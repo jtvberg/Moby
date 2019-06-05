@@ -4,6 +4,7 @@ const tasks = require('./tasks.js')
 const menu = require('./menu.js')
 require('bootstrap/js/dist/modal')
 
+// Load tasks at startup
 if(tasks.taskList.length) {
   tasks.taskList.forEach(tasks.addTask)
 }
@@ -27,25 +28,26 @@ $('#add-button').click(() => {
   tasks.addTask(newTaskData)
 })
 
+// Drag and drop events
 exit = (e) => {
-    const remote = require('electron').remote
-    let w = remote.getCurrentWindow()
-    w.close()
+  const remote = require('electron').remote
+  let w = remote.getCurrentWindow()
+  w.close()
 }
 allowDrop = (e) => {
-    e.preventDefault()
+  e.preventDefault()
 }
 drag = (e) => {
-    e.dataTransfer.setData("text", e.target.id)
+  e.dataTransfer.setData("text", e.target.id)
 }
 drop = (e) => {
-    e.preventDefault()
-    var data = e.dataTransfer.getData('text')
-    if(e.target.parentElement !== document.getElementById(data).parentElement && e.target.parentElement.parentElement !== document.getElementById(data).parentElement) {
-      e.target.appendChild(document.getElementById(data))
-      tasks.updateTask(tasks.taskList, data, e.target.getAttribute('id').substring(3))
-      tasks.saveTasks()
-    } else {
-      console.log("same column")
-    }
+  e.preventDefault()
+  var data = e.dataTransfer.getData('text')
+  if(e.target.parentElement !== document.getElementById(data).parentElement && e.target.parentElement.parentElement !== document.getElementById(data).parentElement) {
+    e.target.appendChild(document.getElementById(data))
+    tasks.updateTask(tasks.taskList, data, e.target.getAttribute('id').substring(3))
+    tasks.saveTasks()
+  } else {
+    console.log("same column")
+  }
 }

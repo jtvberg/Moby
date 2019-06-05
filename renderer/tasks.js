@@ -8,6 +8,7 @@ exports.saveTasks = () => {
 
 // Update task details
 exports.updateTask = (taskList, taskId, taskStatus) => {
+  // Update Status
   for (var i = 0; i < taskList.length; i++) {
     if (taskList[i].TaskId == taskId) {
       taskList[i].TaskStatus = taskStatus
@@ -26,7 +27,7 @@ exports.addTask = (task) => {
                   </div>`
   $(`#col${task.TaskStatus}`).append(taskHTML)
   $('#add-modal').modal('hide')
-
+  // Attach collapse event
   $('.collapsible').off('click').on('click', function() {
       var content = this.nextElementSibling
       if (content.style.maxHeight){

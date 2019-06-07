@@ -9,6 +9,7 @@
         <link rel="stylesheet" href="main.css">
     </head>
     <body>
+
         <div class="wrapper">
             <div class="menu">
                 <div class="menuItem fas fa-plus-square fa-2x open-add-modal" draggable="false"></div>
@@ -16,17 +17,82 @@
                 <div class="menuItem fas fa-minus-square fa-2x" draggable="false"></div>
                 <div class="menuItem fas fa-sign-out-alt fa-2x" onclick="exit(event)" draggable="false"></div>
             </div>
-            <div class="header">Do</div>
-            <div class="header">Today</div> 
-            <div class="header">Doing</div>
-            <div class="header">Done</div>
-            <div class="box a" id="colDo" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <div class="host a">
+                <div class="header">Do</div>
+                <div class="box" id="colDo" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                <div class="footer fas fa-plus-square fa-2x"></div>
             </div>
-            <div class="box b" id="colToday" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <div class="host b">
+                <div class="header">Today</div>
+                <div class="box" id="colToday" ondrop="drop(event)" ondragover="allowDrop(event)">
+                        <div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
+                                <div class="card-header">Header</div>
+                                <div class="card-body">
+                                  <h5 class="card-title">Primary card title</h5>
+                                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                </div>
+                              </div>
+                              <div class="card text-white bg-secondary mb-3" style="max-width: 18rem;">
+                                <div class="card-header">Header</div>
+                                <div class="card-body">
+                                  <h5 class="card-title">Secondary card title</h5>
+                                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                </div>
+                              </div>
+                              <div class="card text-white bg-success mb-3" style="max-width: 18rem;">
+                                <div class="card-header">Header</div>
+                                <div class="card-body">
+                                  <h5 class="card-title">Success card title</h5>
+                                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                </div>
+                              </div>
+                              <div class="card text-white bg-danger mb-3" style="max-width: 18rem;">
+                                <div class="card-header">Header</div>
+                                <div class="card-body">
+                                  <h5 class="card-title">Danger card title</h5>
+                                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                </div>
+                              </div>
+                              <div class="card text-white bg-warning mb-3" style="max-width: 18rem;">
+                                <div class="card-header">Header</div>
+                                <div class="card-body">
+                                  <h5 class="card-title">Warning card title</h5>
+                                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                </div>
+                              </div>
+                              <div class="card text-white bg-info mb-3" style="max-width: 18rem;">
+                                <div class="card-header">Header</div>
+                                <div class="card-body">
+                                  <h5 class="card-title">Info card title</h5>
+                                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                </div>
+                              </div>
+                              <div class="card bg-light mb-3" style="max-width: 18rem;">
+                                <div class="card-header">Header</div>
+                                <div class="card-body">
+                                  <h5 class="card-title">Light card title</h5>
+                                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                </div>
+                              </div>
+                              <div class="card text-white bg-dark mb-3" style="max-width: 18rem;">
+                                <div class="card-header">Header</div>
+                                <div class="card-body">
+                                  <h5 class="card-title">Dark card title</h5>
+                                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                </div>
+                              </div>
+                </div>
+                <div class="footer fas fa-plus-square fa-2x"></div>
             </div>
-            <div class="box c" id="colDoing" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <div class="host c">
+                <div class="header">Doing</div>
+                <div class="box" id="colDoing" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                <div class="footer fas fa-plus-square fa-2x"></div>
             </div>
-            <div class="box d" id="colDone" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <div class="host d">
+                <div class="header">Done</div>
+                <div class="box" id="colDone" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                <div class="footer fas fa-plus-square fa-2x"></div>
             </div>
         </div>
 

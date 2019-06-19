@@ -9,19 +9,26 @@ if(tasks.taskList.length) {
   tasks.taskList.forEach(tasks.addTask)
 }
 
-// Show add-modal
-$('.open-add-modal').click(() => {
-    $('#add-modal').modal('show')
+$('#add-modal').on('show.bs.modal', function(e) {
+  var status = $(e.relatedTarget).data('status-id')
+  $('#taskTitle').val('');
+  $('#taskDetail').val('');
+  $('#taskStatus').val(status);
+})
+
+$('#del-button').click(() => {
+  console.log($(document.activeElement))
+  tasks.updateTask(tasks.taskList, '1560906999221', "Archive")
+  tasks.saveTasks()
 })
 
 // Handle add-modal submission
 $('#add-button').click(() => {
   var newTaskTitle = $('#taskTitle').val()
   var newTaskDetail = $('#taskDetail').val()
-  var newTaskTheme = $('#chooseTheme input:radio:checked').val()
+  var newTaskTheme = $('#chooseTheme input:radio:checked').val() || 1
   var newTaskStatus = $('#taskStatus').val()
   var newTaskId = new Date().valueOf()
-  console.log(newTaskId)
   var newTaskData = {"TaskStatus":newTaskStatus, "TaskId":newTaskId, "TaskTitle":newTaskTitle, "TaskDetail":newTaskDetail, "TaskTheme":newTaskTheme}
   tasks.taskList.push(newTaskData)
   tasks.saveTasks()
@@ -43,11 +50,19 @@ drag = (e) => {
 drop = (e) => {
   e.preventDefault()
   var data = e.dataTransfer.getData('text')
-  if(e.target.parentElement !== document.getElementById(data).parentElement && e.target.parentElement.parentElement !== document.getElementById(data).parentElement) {
+  let col;
+  if(e.target.id.substring(0,3) == 'col') {
     e.target.appendChild(document.getElementById(data))
-    tasks.updateTask(tasks.taskList, data, e.target.getAttribute('id').substring(3))
-    tasks.saveTasks()
+    col = e.target.getAttribute('id').substring(3);
+  } else if (e.target.parentElement.parentElement.id.substring(0,3) == 'col') {
+    col = e.target.parentElement.parentElement.getAttribute('id').substring(3);
+    e.target.parentElement.parentElement.appendChild(document.getElementById(data))
+  } else if (e.target.id.substring(0,4) == 'host') {
+    col = e.target.id.substring(4,e.target.id.length)
+    document.getElementById('col'+col).appendChild(document.getElementById(data))
   } else {
-    console.log("same column")
+    return;
   }
+  tasks.updateTask(tasks.taskList, data, col)
+  tasks.saveTasks()
 }

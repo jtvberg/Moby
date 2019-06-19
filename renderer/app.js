@@ -17,11 +17,14 @@ $('#add-modal').on('show.bs.modal', function(e) {
 })
 
 $('#del-button').click(() => {
-  console.log($(document.activeElement))
-  tasks.updateTask(tasks.taskList, '1560906999221', "Archive")
+  document.getElementById(activeTask).remove()
+  tasks.updateTask(tasks.taskList, activeTask, "Archive")
   tasks.saveTasks()
 })
 
+// $('.card').on('click', function() {
+//   window.activeTask = this.id
+// })
 // Handle add-modal submission
 $('#add-button').click(() => {
   var newTaskTitle = $('#taskTitle').val()

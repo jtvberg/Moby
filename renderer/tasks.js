@@ -28,12 +28,15 @@ exports.addTask = (task) => {
   $(`#col${task.TaskStatus}`).append(taskHTML)
   $('#add-modal').modal('hide')
   // Attach collapse event
+  $('.card').on('click', function() {
+    window.activeTask = this.id
+  })
   $('.collapsible').off('click').on('click', function() {
-      var content = this.nextElementSibling
-      if (content.style.maxHeight){
-        content.style.maxHeight = null
-      } else {
-        content.style.maxHeight = content.scrollHeight + "px"
-      }
-    })
+    var content = this.nextElementSibling
+    if (content.style.maxHeight){
+      content.style.maxHeight = null
+    } else {
+      content.style.maxHeight = content.scrollHeight + "px"
+    }
+  })
 }

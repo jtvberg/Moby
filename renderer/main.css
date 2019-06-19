@@ -37,6 +37,7 @@ body {
     grid-template-rows: 1fr;
     align-items: start;
     grid-gap: 5px;
+    /* background-image: linear-gradient(to bottom right, rgb(53, 53, 53), rgb(0, 0, 0)); */
     background-image: linear-gradient(to bottom right, rgb(0, 141, 223), rgb(0, 66, 128));
     color: rgb(26, 26, 26);
 }

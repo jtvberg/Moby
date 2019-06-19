@@ -17,15 +17,11 @@ $('#add-modal').on('show.bs.modal', function(e) {
 })
 
 $('#del-button').click(() => {
-  document.getElementById(activeTask).remove()
-  tasks.updateTask(tasks.taskList, activeTask, "Archive")
+  document.getElementById('colArchive').appendChild(document.getElementById(activeTask))
+  tasks.updateTask(tasks.taskList, activeTask, 'Archive')
   tasks.saveTasks()
 })
 
-// $('.card').on('click', function() {
-//   window.activeTask = this.id
-// })
-// Handle add-modal submission
 $('#add-button').click(() => {
   var newTaskTitle = $('#taskTitle').val()
   var newTaskDetail = $('#taskDetail').val()
@@ -38,6 +34,12 @@ $('#add-button').click(() => {
   tasks.addTask(newTaskData)
 })
 
+$('#restore-button').click(() => {
+  document.getElementById('colDo').appendChild(document.getElementById(activeTask))
+  tasks.updateTask(tasks.taskList, activeTask, 'Do')
+  tasks.saveTasks()
+})
+
 // Drag and drop events
 exit = (e) => {
   const remote = require('electron').remote
@@ -48,7 +50,7 @@ allowDrop = (e) => {
   e.preventDefault()
 }
 drag = (e) => {
-  e.dataTransfer.setData("text", e.target.id)
+  e.dataTransfer.setData('text', e.target.id)
 }
 drop = (e) => {
   e.preventDefault()

@@ -1,99 +1,125 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Moby</title>
-        <link rel="stylesheet" href="../node_modules/@fortawesome/fontawesome-free/css/all.min.css">
-        <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
-        <link rel="text/javascript" href="../node_modules/bootstrap/dist/js/bootstrap.min.js">
-        <link rel="stylesheet" href="main.css">
-    </head>
-    <body>
-        <div class="wrapper">
-            <div class="menu">
-                <div class="menuItem fas fa-plus-square fa-2x" href="#add-modal" data-toggle="modal" data-status-id="Do"></div>
-                <div class="menuItem fas fa-calendar-check fa-2x"></div>
-                <div class="menuItem fas fa-minus-square fa-2x" id="del-button"></div>
-                <div class="menuItem fas fa-sign-out-alt fa-2x" onclick="exit(event)"></div>
-            </div>
-            <div class="host" id="hostDo" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <div class="header">Do</div>
-                <div class="box" id="colDo"></div>
-                <div class="footer fas fa-plus fa-2x" href="#add-modal" data-toggle="modal" data-status-id="Do"></div>
-            </div>
-            <div class="host" id="hostToday" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <div class="header">Today</div>
-                <div class="box" id="colToday"></div>
-                <div class="footer fas fa-plus fa-2x" href="#add-modal" data-toggle="modal" data-status-id="Today"></div>
-            </div>
-            <div class="host" id="hostDoing" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <div class="header">Doing</div>
-                <div class="box" id="colDoing" ></div>
-                <div class="footer fas fa-plus fa-2x" href="#add-modal" data-toggle="modal" data-status-id="Doing"></div>
-            </div>
-            <div class="host" id="hostDone" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <div class="header">Done</div>
-                <div class="box" id="colDone"></div>
-                <div class="footer fas fa-plus fa-2x" href="#add-modal" data-toggle="modal" data-status-id="Done"></div>
-            </div>
+  <head>
+    <meta charset="UTF-8">
+    <title>Moby</title>
+    <link rel="stylesheet" href="../node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="text/javascript" href="../node_modules/bootstrap/dist/js/bootstrap.min.js">
+    <link rel="stylesheet" href="main.css">
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="menu">
+        <div class="menuItem fas fa-plus-square fa-2x" href="#add-modal" data-toggle="modal" data-status-id="Do"></div>
+        <div class="menuItem fas fa-calendar-check fa-2x"></div>
+        <div class="menuItem fas fa-minus-square fa-2x" id="del-button"></div>
+        <div class="menuItem fas fa-archive fa-2x" href="#restore-modal" data-toggle="modal" ></div>
+        <div class="menuItem fas fa-sign-out-alt fa-2x" onclick="exit(event)"></div>
+      </div>
+      <div class="host" id="hostDo" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <div class="header">Do</div>
+        <div class="box" id="colDo"></div>
+        <div class="footer fas fa-plus fa-2x" href="#add-modal" data-toggle="modal" data-status-id="Do"></div>
+      </div>
+      <div class="host" id="hostToday" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <div class="header">Today</div>
+        <div class="box" id="colToday"></div>
+        <div class="footer fas fa-plus fa-2x" href="#add-modal" data-toggle="modal" data-status-id="Today"></div>
+      </div>
+      <div class="host" id="hostDoing" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <div class="header">Doing</div>
+        <div class="box" id="colDoing" ></div>
+        <div class="footer fas fa-plus fa-2x" href="#add-modal" data-toggle="modal" data-status-id="Doing"></div>
+      </div>
+      <div class="host" id="hostDone" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <div class="header">Done</div>
+        <div class="box" id="colDone"></div>
+        <div class="footer fas fa-plus fa-2x" href="#add-modal" data-toggle="modal" data-status-id="Done"></div>
+      </div>
+    </div>
+
+    <div class="logo"><img src="res/moby1_w_l.png"></div>
+
+    <div id="add-modal" class="modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">New Task</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+            <form id="taskForm">
+              <div class="form-group">
+                <input class="form-control" id="taskTitle" placeholder="Title">
+              </div>
+              <div class="form-group">
+                <textarea class="form-control" id="taskDetail" placeholder="Detail"></textarea>
+              </div>
+              <div class="form-group">
+                <select class="form-control form-control-sm" id="taskStatus">
+                  <option>Do</option>
+                  <option>Today</option>
+                  <option>Doing</option>
+                  <option>Done</option>
+                </select>
+              </div>
+              <div class="btn-group" id="chooseTheme">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="1">
+                  <label class="form-check-label" for="inlineRadio1">1</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="2">
+                  <label class="form-check-label" for="inlineRadio2">2</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="3">
+                  <label class="form-check-label" for="inlineRadio3">3</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4" value="4">
+                  <label class="form-check-label" for="inlineRadio4">4</label>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button id="add-button" type="button" class="btn btn-primary">Save Changes</button>
+          </div>
         </div>
-        <div class="logo"><img src="res/moby1_w_l.png"></div>
-        <div id="add-modal" class="modal" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">New Task</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="taskForm">
-                        <div class="form-group">
-                            <input class="form-control" id="taskTitle" placeholder="Title">
-                        </div>
-                        <div class="form-group">
-                            <textarea class="form-control" id="taskDetail" placeholder="Detail"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <select class="form-control form-control-sm" id="taskStatus">
-                                <option>Do</option>
-                                <option>Today</option>
-                                <option>Doing</option>
-                                <option>Done</option>
-                            </select>
-                        </div>
-                        <div class="btn-group" id="chooseTheme">
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="1">
-                                <label class="form-check-label" for="inlineRadio1">1</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="2">
-                                <label class="form-check-label" for="inlineRadio2">2</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="3">
-                                <label class="form-check-label" for="inlineRadio3">3</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4" value="4">
-                                <label class="form-check-label" for="inlineRadio4">4</label>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button id="add-button" type="button" class="btn btn-primary">Save changes</button>
-                </div>
-                </div>
+      </div>
+    </div>
+
+    <div id="restore-modal" class="modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Restore Task</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="host" id="hostArchive">
+              <div class="box" id="colArchive"></div>
             </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button id="restore-button" type="button" class="btn btn-primary">Restore Selected</button>
+          </div>
         </div>
-        <script>
-            $ = require('jquery')
-            var activeTask
-        </script>
-        <script type="text/javascript" src="./app.js"></script>
-    </body>
+      </div>
+    </div>
+
+    <script>
+      $ = require('jquery')
+      var activeTask
+    </script>
+    <script type="text/javascript" src="./app.js"></script>
+  </body>
 </html>

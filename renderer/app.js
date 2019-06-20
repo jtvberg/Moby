@@ -2,12 +2,21 @@
 const {ipcRenderer} = require('electron')
 const tasks = require('./tasks.js')
 const menu = require('./menu.js')
+var schedule = require('node-schedule')
 require('bootstrap/js/dist/modal')
 
 // Load tasks at startup
 if(tasks.taskList.length) {
   tasks.taskList.forEach(tasks.addTask)
 }
+
+var date = new Date(2019, 5, 19, 20, 44, 0);
+var testSchedule = schedule.scheduleJob(date, function(){
+  var newTaskData = {"TaskStatus":"Today", "TaskId":new Date().valueOf(), "TaskTitle":'Scheduled Task', "TaskDetail":'I was scheduled', "TaskTheme":2}
+  tasks.taskList.push(newTaskData)
+  tasks.saveTasks()
+  tasks.addTask(newTaskData)
+});
 
 $('#add-modal').on('show.bs.modal', function(e) {
   var status = $(e.relatedTarget).data('status-id')

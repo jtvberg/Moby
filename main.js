@@ -7,6 +7,7 @@ require('electron-reload')(__dirname)
 // Create main window post electron init
 app.on('ready', () => {
   mainWindow.createWindow()
+  //mainWindow.win.setFullScreen(true)
 })
 
 // Close app on window close

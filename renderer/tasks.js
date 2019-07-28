@@ -20,23 +20,22 @@ exports.updateTask = (taskList, taskId, taskStatus) => {
 // Add task to UI
 exports.addTask = (task) => {
   let taskHTML = `<div class="card drag${task.TaskTheme}" id="${task.TaskId}" draggable="true" ondragstart="drag(event)">
-                    <button id="b${task.TaskId}" class="collapsible">${task.TaskTitle}</button>
-                    <div class="content">
+                    <button data-toggle="collapse" data-target="#c${task.TaskId}" id="b${task.TaskId}" class="collapsible">${task.TaskTitle}</button>
+                    <div class="collapse" id="c${task.TaskId}">
                         <p>${task.TaskDetail}</p>
                     </div>
                   </div>`
   $(`#col${task.TaskStatus}`).append(taskHTML)
   $('#add-modal').modal('hide')
-  // Attach collapse event
   $('.card').on('click', function() {
     window.activeTask = this.id
   })
-  $('.collapsible').off('click').on('click', function() {
-    var content = this.nextElementSibling
-    if (content.style.maxHeight){
-      content.style.maxHeight = null
-    } else {
-      content.style.maxHeight = content.scrollHeight + "px"
-    }
-  })
+  // $('.collapsible').off('click').on('click', function() {
+  //   var content = this.nextElementSibling
+  //   if (content.style.maxHeight){
+  //     content.style.maxHeight = null
+  //   } else {
+  //     content.style.maxHeight = content.scrollHeight + "px"
+  //   }
+  // })
 }

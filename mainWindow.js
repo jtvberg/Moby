@@ -7,9 +7,7 @@ exports.createWindow = () => {
   this.win = new BrowserWindow({
     width: 1200,
     height: 800,
-    //show: false,
     frame: false,
-    //backgroundColor: "#FFF",
     webPreferences: {
       nodeIntegration: true
     }
@@ -17,7 +15,6 @@ exports.createWindow = () => {
 
   // open DevTools remove for dist
   this.win.webContents.openDevTools()
-
   // HTML to open
   this.win.loadURL(`file://${__dirname}/renderer/main.html`)
 

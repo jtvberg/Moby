@@ -10,13 +10,16 @@ if(tasks.taskList.length) {
   tasks.taskList.forEach(tasks.addTask)
 }
 
-var date = new Date(2019, 5, 19, 20, 44, 0);
+// Month is 0 based
+var date = new Date(2019, 6, 24, 13, 34, 0)
+console.log(date)
 var testSchedule = schedule.scheduleJob(date, function(){
-  var newTaskData = {"TaskStatus":"Today", "TaskId":new Date().valueOf(), "TaskTitle":'Scheduled Task', "TaskDetail":'I was scheduled', "TaskTheme":2}
+  var newTaskData = {"TaskStatus":"Today", "TaskId":new Date().valueOf(), "TaskTitle":'Scheduled Task', "TaskDetail":'I was scheduled', "TaskTheme":3}
   tasks.taskList.push(newTaskData)
   tasks.saveTasks()
   tasks.addTask(newTaskData)
-});
+  console.log(newTaskData)
+})
 
 $('#add-modal').on('show.bs.modal', function(e) {
   var status = $(e.relatedTarget).data('status-id')

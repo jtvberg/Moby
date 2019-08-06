@@ -29,9 +29,11 @@ $('#add-modal').on('show.bs.modal', function(e) {
 })
 
 $('#del-button').click(() => {
-  document.getElementById('colArchive').appendChild(document.getElementById(activeTask))
-  tasks.updateTask(tasks.taskList, activeTask, 'Archive')
-  tasks.saveTasks()
+  if(activeTask) {
+    document.getElementById('colArchive').appendChild(document.getElementById(activeTask))
+    tasks.updateTask(tasks.taskList, activeTask, 'Archive')
+    tasks.saveTasks()
+  }
 })
 
 $('#add-button').click(() => {

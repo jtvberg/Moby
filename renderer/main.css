@@ -12,15 +12,33 @@ body {
     font-weight: bold;
 }
 .card {
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    color: #fff;
     transition: 0.3s;
     border-radius: 2px;
     margin: 5px;
-    font-size: 50%;
     -webkit-app-region: no-drag;
 }
 .card:hover {
-    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.6);
+}
+.cardMenuItem:hover {
+    color: rgb(66, 195, 255);
+}
+.collapsible {
+    width: 100%;
+    background-color: #00000000;
+    border: none;
+}
+.collapse {
+    color: #FFF;
+}
+.cardMenuItem {
+    color: #fff;
+    font-size: 100%;
+    text-align: right;
+    align-content: right;
+    align-self: right;
+    align-items: right;
 }
 .footer {
     color: rgb(255, 255, 255, .2);
@@ -39,14 +57,13 @@ body {
     grid-gap: 5px;
     /* background-image: linear-gradient(to bottom right, rgb(53, 53, 53), rgb(0, 0, 0)); */
     background-image: linear-gradient(to bottom right, rgb(0, 141, 223), rgb(0, 66, 128));
-    color: rgb(26, 26, 26);
 }
 .logo {
     z-index: 1000;
     position: fixed;
     bottom: -20px;
     right: -30px;
-    opacity: .2;
+    opacity: .05;
 }
 .menu {
     /* grid-row: 1 / 3; */
@@ -76,25 +93,6 @@ body {
 ::-webkit-scrollbar {
     width: 0px;
     background: transparent;
-}
-.content {
-    max-height: 0;
-    overflow: hidden;
-    font-size: 150%;
-    color: #fff;
-    padding: 0px 5px 0px 5px;
-    border-radius: 0px 0px 2px 2px;
-    transition: max-height 0.2s ease-out;
-}
-.collapsible {
-    width: 100%;
-    background-color: #00000000;
-    border: none;
-    color: #FFF;
-    text-align: left;
-    font-family: inherit;
-    font-size: 200%;
-    font-weight: bold;
 }
 .edge {
     width: 5px;

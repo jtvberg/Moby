@@ -23,9 +23,9 @@ var testSchedule = schedule.scheduleJob(date, function(){
 
 $('#add-modal').on('show.bs.modal', function(e) {
   var status = $(e.relatedTarget).data('status-id')
-  $('#taskTitle').val('');
-  $('#taskDetail').val('');
-  $('#taskStatus').val(status);
+  $('#taskTitle').val('')
+  $('#taskDetail').val('')
+  $('#taskStatus').val(status)
 })
 
 $('#del-button').click(() => {

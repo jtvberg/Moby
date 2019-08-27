@@ -25,10 +25,10 @@ exports.addTask = (task) => {
   //                     <p>${task.TaskDetail}</p>
   //                   </div>
   //                 </div>`
-  let taskHTML = `<div class="card drag${task.TaskTheme}" id="${task.TaskId}" draggable="true" ondragstart="drag(event)">
+  let taskHTML = `<div class="card theme-${task.TaskTheme}" id="${task.TaskId}" draggable="true" ondragstart="drag(event)">
                     <div id="b${task.TaskId}" class="collapsible">${task.TaskTitle}</div>
-                    <div class="collapse" id="c${task.TaskId}">
-                      <p>${task.TaskDetail}</p>
+                    <div class="collapse testing" id="c${task.TaskId}">
+                      <p style="white-space: pre-wrap;">${task.TaskDetail}</p>
                       <div class="cardMenu">
                         <div class="cardMenuItem fas fa-minus-square" id="del-button"></div>
                         <div class="cardMenuItemEdit fas fa-edit" id="edit-button"></div>

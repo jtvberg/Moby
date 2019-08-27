@@ -31,6 +31,10 @@ body {
 }
 .collapse {
     color: #FFF;
+    
+}
+.testing {
+    font-size: 75%;
 }
 .cardMenu {
     align-content: flex-end;
@@ -110,15 +114,19 @@ body {
 .menuItems:active {
     background-color: blue;
 }
-.drag1 {
+.theme-1.active, .theme-2.active, .theme-3.active, .theme-4.active {
+    border-color: rgb(81, 190, 233) !important;
+    border-width: 1px;
+}
+.theme-1 {
     background-color: midnightblue;
 }
-.drag2 {
+.theme-2 {
     background-color: darkred;
 }
-.drag3 {
+.theme-3 {
     background-color: purple;
 }
-.drag4 {
+.theme-4 {
     background-color: orangered;
 }

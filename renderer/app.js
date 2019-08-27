@@ -66,6 +66,15 @@ $('#add-button').click(() => {
   tasks.addTask(newTaskData)
 })
 
+$('#update-button').click(() => {
+  var getTask = tasks.taskList.find(task => task.TaskId == activeTask)
+  getTask.TaskTitle = $('#editTitle').val()
+  getTask.TaskDetail = $('#editDetail').val()
+  getTask.TaskTheme = $('#editChooseTheme input:radio:checked').val() || 1
+  getTask.TaskStatus = $('#editStatus').val()
+  tasks.saveTasks()
+})
+
 $('#restore-button').click(() => {
   document.getElementById('colDo').appendChild(document.getElementById(activeTask))
   tasks.updateTask(tasks.taskList, activeTask, 'Do')

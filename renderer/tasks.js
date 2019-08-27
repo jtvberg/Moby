@@ -29,7 +29,10 @@ exports.addTask = (task) => {
                     <div id="b${task.TaskId}" class="collapsible">${task.TaskTitle}</div>
                     <div class="collapse" id="c${task.TaskId}">
                       <p>${task.TaskDetail}</p>
-                      <div class="cardMenuItem fas fa-minus-square" id="del-button"></div>
+                      <div class="cardMenu">
+                        <div class="cardMenuItem fas fa-minus-square" id="del-button"></div>
+                        <div class="cardMenuItemEdit fas fa-edit" id="edit-button"></div>
+                      <div>
                     </div>
                   </div>`
   $(`#col${task.TaskStatus}`).append(taskHTML)
@@ -37,7 +40,7 @@ exports.addTask = (task) => {
   $('.card').on('click', function() {
     window.activeTask = this.id
   })
-  $(`#b${task.TaskId}`).mouseenter(
+  $(`#${task.TaskId}`).mouseenter(
     function() {
        $(`#c${task.TaskId}`).collapse('show')
 
@@ -45,11 +48,11 @@ exports.addTask = (task) => {
        //$(`#c${task.TaskId}`).collapse('hide')
      //}
    );
-   $(`#c${task.TaskId}`).mouseout(
-    function() {
-       $(`#c${task.TaskId}`).collapse('hide')
-     }
-   );
+  //  $(`#c${task.TaskId}`).mouseout(
+  //   function() {
+  //      $(`#c${task.TaskId}`).collapse('hide')
+  //    }
+  //  );
   // $('.collapsible').off('click').on('click', function() {
   //   var content = this.nextElementSibling
   //   if (content.style.maxHeight){

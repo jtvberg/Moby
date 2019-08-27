@@ -12,7 +12,7 @@
       <div class="menu">
         <div class="menuItem fas fa-plus-square fa-2x" href="#add-modal" data-toggle="modal" data-status-id="Do"></div>
         <div class="menuItem fas fa-calendar-check fa-2x"></div>
-        <div class="menuItem fas fa-edit fa-2x" href="#add-modal" data-toggle="modal" ></div>
+        <div class="menuItem fas fa-edit fa-2x" href="#edit-modal" data-toggle="modal" ></div>
         <div class="menuItem fas fa-minus-square fa-2x" id="del-button"></div>
         <div class="menuItem fas fa-archive fa-2x" href="#restore-modal" data-toggle="modal" ></div>
         <div class="menuItem fas fa-sign-out-alt fa-2x" onclick="exit(event)"></div>
@@ -89,6 +89,59 @@
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             <button id="add-button" type="button" class="btn btn-primary">Save Changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="edit-modal" class="modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Edit Task</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+            <form id="taskForm">
+              <div class="form-group">
+                <input class="form-control" id="editTitle" placeholder="Title">
+              </div>
+              <div class="form-group">
+                <textarea class="form-control" id="editDetail" placeholder="Detail"></textarea>
+              </div>
+              <div class="form-group">
+                <select class="form-control form-control-sm" id="editStatus">
+                  <option>Do</option>
+                  <option>Today</option>
+                  <option>Doing</option>
+                  <option>Done</option>
+                </select>
+              </div>
+              <div class="btn-group" id="chooseTheme">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="1">
+                  <label class="form-check-label" for="inlineRadio1">1</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="2">
+                  <label class="form-check-label" for="inlineRadio2">2</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="3">
+                  <label class="form-check-label" for="inlineRadio3">3</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4" value="4">
+                  <label class="form-check-label" for="inlineRadio4">4</label>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button id="edit-button" type="button" class="btn btn-primary">Save Changes</button>
           </div>
         </div>
       </div>

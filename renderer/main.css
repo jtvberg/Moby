@@ -32,13 +32,16 @@ body {
 .collapse {
     color: #FFF;
 }
-.cardMenuItem {
+.cardMenu {
+    align-content: flex-end;
     color: #fff;
     font-size: 100%;
     text-align: right;
-    align-content: right;
-    align-self: right;
-    align-items: right;
+    width: 100%;
+    padding: 1px;
+}
+.cardMenuItem {
+
 }
 .footer {
     color: rgb(255, 255, 255, .2);

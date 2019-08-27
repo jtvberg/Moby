@@ -21,11 +21,29 @@ var testSchedule = schedule.scheduleJob(date, function(){
   console.log(newTaskData)
 })
 
+$('.wrapper').hover(
+    function() {
+       $(`.collapse`).collapse('hide')
+     }
+   );
+
 $('#add-modal').on('show.bs.modal', function(e) {
   var status = $(e.relatedTarget).data('status-id')
   $('#taskTitle').val('')
   $('#taskDetail').val('')
   $('#taskStatus').val(status)
+})
+
+$('#edit-modal').on('show.bs.modal', function(e) {
+  var getTask = tasks.taskList.find(task => task.TaskId == activeTask)
+  $('#editTitle').val(getTask.TaskTitle)
+  $('#editDetail').val(getTask.TaskDetail)
+  $('#editStatus').val(getTask.TaskStatus)
+  $(`input[name=inlineRadioOptions][value=${getTask.TaskTheme}]`).prop('checked',true);
+})
+
+$('.cardMenuItemEdit').click(() => {
+  $('#edit-modal').modal('show');
 })
 
 $('#del-button').click(() => {

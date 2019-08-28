@@ -27,19 +27,36 @@ exports.addTask = (task) => {
   //                 </div>`
   let taskHTML = `<div class="card theme-${task.TaskTheme}" id="${task.TaskId}" draggable="true" ondragstart="drag(event)">
                     <div id="b${task.TaskId}" class="collapsible">${task.TaskTitle}</div>
-                    <div class="collapse testing" id="c${task.TaskId}">
+                    <div class="collapse collapseContent" id="c${task.TaskId}">
                       <p style="white-space: pre-wrap;">${task.TaskDetail}</p>
                       <div class="cardMenu">
-                        <div class="cardMenuItem fas fa-minus-square" id="del-button"></div>
+                        <div class="cardMenuItemDel fas fa-minus-square" id="del-button"></div>
                         <div class="cardMenuItemEdit fas fa-edit" id="edit-button"></div>
                       <div>
                     </div>
                   </div>`
+
   $(`#col${task.TaskStatus}`).append(taskHTML)
+
   $('#add-modal').modal('hide')
+
   $('.card').on('click', function() {
     window.activeTask = this.id
   })
+
+  $('.cardMenuItemEdit').click(() => {
+    $('#edit-modal').modal('show');
+  })
+
+  $('.cardMenuItemDel').click(() => {
+    if(activeTask) {
+      console.log("del")
+      document.getElementById('colArchive').appendChild(document.getElementById(activeTask))
+      tasks.updateTask(tasks.taskList, activeTask, 'Archive')
+      tasks.saveTasks()
+    }
+  })
+
   $(`#${task.TaskId}`).mouseenter(
     function() {
        $(`#c${task.TaskId}`).collapse('show')

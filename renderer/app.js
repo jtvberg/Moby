@@ -42,18 +42,6 @@ $('#edit-modal').on('show.bs.modal', function(e) {
   $(`input[name=inlineRadioOptions][value=${getTask.TaskTheme}]`).prop('checked',true);
 })
 
-$('.cardMenuItemEdit').click(() => {
-  $('#edit-modal').modal('show');
-})
-
-$('#del-button').click(() => {
-  if(activeTask) {
-    document.getElementById('colArchive').appendChild(document.getElementById(activeTask))
-    tasks.updateTask(tasks.taskList, activeTask, 'Archive')
-    tasks.saveTasks()
-  }
-})
-
 $('#add-button').click(() => {
   var newTaskTitle = $('#taskTitle').val()
   var newTaskDetail = $('#taskDetail').val()
@@ -73,12 +61,17 @@ $('#update-button').click(() => {
   getTask.TaskTheme = $('#editChooseTheme input:radio:checked').val() || 1
   getTask.TaskStatus = $('#editStatus').val()
   tasks.saveTasks()
+  document.getElementById(getTask.TaskId).remove()
+  var newTaskData = {"TaskStatus":getTask.TaskStatus, "TaskId":getTask.TaskId, "TaskTitle":getTask.TaskTitle , "TaskDetail":getTask.TaskDetail, "TaskTheme":getTask.TaskTheme}
+  tasks.addTask(newTaskData)
+  $('#edit-modal').modal('hide')
 })
 
 $('#restore-button').click(() => {
   document.getElementById('colDo').appendChild(document.getElementById(activeTask))
   tasks.updateTask(tasks.taskList, activeTask, 'Do')
   tasks.saveTasks()
+  $('#restore-modal').modal('hide')
 })
 
 // Drag and drop events

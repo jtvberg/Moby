@@ -16,6 +16,7 @@ body {
     transition: 0.3s;
     border-radius: 2px;
     margin: 5px;
+    font-weight: bold;
     -webkit-app-region: no-drag;
 }
 .card:hover {
@@ -31,9 +32,8 @@ body {
 }
 .collapse {
     color: #FFF;
-    
 }
-.testing {
+.collapseContent {
     font-size: 75%;
 }
 .cardMenu {
@@ -43,9 +43,6 @@ body {
     text-align: right;
     width: 100%;
     padding: 1px;
-}
-.cardMenuItem {
-
 }
 .footer {
     color: rgb(255, 255, 255, .2);
@@ -70,7 +67,7 @@ body {
     position: fixed;
     bottom: -20px;
     right: -30px;
-    opacity: .05;
+    opacity: .02;
 }
 .menu {
     /* grid-row: 1 / 3; */

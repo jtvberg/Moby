@@ -32,14 +32,15 @@ $('#add-modal').on('show.bs.modal', function(e) {
   $('#taskTitle').val('')
   $('#taskDetail').val('')
   $('#taskStatus').val(status)
+  $('#option1').closest('.btn').button('toggle')
 })
 
-$('#edit-modal').on('show.bs.modal', function(e) {
+$('#edit-modal').on('shown.bs.modal', function () {
   var getTask = tasks.taskList.find(task => task.TaskId == activeTask)
   $('#editTitle').val(getTask.TaskTitle)
   $('#editDetail').val(getTask.TaskDetail)
   $('#editStatus').val(getTask.TaskStatus)
-  $(`input[name=inlineRadioOptions][value=${getTask.TaskTheme}]`).prop('checked',true);
+  $(`#editOption${getTask.TaskTheme}`).closest('.btn').button('toggle')
 })
 
 $('#add-button').click(() => {
@@ -73,7 +74,6 @@ $('#restore-button').click(() => {
   tasks.saveTasks()
   $('#restore-modal').modal('hide')
 })
-
 // Drag and drop events
 exit = (e) => {
   const remote = require('electron').remote

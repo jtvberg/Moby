@@ -10,7 +10,6 @@
   <body>
     <div class="wrapper">
       <div class="menu">
-        <div class="menuItem fas fa-calendar-check fa-2x"></div>
         <div class="menuItem fas fa-archive fa-2x" href="#restore-modal" data-toggle="modal" ></div>
         <div class="menuItem fas fa-sign-out-alt fa-2x" onclick="exit(event)"></div>
       </div>
@@ -38,14 +37,66 @@
 
     <div class="logo"><img src="res/moby1_w_l.png"></div>
 
+    <div id="edit-modal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Edit Task</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form id="taskForm">
+                <div class="form-group">
+                  <input class="form-control" id="editTitle" placeholder="Title">
+                </div>
+                <div class="form-group">
+                  <textarea class="form-control" id="editDetail" placeholder="Detail"></textarea>
+                </div>
+                <div class="form-group">
+                  <select class="form-control form-control-sm" id="editStatus">
+                    <option>Do</option>
+                    <option>Today</option>
+                    <option>Doing</option>
+                    <option>Done</option>
+                  </select>
+                </div>
+                <div class="btn-group btn-group-toggle btn-group-lg" id="editChooseTheme" data-toggle="buttons">
+                  <label class="btn theme-1" active>
+                    <input type="radio" name="options" id="editOption1" autocomplete="off" checked value="1"> 
+                  </label>
+                  <label class="btn theme-2">
+                    <input type="radio" name="options" id="editOption2" autocomplete="off" value="2"> 
+                  </label>
+                  <label class="btn theme-3">
+                    <input type="radio" name="options" id="editOption3" autocomplete="off" value="3">
+                  </label>
+                  <label class="btn theme-4">
+                    <input type="radio" name="options" id="editOption4" autocomplete="off" value="4"> 
+                  </label>
+                  <label class="btn theme-5">
+                    <input type="radio" name="options" id="editOption5" autocomplete="off" value="5"> 
+                  </label>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button id="update-button" type="button" class="btn btn-primary">Save Changes</button>
+            </div>
+          </div>
+        </div>
+    </div>
+
     <div id="add-modal" class="modal" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-              <h5 class="modal-title">New Task</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <h5 class="modal-title">New Task</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
-              </button>
+            </button>
           </div>
           <div class="modal-body">
             <form id="taskForm">
@@ -63,96 +114,28 @@
                   <option>Done</option>
                 </select>
               </div>
-              <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                <label class="btn theme-1">
-                  <input type="radio" name="options" id="option1" autocomplete="off"> 
+              <div class="btn-group btn-group-toggle btn-group-lg" id="chooseTheme" data-toggle="buttons">
+                <label class="btn theme-1" active>
+                  <input type="radio" name="options" id="option1" autocomplete="off" checked value="1"> 
                 </label>
                 <label class="btn theme-2">
-                  <input type="radio" name="options" id="option2" autocomplete="off"> 
+                  <input type="radio" name="options" id="option2" autocomplete="off" value="2"> 
                 </label>
                 <label class="btn theme-3">
-                  <input type="radio" name="options" id="option3" autocomplete="off"> 
+                  <input type="radio" name="options" id="option3" autocomplete="off" value="3">
                 </label>
                 <label class="btn theme-4">
-                  <input type="radio" name="options" id="option3" autocomplete="off"> 
+                  <input type="radio" name="options" id="option4" autocomplete="off" value="4"> 
                 </label>
-              </div>
-              <div class="btn-group" id="chooseTheme">
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="1">
-                  <label class="form-check-label" for="inlineRadio1">1</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="2">
-                  <label class="form-check-label" for="inlineRadio2">2</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="3">
-                  <label class="form-check-label" for="inlineRadio3">3</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4" value="4">
-                  <label class="form-check-label" for="inlineRadio4">4</label>
-                </div>
+                <label class="btn theme-5">
+                  <input type="radio" name="options" id="option5" autocomplete="off" value="5"> 
+                </label>
               </div>
             </form>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             <button id="add-button" type="button" class="btn btn-primary">Save Changes</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="edit-modal" class="modal" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title">Edit Task</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-              </button>
-          </div>
-          <div class="modal-body">
-            <form id="taskForm">
-              <div class="form-group">
-                <input class="form-control" id="editTitle" placeholder="Title">
-              </div>
-              <div class="form-group">
-                <textarea class="form-control" id="editDetail" placeholder="Detail"></textarea>
-              </div>
-              <div class="form-group">
-                <select class="form-control form-control-sm" id="editStatus">
-                  <option>Do</option>
-                  <option>Today</option>
-                  <option>Doing</option>
-                  <option>Done</option>
-                </select>
-              </div>
-              <div class="btn-group" id="editChooseTheme">
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="1">
-                  <label class="form-check-label" for="inlineRadio1">1</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="2">
-                  <label class="form-check-label" for="inlineRadio2">2</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="3">
-                  <label class="form-check-label" for="inlineRadio3">3</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4" value="4">
-                  <label class="form-check-label" for="inlineRadio4">4</label>
-                </div>
-              </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button id="update-button" type="button" class="btn btn-primary">Save Changes</button>
           </div>
         </div>
       </div>

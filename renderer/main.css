@@ -2,6 +2,7 @@ body {
     overflow-x: hidden;
     overflow-y: hidden;
     margin: 0px;
+    background-color: black;
     -webkit-user-select: none;
     -webkit-app-region: drag;
 }
@@ -111,9 +112,9 @@ body {
 .menuItems:active {
     background-color: blue;
 }
-.theme-1.active, .theme-2.active, .theme-3.active, .theme-4.active {
+.theme-1.active, .theme-2.active, .theme-3.active, .theme-4.active, .theme-5.active  {
     border-color: rgb(81, 190, 233) !important;
-    border-width: 1px;
+    border-width: 2px 1px !important;
 }
 .theme-1 {
     background-color: midnightblue;
@@ -126,4 +127,7 @@ body {
 }
 .theme-4 {
     background-color: orangered;
+}
+.theme-5 {
+    background-color: green;
 }

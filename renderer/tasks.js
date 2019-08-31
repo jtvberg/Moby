@@ -31,6 +31,7 @@ exports.addTask = (task) => {
                       <p style="white-space: pre-wrap;">${task.TaskDetail}</p>
                       <div class="cardMenu">
                         <div class="cardMenuItemDel fas fa-minus-square" id="del-button"></div>
+                        <div class="cardMenuItemClone fas fa-clone" id="clone-button-${task.TaskId}"></div>
                         <div class="cardMenuItemEdit fas fa-edit" id="edit-button"></div>
                       <div>
                     </div>
@@ -44,38 +45,39 @@ exports.addTask = (task) => {
     window.activeTask = this.id
   })
 
+  $('.card').hover(function() {
+    window.activeTask = this.id
+  })
+
   $('.cardMenuItemEdit').click(() => {
     $('#edit-modal').modal('show');
   })
 
   $('.cardMenuItemDel').click(() => {
     if(activeTask) {
-      console.log("del")
       document.getElementById('colArchive').appendChild(document.getElementById(activeTask))
       tasks.updateTask(tasks.taskList, activeTask, 'Archive')
       tasks.saveTasks()
     }
   })
 
-  $(`#${task.TaskId}`).mouseenter(
-    function() {
+  $(`#clone-button-${task.TaskId}`).click(() => {
+    if(activeTask) {
+      var getTask = tasks.taskList.find(task => task.TaskId == activeTask)
+      var newTaskTitle = getTask.TaskTitle
+      var newTaskDetail = getTask.TaskDetail
+      var newTaskTheme = getTask.TaskTheme
+      var newTaskStatus = 'Do'
+      var newTaskId = new Date().valueOf()
+      var newTaskData = {"TaskStatus":newTaskStatus, "TaskId":newTaskId, "TaskTitle":newTaskTitle, "TaskDetail":newTaskDetail, "TaskTheme":newTaskTheme}
+      tasks.taskList.push(newTaskData)
+      tasks.saveTasks()
+      tasks.addTask(newTaskData)
+    }
+  })
+  
+  $(`#${task.TaskId}`).mouseenter(function() {
        $(`#c${task.TaskId}`).collapse('show')
-
-     }//, function() {
-       //$(`#c${task.TaskId}`).collapse('hide')
-     //}
+     }
    );
-  //  $(`#c${task.TaskId}`).mouseout(
-  //   function() {
-  //      $(`#c${task.TaskId}`).collapse('hide')
-  //    }
-  //  );
-  // $('.collapsible').off('click').on('click', function() {
-  //   var content = this.nextElementSibling
-  //   if (content.style.maxHeight){
-  //     content.style.maxHeight = null
-  //   } else {
-  //     content.style.maxHeight = content.scrollHeight + "px"
-  //   }
-  // })
 }

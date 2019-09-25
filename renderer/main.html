@@ -10,7 +10,9 @@
   <body>
     <div class="wrapper">
       <div class="menu">
-        <div class="menuItem fas fa-archive fa-2x" href="#restore-modal" data-toggle="modal" ></div>
+        <div class="menuItem fas fa-archive fa-2x" href="#restore-modal" data-toggle="modal"></div>
+        <div class="menuItem fas fa-download fa-2x" onclick="exportTasks(event)"></div>
+        <div class="menuItem fas fa-upload fa-2x" onclick="importTasks(event)"></div>
         <div class="menuItem fas fa-sign-out-alt fa-2x" onclick="exit(event)"></div>
       </div>
       <div class="host" id="hostDo" ondrop="drop(event)" ondragover="allowDrop(event)">

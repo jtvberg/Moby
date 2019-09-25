@@ -10,6 +10,12 @@ if(tasks.taskList.length) {
   tasks.taskList.forEach(tasks.addTask)
 }
 
+let desktopPath = ''
+
+ipcRenderer.on('desktopPath', (event, data) => {
+  desktopPath = data
+})
+
 // Month is 0 based
 var date = new Date(2019, 6, 24, 13, 34, 0)
 console.log(date)
@@ -74,12 +80,38 @@ $('#restore-button').click(() => {
   tasks.saveTasks()
   $('#restore-modal').modal('hide')
 })
-// Drag and drop events
+
+let fs = require('fs');
+exportTasks = (e) => {
+  if(tasks.taskList.length) {
+    var JSONexport = JSON.stringify(tasks.taskList)
+    fs.writeFile(`${desktopPath}/export.txt`, JSONexport, (err) => {
+      if(err) {
+          alert("An error during the export "+ err.message)
+      }
+      alert("The export has completed succesfully and is located on your desktop");
+    })
+  }
+}
+
+importTasks = (e) => {
+  fs.readFile(`${desktopPath}/export.txt`, (err, data) => {
+    if(err) {
+      alert("An error during the import "+ err.message)
+    }
+    var JSONimport = JSON.parse(data)
+    console.log(JSONimport)
+    alert("The import has completed succesfully");
+  })
+}
+
 exit = (e) => {
   const remote = require('electron').remote
   let w = remote.getCurrentWindow()
   w.close()
 }
+
+// Drag and drop events
 allowDrop = (e) => {
   e.preventDefault()
 }

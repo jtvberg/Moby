@@ -100,7 +100,6 @@ importTasks = (e) => {
       alert("An error during the import "+ err.message)
     }
     var JSONimport = JSON.parse(data)
-    console.log(JSONimport)
     if(JSONimport.length) {
       JSONimport.forEach((item) => {
         tasks.taskList.push(item)
@@ -108,8 +107,9 @@ importTasks = (e) => {
       tasks.saveTasks()
       JSONimport.forEach(tasks.addTask)
       alert("The import has completed succesfully");
+    } else {
+      alert("No records found");
     }
-    alert("No records found");
   })
 }
 

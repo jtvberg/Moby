@@ -16,22 +16,21 @@ ipcRenderer.on('desktopPath', (event, data) => {
   desktopPath = data
 })
 
+// Scheduled Tasks Check
 // Month is 0 based
-var date = new Date(2019, 6, 24, 13, 34, 0)
-console.log(date)
+var date = new Date(2019, 8, 27, 13, 17, 0)
 var testSchedule = schedule.scheduleJob(date, function(){
   var newTaskData = {"TaskStatus":"Today", "TaskId":new Date().valueOf(), "TaskTitle":'Scheduled Task', "TaskDetail":'I was scheduled', "TaskTheme":3}
   tasks.taskList.push(newTaskData)
   tasks.saveTasks()
   tasks.addTask(newTaskData)
-  console.log(newTaskData)
 })
 
 $('.wrapper').hover(
-    function() {
-       $(`.collapse`).collapse('hide')
-     }
-   );
+  function() {
+    $(`.collapse`).collapse('hide')
+  }
+);
 
 $('#add-modal').on('show.bs.modal', function(e) {
   var status = $(e.relatedTarget).data('status-id')
@@ -82,7 +81,8 @@ $('#restore-button').click(() => {
 })
 
 let fs = require('fs');
-exportTasks = (e) => {
+
+$('#export-button').click(() => {
   if(tasks.taskList.length) {
     var JSONexport = JSON.stringify(tasks.taskList)
     fs.writeFile(`${desktopPath}/export.txt`, JSONexport, (err) => {
@@ -92,9 +92,9 @@ exportTasks = (e) => {
       alert("The export has completed succesfully and is located on your desktop");
     })
   }
-}
+})
 
-importTasks = (e) => {
+$('#import-button').click(() => {
   fs.readFile(`${desktopPath}/export.txt`, (err, data) => {
     if(err) {
       alert("An error during the import "+ err.message)
@@ -111,7 +111,7 @@ importTasks = (e) => {
       alert("No records found");
     }
   })
-}
+})
 
 exit = (e) => {
   const remote = require('electron').remote

@@ -15,7 +15,7 @@
   "author": "Vandenberg",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron-reload": "^1.4.0"
+    "electron-reload": "^1.5.0"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.8.1",

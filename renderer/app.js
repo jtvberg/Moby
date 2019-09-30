@@ -8,6 +8,7 @@ require('bootstrap/js/dist/modal')
 // Load tasks at startup
 if(tasks.taskList.length) {
   tasks.taskList.forEach(tasks.addTask)
+  
 }
 
 let desktopPath = ''
@@ -18,9 +19,10 @@ ipcRenderer.on('desktopPath', (event, data) => {
 
 // Scheduled Tasks Check
 // Month is 0 based
-var date = new Date(2019, 8, 27, 13, 17, 0)
-var testSchedule = schedule.scheduleJob(date, function(){
-  var newTaskData = {"TaskStatus":"Today", "TaskId":new Date().valueOf(), "TaskTitle":'Scheduled Task', "TaskDetail":'I was scheduled', "TaskTheme":3}
+var date = new Date(2019, 8, 29, 10, 39, 00)
+var newTaskData = {"TaskStatus":"Today", "TaskId":new Date().valueOf(), "TaskTitle":'Scheduled Task', "TaskDetail":'I was scheduled', "TaskTheme":4}
+
+const testSchedule = schedule.scheduleJob(date, newTaskData, function(){
   tasks.taskList.push(newTaskData)
   tasks.saveTasks()
   tasks.addTask(newTaskData)

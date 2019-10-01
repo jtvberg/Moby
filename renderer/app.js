@@ -22,6 +22,19 @@ ipcRenderer.on('desktopPath', (event, data) => {
 var date = new Date(2019, 8, 29, 10, 39, 00)
 var newTaskData = {"TaskStatus":"Today", "TaskId":new Date().valueOf(), "TaskTitle":'Scheduled Task', "TaskDetail":'I was scheduled', "TaskTheme":4}
 
+// Day 1-7
+// Month 1-12
+// MonthDay 1-5
+// MonthDate 1-31
+// Count
+// If Count == 1 {
+// Month + MonthDate = Schedule Once }
+// Else if Count >1 {
+// If Day[] only = Recur on that day(s) for Count
+// If MonthDay + Day[] = Recur on that day(s) of month for Count
+// If MondhDate = Recur on that date of the month for Count
+// }
+
 const testSchedule = schedule.scheduleJob(date, newTaskData, function(){
   tasks.taskList.push(newTaskData)
   tasks.saveTasks()

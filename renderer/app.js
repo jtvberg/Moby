@@ -20,7 +20,7 @@ ipcRenderer.on('desktopPath', (event, data) => {
 // Scheduled Tasks Check
 // Month is 0 based
 var date = new Date(2019, 8, 29, 10, 39, 00)
-var newTaskData = {"TaskStatus":"Today", "TaskId":new Date().valueOf(), "TaskTitle":'Scheduled Task', "TaskDetail":'I was scheduled', "TaskTheme":4}
+var newTaskData = {"TaskStatus":"Today", "TaskId":new Date().valueOf(), "TaskTitle":'Scheduled Task', "TaskDetail":'I was scheduled', "TaskTheme":4, "Count":1, "WeekDay": 2, "MonthDay": 15}
 
 // WeekDay 1-7
 // Month 1-12
@@ -69,7 +69,17 @@ $('#add-button').click(() => {
   var newTaskTheme = $('#chooseTheme input:radio:checked').val() || 1
   var newTaskStatus = $('#taskStatus').val()
   var newTaskId = new Date().valueOf()
-  var newTaskData = {"TaskStatus":newTaskStatus, "TaskId":newTaskId, "TaskTitle":newTaskTitle, "TaskDetail":newTaskDetail, "TaskTheme":newTaskTheme}
+  var count = $('#count-select').val() || 1
+  var weekDay = $('#check-sun').prop('checked') + ',' 
+    + $('#check-mon').prop('checked') + ','
+    + $('#check-tue').prop('checked') + ','
+    + $('#check-wed').prop('checked') + ','
+    + $('#check-thu').prop('checked') + ','
+    + $('#check-fri').prop('checked') + ','
+    + $('#check-sat').prop('checked')
+  var monthDay = $('#chooseRecur input:radio:checked').val() || 0
+  var newTaskData = {"TaskStatus":newTaskStatus, "TaskId":newTaskId, "TaskTitle":newTaskTitle, "TaskDetail":newTaskDetail, "TaskTheme":newTaskTheme, "Count":count, "WeekDay":weekDay, "MonthDay":monthDay}
+  console.log(newTaskData)
   tasks.taskList.push(newTaskData)
   tasks.saveTasks()
   tasks.addTask(newTaskData)
@@ -100,7 +110,7 @@ let fs = require('fs');
 $('#export-button').click(() => {
   if(tasks.taskList.length) {
     var JSONexport = JSON.stringify(tasks.taskList)
-    fs.writeFile(`${desktopPath}/export.txt`, JSONexport, (err) => {
+    fs.writeFile(`${desktopPath}/moby_export.txt`, JSONexport, (err) => {
       if(err) {
           alert("An error during the export "+ err.message)
       }
@@ -110,7 +120,7 @@ $('#export-button').click(() => {
 })
 
 $('#import-button').click(() => {
-  fs.readFile(`${desktopPath}/export.txt`, (err, data) => {
+  fs.readFile(`${desktopPath}/moby_export.txt`, (err, data) => {
     if(err) {
       alert("An error during the import "+ err.message)
     }

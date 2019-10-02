@@ -13,11 +13,9 @@ body {
     font-weight: bold;
 }
 .card {
-    color: #fff;
     transition: 0.3s;
     border-radius: 2px;
     margin: 5px;
-    font-weight: bold;
     -webkit-app-region: no-drag;
 }
 .card:hover {
@@ -31,11 +29,19 @@ body {
     background-color: #00000000;
     border: none;
 }
-.collapse {
-    color: #FFF;
-}
 .collapseContent {
     font-size: 75%;
+}
+.panel {
+    border-width: 1px;
+    border-color: rgb(206, 212, 218);
+    padding: 2px;
+}
+.panelHeader {
+    height: 30px;
+}
+.panelHeader:hover {
+    background-color: rgb(241, 241, 241);
 }
 .cardMenu {
     align-content: flex-end;
@@ -115,6 +121,10 @@ body {
 .theme-1.active, .theme-2.active, .theme-3.active, .theme-4.active, .theme-5.active  {
     border-color: rgb(81, 190, 233) !important;
     border-width: 2px 1px !important;
+}
+.theme-1, .theme-2, .theme-3, .theme-4, .theme-5  {
+    color: #fff;
+    font-weight: bold;
 }
 .theme-1 {
     background-color: midnightblue;

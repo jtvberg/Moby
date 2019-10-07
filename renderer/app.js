@@ -75,6 +75,14 @@ $('#add-button').click(() => {
   tasks.addTask(newTaskData)
 })
 
+$(function(){
+  $('#add-modal').keypress(function(e){
+    if(e.which == 13) {
+      $('#add-button').click()
+    }
+  })
+})
+
 $('#update-button').click(() => {
   var getTask = tasks.taskList.find(task => task.TaskId == activeTask)
   getTask.TaskTitle = $('#editTitle').val()
@@ -86,6 +94,14 @@ $('#update-button').click(() => {
   var newTaskData = {"TaskStatus":getTask.TaskStatus, "TaskId":getTask.TaskId, "TaskTitle":getTask.TaskTitle , "TaskDetail":getTask.TaskDetail, "TaskTheme":getTask.TaskTheme}
   tasks.addTask(newTaskData)
   $('#edit-modal').modal('hide')
+})
+
+$(function(){
+  $('#edit-modal').keypress(function(e){
+    if(e.which == 13) {
+      $('#update-button').click()
+    }
+  })
 })
 
 $('#restore-button').click(() => {

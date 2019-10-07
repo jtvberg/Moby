@@ -2,25 +2,21 @@
 const {ipcRenderer} = require('electron')
 const tasks = require('./tasks.js')
 const menu = require('./menu.js')
-var schedule = require('node-schedule')
 require('bootstrap/js/dist/modal')
 
 // Load tasks at startup
 if(tasks.taskList.length) {
   tasks.taskList.forEach(tasks.addTask)
-  
+  tasks.taskList.forEach(addScheduledTasks)
+  //addScheduledTasks()
+  //window.setInterval(addScheduledTasks, 10000)
 }
 
 let desktopPath = ''
 
-ipcRenderer.on('desktopPath', (event, data) => {
+ipcRenderer.on('desktopPath', (e, data) => {
   desktopPath = data
 })
-
-// Scheduled Tasks Check
-// Month is 0 based
-var date = new Date(2019, 8, 29, 10, 39, 00)
-var newTaskData = {"TaskStatus":"Today", "TaskId":new Date().valueOf(), "TaskTitle":'Scheduled Task', "TaskDetail":'I was scheduled', "TaskTheme":4, "Count":1, "WeekDay": 2, "MonthDay": 15}
 
 // WeekDay 1-7
 // Month 1-12
@@ -35,11 +31,14 @@ var newTaskData = {"TaskStatus":"Today", "TaskId":new Date().valueOf(), "TaskTit
 // If MondhDate = Recur on that date of the month for Count
 // }
 
-const testSchedule = schedule.scheduleJob(date, newTaskData, function(){
-  tasks.taskList.push(newTaskData)
-  tasks.saveTasks()
-  tasks.addTask(newTaskData)
-})
+function addScheduledTasks(item) {
+  //console.log(Date().valueOf())
+  var d = new Date()
+  var today = d.getDay()
+  if(item.Count > 0 && item.WeekDay.includes(today)) {
+    //console.log("Is Today")
+  }
+}
 
 $('.wrapper').hover(
   function() {
@@ -68,17 +67,23 @@ $('#add-button').click(() => {
   var newTaskDetail = $('#taskDetail').val()
   var newTaskTheme = $('#chooseTheme input:radio:checked').val() || 1
   var newTaskStatus = $('#taskStatus').val()
-  var newTaskId = new Date().valueOf()
+  var newTaskId = Date.now()
   var count = $('#count-select').val() || 1
-  var weekDay = $('#check-sun').prop('checked') + ',' 
-    + $('#check-mon').prop('checked') + ','
-    + $('#check-tue').prop('checked') + ','
-    + $('#check-wed').prop('checked') + ','
-    + $('#check-thu').prop('checked') + ','
-    + $('#check-fri').prop('checked') + ','
-    + $('#check-sat').prop('checked')
+  var startDate = new Date(Date.parse($('#startDate').val()) || Date.now())
+  var weekDay = []
+  $('#check-sun').prop('checked') && weekDay.push(0)
+  $('#check-mon').prop('checked') && weekDay.push(1)
+  $('#check-tue').prop('checked') && weekDay.push(2)
+  $('#check-wed').prop('checked') && weekDay.push(3)
+  $('#check-thu').prop('checked') && weekDay.push(4)
+  $('#check-fri').prop('checked') && weekDay.push(5)
+  $('#check-sat').prop('checked') && weekDay.push(6)
   var monthDay = $('#chooseRecur input:radio:checked').val() || 0
-  var newTaskData = {"TaskStatus":newTaskStatus, "TaskId":newTaskId, "TaskTitle":newTaskTitle, "TaskDetail":newTaskDetail, "TaskTheme":newTaskTheme, "Count":count, "WeekDay":weekDay, "MonthDay":monthDay}
+  if(weekDay.length < 1 && monthDay > 0 && startDate) {
+    weekDay.push(startDate.getDay())
+  }
+  count *= weekDay.length
+  var newTaskData = {"TaskStatus":newTaskStatus, "TaskId":newTaskId, "TaskTitle":newTaskTitle, "TaskDetail":newTaskDetail, "TaskTheme":newTaskTheme, "Count":count, "StartDate":startDate, "WeekDay":weekDay, "MonthDay":monthDay}
   console.log(newTaskData)
   tasks.taskList.push(newTaskData)
   tasks.saveTasks()

@@ -41,7 +41,7 @@ body {
     height: 30px;
 }
 .panelHeader:hover {
-    background-color: rgb(241, 241, 241);
+   color: rgb(25, 165, 201);
 }
 .cardMenu {
     align-content: flex-end;

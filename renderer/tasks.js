@@ -19,12 +19,6 @@ exports.updateTask = (taskList, taskId, taskStatus) => {
 
 // Add task to UI
 exports.addTask = (task) => {
-  // let taskHTML = `<div class="card drag${task.TaskTheme}" id="${task.TaskId}" draggable="true" ondragstart="drag(event)">
-  //                   <button data-toggle="collapse" data-target="#c${task.TaskId}" id="b${task.TaskId}" class="collapsible">${task.TaskTitle}</button>
-  //                   <div class="collapse" id="c${task.TaskId}">
-  //                     <p>${task.TaskDetail}</p>
-  //                   </div>
-  //                 </div>`
   let taskHTML = `<div class="card theme-${task.TaskTheme}" id="${task.TaskId}" draggable="true" ondragstart="drag(event)">
                     <div id="b${task.TaskId}" class="collapsible">${task.TaskTitle}</div>
                     <div class="collapse collapseContent" id="c${task.TaskId}">
@@ -36,23 +30,17 @@ exports.addTask = (task) => {
                       <div>
                     </div>
                   </div>`
-
   $(`#col${task.TaskStatus}`).append(taskHTML)
-
   $('#add-modal').modal('hide')
-
   $('.card').on('click', function() {
     window.activeTask = this.id
   })
-
   $('.card').hover(function() {
     window.activeTask = this.id
   })
-
   $('.cardMenuItemEdit').click(() => {
     $('#edit-modal').modal('show');
   })
-
   $('.cardMenuItemDel').click(() => {
     if(activeTask) {
       document.getElementById('colArchive').appendChild(document.getElementById(activeTask))
@@ -60,7 +48,6 @@ exports.addTask = (task) => {
       tasks.saveTasks()
     }
   })
-
   $(`#clone-button-${task.TaskId}`).click(() => {
     if(activeTask) {
       var getTask = tasks.taskList.find(task => task.TaskId == activeTask)
@@ -75,9 +62,8 @@ exports.addTask = (task) => {
       tasks.addTask(newTaskData)
     }
   })
-  
   $(`#${task.TaskId}`).mouseenter(function() {
-       $(`#c${task.TaskId}`).collapse('show')
-     }
-   );
+      $(`#c${task.TaskId}`).collapse('show')
+    }
+  )
 }

@@ -11,6 +11,7 @@
     <div class="wrapper">
       <div class="menu">
         <div class="menuItem fas fa-archive fa-2x" href="#restore-modal" data-toggle="modal"></div>
+        <div class="menuItem fas fa-calendar fa-2x" href="#schedule-modal" data-toggle="modal"></div>
         <div class="menuItem fas fa-download fa-2x" id="export-button"></div>
         <div class="menuItem fas fa-upload fa-2x" id="import-button"></div>
         <div class="menuItem fas fa-sign-out-alt fa-2x" onclick="exit(event)"></div>
@@ -81,6 +82,88 @@
                     <input type="radio" name="options" id="editOption5" autocomplete="off" value="5"> 
                   </label>
                 </div>
+                <div class="panel-group" id="panel-recur">
+                  <div class="panel">
+                    <div class="panelHeader" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                      Schedule & Recurrence
+                    </div>
+                    <div class="panel-body">
+                      <div id="collapseOne" class="collapse show" data-parent="#panel-recur">
+                        <div class="form-group row">
+                          <label class="col-sm-3 col-form-label col-form-label-sm" for="startDate">Start Date</label>
+                          <div class="col-sm-4">
+                            <input class="form-control form-control-sm" id="startDate" placeholder="mm/dd/yyyy">
+                          </div>
+                        </div>
+                         <div class="form-group">
+                          <div class="form-check form-check-inline form-control-sm">
+                            <input type="checkbox" class="form-check-input" id="check-sun">
+                            <label class="form-check-label" for="check-sun">Sun</label>
+                          </div>
+                          <div class="form-check form-check-inline form-control-sm">
+                            <input type="checkbox" class="form-check-input" id="check-mon">
+                            <label class="form-check-label" for="check-mon">Mon</label>
+                          </div>
+                          <div class="form-check form-check-inline form-control-sm">
+                            <input type="checkbox" class="form-check-input" id="check-tue">
+                            <label class="form-check-label" for="check-tue">Tue</label>
+                          </div>
+                          <div class="form-check form-check-inline form-control-sm">
+                            <input type="checkbox" class="form-check-input" id="check-wed">
+                            <label class="form-check-label" for="check-wed">Wed</label>
+                          </div>
+                          <div class="form-check form-check-inline form-control-sm">
+                            <input type="checkbox" class="form-check-input" id="check-thu">
+                            <label class="form-check-label" for="check-thu">Thu</label>
+                          </div>
+                          <div class="form-check form-check-inline form-control-sm">
+                            <input type="checkbox" class="form-check-input" id="check-fri">
+                            <label class="form-check-label" for="check-fri">Fri</label>
+                          </div>
+                          <div class="form-check form-check-inline form-control-sm">
+                            <input type="checkbox" class="form-check-input" id="check-sat">
+                            <label class="form-check-label" for="check-sat">Sat</label>
+                          </div>
+                          <div id=chooseRecur>
+                            <div class="form-check form-control-sm">
+                              <input type="radio" class="form-check-input" name="radioRecur" id="radio-weekly" value="1">
+                              <label class="form-check-label" for="radio-weekly">Weekly</label>
+                            </div>
+                            <div class="form-check form-control-sm">
+                              <input type="radio" class="form-check-input" name="radioRecur" id="radio-biWeekly" value="2">
+                              <label class="form-check-label" for="radio-biWeekly">Bi-Weekly</label>
+                            </div>
+                            <div class="form-check form-control-sm">
+                              <input type="radio" class="form-check-input" name="radioRecur" id="radio-triWeekly" value="3">
+                              <label class="form-check-label" for="radio-triWeekly">Tri-Weekly</label>
+                            </div>
+                            <div class="form-check form-control-sm">
+                              <input type="radio" class="form-check-input" name="radioRecur" id="radio-Monthly" value="4">
+                              <label class="form-check-label" for="radio-Monthly">Monthly</label>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group row">
+                          <label class="col-sm-4 col-form-label col-form-label-sm" for="count-select">Recurrence Count</label>
+                          <div class="col-sm-2">
+                            <select class="form-control form-control-sm" id="count-select">
+                              <option>1</option>
+                              <option>2</option>
+                              <option>3</option>
+                              <option>4</option>
+                              <option>5</option>
+                              <option>6</option>
+                              <option>7</option>
+                              <option>8</option>
+                              <option>9</option>
+                              <option>10</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </form>
             </div>
             <div class="modal-footer">
@@ -134,7 +217,6 @@
                   <input type="radio" name="options" id="option5" autocomplete="off" value="5"> 
                 </label>
               </div>
-
               <div class="panel-group" id="panel-recur">
                 <div class="panel">
                   <div class="panelHeader" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
@@ -217,7 +299,6 @@
                   </div>
                 </div>
               </div>
-              
             </form>
           </div>
           <div class="modal-footer">
@@ -249,6 +330,28 @@
         </div>
       </div>
     </div>
+
+    <div id="schedule-modal" class="modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Scheduled Tasks</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="host" id="hostSchedule">
+              <div class="box" id="colSchedule"></div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>    
+
     <script>
       //$ = require('jquery');
       window.$ = window.jQuery = require('jquery');

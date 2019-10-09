@@ -39,7 +39,9 @@ exports.addTask = (task) => {
     window.activeTask = this.id
   })
   $('.cardMenuItemEdit').click(() => {
-    $('#edit-modal').modal('show');
+    $('#schedule-modal').modal('hide')
+    $('#restore-modal').modal('hide')
+    $('#edit-modal').modal('show')
   })
   $('.cardMenuItemDel').click(() => {
     if(activeTask) {

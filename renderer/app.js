@@ -63,11 +63,11 @@ $('#edit-modal').on('shown.bs.modal', function () {
 })
 
 $('#add-button').click(() => {
-  var newTaskTitle = $('#taskTitle').val()
-  var newTaskDetail = $('#taskDetail').val()
-  var newTaskTheme = $('#chooseTheme input:radio:checked').val() || 1
-  var newTaskStatus = $('#taskStatus').val()
-  var newTaskId = Date.now()
+  var taskTitle = $('#taskTitle').val()
+  var taskDetail = $('#taskDetail').val()
+  var taskTheme = $('#chooseTheme input:radio:checked').val() || 1
+  var taskStatus = $('#taskStatus').val()
+  var taskId = Date.now()
   var count = $('#count-select').val() || 1
   var startDate = new Date(Date.parse($('#startDate').val()) || Date.now())
   var weekDay = []
@@ -83,7 +83,10 @@ $('#add-button').click(() => {
     weekDay.push(startDate.getDay())
   }
   count *= weekDay.length
-  var newTaskData = {"TaskStatus":newTaskStatus, "TaskId":newTaskId, "TaskTitle":newTaskTitle, "TaskDetail":newTaskDetail, "TaskTheme":newTaskTheme, "Count":count, "StartDate":startDate, "WeekDay":weekDay, "MonthDay":monthDay}
+  if(startDate > Date.now()) {
+    newTaskStatus = "Schedule"
+  }
+  var newTaskData = {"TaskStatus":taskStatus, "TaskId":taskId, "TaskTitle":taskTitle, "TaskDetail":taskDetail, "TaskTheme":taskTheme, "Count":count, "StartDate":startDate, "WeekDay":weekDay, "MonthDay":monthDay}
   console.log(newTaskData)
   tasks.taskList.push(newTaskData)
   tasks.saveTasks()

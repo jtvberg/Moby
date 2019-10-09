@@ -1,4 +1,4 @@
-const {app, ipcMain} = require('electron')
+const { app, ipcMain } = require('electron')
 const mainWindow = require('./mainWindow')
 
 // Enable Electron-Reload (dev only)
@@ -17,7 +17,7 @@ app.on('ready', () => {
 
 // Close app on window close
 app.on('window-all-closed', () => {
-  //if (process.platform !== 'darwin') 
+  //if (process.platform !== 'darwin')
   app.quit()
 })
 

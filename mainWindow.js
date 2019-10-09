@@ -1,9 +1,8 @@
-const {BrowserWindow} = require('electron')
+const { BrowserWindow } = require('electron')
 
 exports.win
 
 exports.createWindow = () => {
-
   this.win = new BrowserWindow({
     width: 1200,
     height: 800,

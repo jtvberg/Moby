@@ -12,13 +12,13 @@ exports.updateTask = (taskList, taskId, taskStatus) => {
   for (var i = 0; i < taskList.length; i++) {
     if (taskList[i].TaskId == taskId) {
       taskList[i].TaskStatus = taskStatus
-      return;
+      return
     }
   }
 }
 
 // Add task to UI
-exports.addTask = (task) => {
+exports.addTask = task => {
   let taskHTML = `<div class="card theme-${task.TaskTheme}" id="${task.TaskId}" draggable="true" ondragstart="drag(event)">
                     <div id="b${task.TaskId}" class="collapsible">${task.TaskTitle}</div>
                     <div class="collapse collapseContent" id="c${task.TaskId}">
@@ -44,28 +44,35 @@ exports.addTask = (task) => {
     $('#edit-modal').modal('show')
   })
   $('.cardMenuItemDel').click(() => {
-    if(activeTask) {
-      document.getElementById('colArchive').appendChild(document.getElementById(activeTask))
+    if (activeTask) {
+      document
+        .getElementById('colArchive')
+        .appendChild(document.getElementById(activeTask))
       tasks.updateTask(tasks.taskList, activeTask, 'Archive')
       tasks.saveTasks()
     }
   })
   $(`#clone-button-${task.TaskId}`).click(() => {
-    if(activeTask) {
+    if (activeTask) {
       var getTask = tasks.taskList.find(task => task.TaskId == activeTask)
       var newTaskTitle = getTask.TaskTitle
       var newTaskDetail = getTask.TaskDetail
       var newTaskTheme = getTask.TaskTheme
       var newTaskStatus = 'Do'
       var newTaskId = new Date().valueOf()
-      var newTaskData = {"TaskStatus":newTaskStatus, "TaskId":newTaskId, "TaskTitle":newTaskTitle, "TaskDetail":newTaskDetail, "TaskTheme":newTaskTheme}
+      var newTaskData = {
+        TaskStatus: newTaskStatus,
+        TaskId: newTaskId,
+        TaskTitle: newTaskTitle,
+        TaskDetail: newTaskDetail,
+        TaskTheme: newTaskTheme
+      }
       tasks.taskList.push(newTaskData)
       tasks.saveTasks()
       tasks.addTask(newTaskData)
     }
   })
   $(`#${task.TaskId}`).mouseenter(function() {
-      $(`#c${task.TaskId}`).collapse('show')
-    }
-  )
+    $(`#c${task.TaskId}`).collapse('show')
+  })
 }

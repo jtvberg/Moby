@@ -6,43 +6,61 @@ body {
   -webkit-user-select: none;
   -webkit-app-region: drag;
 }
+
 .header {
   color: #fff;
   font-size: 120%;
   justify-self: center;
   font-weight: bold;
 }
+
 .card {
   transition: 0.3s;
   border-radius: 2px;
   margin: 5px;
   -webkit-app-region: no-drag;
 }
+
 .card:hover {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.6);
 }
+
 .cardMenuItem:hover {
   color: rgb(66, 195, 255);
 }
+
 .collapsible {
   width: 100%;
   background-color: #00000000;
   border: none;
 }
+
 .collapseContent {
   font-size: 75%;
 }
+
 .panel {
   border-width: 1px;
   border-color: rgb(206, 212, 218);
   padding: 2px;
 }
-.panelHeader {
+
+.panel-header {
   height: 30px;
 }
-.panelHeader:hover {
+
+.panel-header:hover {
   color: rgb(25, 165, 201);
 }
+
+.panel-header .fa {
+  transition: 0.3s transform ease-in-out;
+}
+
+.panel-header .collapsed .fa {
+  transform: rotate(-90deg);
+}
+
 .cardMenu {
   align-content: flex-end;
   color: #fff;
@@ -51,15 +69,18 @@ body {
   width: 100%;
   padding: 1px;
 }
+
 .footer {
   color: rgb(255, 255, 255, 0.2);
   font-size: 150%;
   justify-self: right;
   padding: 0px 5px;
 }
+
 .footer:hover {
   color: rgb(255, 255, 255);
 }
+
 .wrapper {
   display: grid;
   grid-template-columns: 40px 1fr 1fr 1fr 1fr 5px;
@@ -73,6 +94,7 @@ body {
     rgb(0, 66, 128)
   );
 }
+
 .logo {
   z-index: 1000;
   position: fixed;
@@ -80,6 +102,7 @@ body {
   right: -30px;
   opacity: 0.02;
 }
+
 .menu {
   /* grid-row: 1 / 3; */
   text-align: center;
@@ -88,6 +111,7 @@ body {
   border-radius: 5px;
   height: 100vh;
 }
+
 .host {
   display: grid;
   /* grid-row: 2; */
@@ -99,29 +123,36 @@ body {
   margin: 0px 0px;
   z-index: 1001;
 }
+
 .box {
   grid-row: 2;
   min-height: 35px;
   max-height: 100vh;
   overflow-y: scroll;
 }
+
 ::-webkit-scrollbar {
   width: 0px;
   background: transparent;
 }
+
 .edge {
   width: 5px;
   background-color: #00000000;
 }
+
 .menuItem {
   padding: 4px;
 }
+
 .menuItem:hover {
   color: rgb(66, 195, 255);
 }
+
 .menuItems:active {
   background-color: blue;
 }
+
 .theme-1.active,
 .theme-2.active,
 .theme-3.active,
@@ -130,6 +161,7 @@ body {
   border-color: rgb(81, 190, 233) !important;
   border-width: 2px 1px !important;
 }
+
 .theme-1,
 .theme-2,
 .theme-3,
@@ -138,18 +170,23 @@ body {
   color: #fff;
   font-weight: bold;
 }
+
 .theme-1 {
   background-color: midnightblue;
 }
+
 .theme-2 {
   background-color: darkred;
 }
+
 .theme-3 {
   background-color: purple;
 }
+
 .theme-4 {
   background-color: orangered;
 }
+
 .theme-5 {
   background-color: green;
 }

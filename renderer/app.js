@@ -3,7 +3,6 @@
 // Html id: member-id
 // JS Class: MemberClass
 
-
 // Modules
 const { ipcRenderer } = require('electron')
 const tasks = require('./tasks.js')

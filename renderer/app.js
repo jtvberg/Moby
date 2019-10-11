@@ -149,6 +149,7 @@ $('#export-button').click(() => {
     fs.writeFile(`${desktopPath}/moby_export.txt`, JSONexport, err => {
       if (err) {
         alert('An error during the export ' + err.message)
+        return
       }
       alert(
         'The export has completed succesfully and is located on your desktop'
@@ -161,6 +162,7 @@ $('#import-button').click(() => {
   fs.readFile(`${desktopPath}/moby_export.txt`, (err, data) => {
     if (err) {
       alert('An error during the import ' + err.message)
+      return
     }
     var JSONimport = JSON.parse(data)
     if (JSONimport.length) {

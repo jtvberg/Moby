@@ -19,7 +19,7 @@ exports.updateTask = (taskList, taskId, taskStatus) => {
 
 // Add task to UI
 exports.addTask = task => {
-  let taskHTML = `<div class="card theme-${task.TaskTheme}" id="${task.TaskId}" draggable="true" ondragstart="drag(event)">
+  let taskHTML = `<div class="card theme-${task.TaskTheme}" id="${task.TaskId}" data-toggle="collapse" data-target="#c${task.TaskId}" draggable="true" ondragstart="drag(event)">
                     <div id="b${task.TaskId}" class="collapsible">${task.TaskTitle}</div>
                     <div class="collapse collapseContent" id="c${task.TaskId}">
                       <p style="white-space: pre-wrap;">${task.TaskDetail}</p>
@@ -71,8 +71,5 @@ exports.addTask = task => {
       tasks.saveTasks()
       tasks.addTask(newTaskData)
     }
-  })
-  $(`#${task.TaskId}`).mouseenter(function() {
-    $(`#c${task.TaskId}`).collapse('show')
   })
 }

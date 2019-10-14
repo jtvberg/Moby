@@ -11,8 +11,8 @@ require('bootstrap/js/dist/modal')
 
 // Load tasks at startup
 if (tasks.taskList.length) {
+  //tasks.taskList.forEach(addScheduledTasks)
   tasks.taskList.forEach(tasks.addTask)
-  tasks.taskList.forEach(addScheduledTasks)
   //addScheduledTasks()
   //window.setInterval(addScheduledTasks, 10000)
 }
@@ -28,7 +28,7 @@ function addScheduledTasks(item) {
   var d = new Date()
   var today = d.getDay()
   if (item.Count > 0 && item.WeekDay.includes(today)) {
-    //console.log("Is Today")
+    item.TaskStatus = 'Today'
   }
 }
 
@@ -57,13 +57,13 @@ $('#edit-modal').on('shown.bs.modal', function() {
 })
 
 $('#add-button').click(() => {
-  var taskTitle = $('#taskTitle').val()
+  var taskTitle = $('#taskTitle').val() || "No Title"
   var taskDetail = $('#taskDetail').val()
   var taskTheme = $('#chooseTheme input:radio:checked').val() || 1
   var taskStatus = $('#taskStatus').val()
   var taskId = Date.now()
   var count = $('#count-select').val() || 1
-  var startDate = new Date(Date.parse($('#startDate').val()) || Date.now())
+  var startDate = new Date(Date.parse($('#start-date').val()) || Date.now()).getTime()
   var weekDay = []
   $('#check-sun').prop('checked') && weekDay.push(0)
   $('#check-mon').prop('checked') && weekDay.push(1)
@@ -78,7 +78,7 @@ $('#add-button').click(() => {
   }
   count *= weekDay.length
   if (startDate > Date.now()) {
-    newTaskStatus = 'Schedule'
+    taskStatus = 'Schedule'
   }
   var newTaskData = {
     TaskStatus: taskStatus,
@@ -91,7 +91,6 @@ $('#add-button').click(() => {
     WeekDay: weekDay,
     MonthDay: monthDay
   }
-  console.log(newTaskData)
   tasks.taskList.push(newTaskData)
   tasks.saveTasks()
   tasks.addTask(newTaskData)

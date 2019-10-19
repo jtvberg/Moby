@@ -50,7 +50,7 @@
             </button>
           </div>
           <div class="modal-body">
-            <form id="taskForm">
+            <form id="task-form">
               <div class="form-group">
                 <input class="form-control" id="editTitle" placeholder="Title">
               </div>
@@ -96,53 +96,53 @@
                       <div class="form-group row">
                         <label class="col-sm-3 col-form-label col-form-label-sm" for="startDate">Start Date</label>
                         <div class="col-sm-4">
-                          <input class="form-control form-control-sm" id="startDate" placeholder="mm/dd/yyyy">
+                          <input class="form-control form-control-sm" id="start-date-edit" placeholder="mm/dd/yyyy">
                         </div>
                       </div>
                         <div class="form-group">
                         <div class="form-check form-check-inline form-control-sm">
-                          <input type="checkbox" class="form-check-input" id="check-sun">
+                          <input type="checkbox" class="form-check-input" id="check-sun-edit">
                           <label class="form-check-label" for="check-sun">Sun</label>
                         </div>
                         <div class="form-check form-check-inline form-control-sm">
-                          <input type="checkbox" class="form-check-input" id="check-mon">
+                          <input type="checkbox" class="form-check-input" id="check-mon-edit">
                           <label class="form-check-label" for="check-mon">Mon</label>
                         </div>
                         <div class="form-check form-check-inline form-control-sm">
-                          <input type="checkbox" class="form-check-input" id="check-tue">
+                          <input type="checkbox" class="form-check-input" id="check-tue-edit">
                           <label class="form-check-label" for="check-tue">Tue</label>
                         </div>
                         <div class="form-check form-check-inline form-control-sm">
-                          <input type="checkbox" class="form-check-input" id="check-wed">
+                          <input type="checkbox" class="form-check-input" id="check-wed-edit">
                           <label class="form-check-label" for="check-wed">Wed</label>
                         </div>
                         <div class="form-check form-check-inline form-control-sm">
-                          <input type="checkbox" class="form-check-input" id="check-thu">
+                          <input type="checkbox" class="form-check-input" id="check-thu-edit">
                           <label class="form-check-label" for="check-thu">Thu</label>
                         </div>
                         <div class="form-check form-check-inline form-control-sm">
-                          <input type="checkbox" class="form-check-input" id="check-fri">
+                          <input type="checkbox" class="form-check-input" id="check-fri-edit">
                           <label class="form-check-label" for="check-fri">Fri</label>
                         </div>
                         <div class="form-check form-check-inline form-control-sm">
-                          <input type="checkbox" class="form-check-input" id="check-sat">
+                          <input type="checkbox" class="form-check-input" id="check-sat-edit">
                           <label class="form-check-label" for="check-sat">Sat</label>
                         </div>
-                        <div id=chooseRecur>
+                        <div id=choose-recur-edit>
                           <div class="form-check form-control-sm">
-                            <input type="radio" class="form-check-input" name="radioRecur" id="radio-weekly" value="1">
+                            <input type="radio" class="form-check-input" name="radioRecur" id="radio-weekly-edit" value="1">
                             <label class="form-check-label" for="radio-weekly">Weekly</label>
                           </div>
                           <div class="form-check form-control-sm">
-                            <input type="radio" class="form-check-input" name="radioRecur" id="radio-biWeekly" value="2">
+                            <input type="radio" class="form-check-input" name="radioRecur" id="radio-biWeekly-edit" value="2">
                             <label class="form-check-label" for="radio-biWeekly">Bi-Weekly</label>
                           </div>
                           <div class="form-check form-control-sm">
-                            <input type="radio" class="form-check-input" name="radioRecur" id="radio-triWeekly" value="3">
+                            <input type="radio" class="form-check-input" name="radioRecur" id="radio-triWeekly-edit" value="3">
                             <label class="form-check-label" for="radio-triWeekly">Tri-Weekly</label>
                           </div>
                           <div class="form-check form-control-sm">
-                            <input type="radio" class="form-check-input" name="radioRecur" id="radio-Monthly" value="4">
+                            <input type="radio" class="form-check-input" name="radioRecur" id="radio-monthly-edit" value="4">
                             <label class="form-check-label" for="radio-Monthly">Monthly</label>
                           </div>
                         </div>
@@ -150,17 +150,17 @@
                       <div class="form-group row">
                         <label class="col-sm-4 col-form-label col-form-label-sm" for="count-select">Recurrence Count</label>
                         <div class="col-sm-2">
-                          <select class="form-control form-control-sm" id="count-select">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
-                            <option>5</option>
-                            <option>6</option>
-                            <option>7</option>
-                            <option>8</option>
-                            <option>9</option>
-                            <option>10</option>
+                          <select class="form-control form-control-sm" id="count-select-edit">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
                           </select>
                         </div>
                       </div>
@@ -188,7 +188,7 @@
             </button>
           </div>
           <div class="modal-body">
-            <form id="taskForm">
+            <form id="task-form">
               <div class="form-group">
                 <input class="form-control" id="taskTitle" placeholder="Title">
               </div>
@@ -237,68 +237,74 @@
                           <input class="form-control form-control-sm" id="start-date" placeholder="mm/dd/yyyy">
                         </div>
                       </div>
-                       <div class="form-group">
-                        <div class="form-check form-check-inline form-control-sm">
-                          <input type="checkbox" class="form-check-input" id="check-sun">
-                          <label class="form-check-label" for="check-sun">Sun</label>
-                        </div>
-                        <div class="form-check form-check-inline form-control-sm">
-                          <input type="checkbox" class="form-check-input" id="check-mon">
-                          <label class="form-check-label" for="check-mon">Mon</label>
-                        </div>
-                        <div class="form-check form-check-inline form-control-sm">
-                          <input type="checkbox" class="form-check-input" id="check-tue">
-                          <label class="form-check-label" for="check-tue">Tue</label>
-                        </div>
-                        <div class="form-check form-check-inline form-control-sm">
-                          <input type="checkbox" class="form-check-input" id="check-wed">
-                          <label class="form-check-label" for="check-wed">Wed</label>
-                        </div>
-                        <div class="form-check form-check-inline form-control-sm">
-                          <input type="checkbox" class="form-check-input" id="check-thu">
-                          <label class="form-check-label" for="check-thu">Thu</label>
-                        </div>
-                        <div class="form-check form-check-inline form-control-sm">
-                          <input type="checkbox" class="form-check-input" id="check-fri">
-                          <label class="form-check-label" for="check-fri">Fri</label>
-                        </div>
-                        <div class="form-check form-check-inline form-control-sm">
-                          <input type="checkbox" class="form-check-input" id="check-sat">
-                          <label class="form-check-label" for="check-sat">Sat</label>
-                        </div>
-                        <div id=chooseRecur>
-                          <div class="form-check form-control-sm">
+                      <div class="form-group">
+                        <div id="choose-recur">
+                          <div class="form-check form-check-inline form-control-sm">
+                            <input type="radio" class="form-check-input" name="radioRecur" id="radio-once" value="0" checked="true">
+                            <label class="form-check-label" for="radio-once">One-time</label>
+                          </div>
+                          <div class="form-check form-check-inline form-control-sm">
                             <input type="radio" class="form-check-input" name="radioRecur" id="radio-weekly" value="1">
                             <label class="form-check-label" for="radio-weekly">Weekly</label>
                           </div>
-                          <div class="form-check form-control-sm">
+                          <div class="form-check form-check-inline form-control-sm">
                             <input type="radio" class="form-check-input" name="radioRecur" id="radio-biWeekly" value="2">
                             <label class="form-check-label" for="radio-biWeekly">Bi-Weekly</label>
                           </div>
-                          <div class="form-check form-control-sm">
+                          <div class="form-check form-check-inline form-control-sm">
                             <input type="radio" class="form-check-input" name="radioRecur" id="radio-triWeekly" value="3">
                             <label class="form-check-label" for="radio-triWeekly">Tri-Weekly</label>
                           </div>
-                          <div class="form-check form-control-sm">
-                            <input type="radio" class="form-check-input" name="radioRecur" id="radio-Monthly" value="4">
+                          <div class="form-check form-check-inline form-control-sm">
+                            <input type="radio" class="form-check-input" name="radioRecur" id="radio-monthly" value="4">
                             <label class="form-check-label" for="radio-Monthly">Monthly</label>
                           </div>
                         </div>
+                        <fieldset disabled id="choose-days">
+                          <div class="form-check form-check-inline form-control-sm">
+                            <input type="checkbox" class="form-check-input" id="check-sun">
+                            <label class="form-check-label" for="check-sun">Sun</label>
+                          </div>
+                          <div class="form-check form-check-inline form-control-sm">
+                            <input type="checkbox" class="form-check-input" id="check-mon">
+                            <label class="form-check-label" for="check-mon">Mon</label>
+                          </div>
+                          <div class="form-check form-check-inline form-control-sm">
+                            <input type="checkbox" class="form-check-input" id="check-tue">
+                            <label class="form-check-label" for="check-tue">Tue</label>
+                          </div>
+                          <div class="form-check form-check-inline form-control-sm">
+                            <input type="checkbox" class="form-check-input" id="check-wed">
+                            <label class="form-check-label" for="check-wed">Wed</label>
+                          </div>
+                          <div class="form-check form-check-inline form-control-sm">
+                            <input type="checkbox" class="form-check-input" id="check-thu">
+                            <label class="form-check-label" for="check-thu">Thu</label>
+                          </div>
+                          <div class="form-check form-check-inline form-control-sm">
+                            <input type="checkbox" class="form-check-input" id="check-fri">
+                            <label class="form-check-label" for="check-fri">Fri</label>
+                          </div>
+                          <div class="form-check form-check-inline form-control-sm">
+                            <input type="checkbox" class="form-check-input" id="check-sat">
+                            <label class="form-check-label" for="check-sat">Sat</label>
+                          </div>
+                        </fieldset>
                       </div>
                       <div class="form-group row">
                         <label class="col-sm-4 col-form-label col-form-label-sm" for="count-select">Recurrence Count</label>
                         <div class="col-sm-2">
                           <select class="form-control form-control-sm" id="count-select">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
-                            <option>5</option>
-                            <option>6</option>
-                            <option>7</option>
-                            <option>8</option>
-                            <option>9</option>
-                            <option>10</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
                           </select>
                         </div>
                       </div>
@@ -357,7 +363,7 @@
           </div>
         </div>
       </div>
-    </div>    
+    </div>
 
     <script>
       //$ = require('jquery');

@@ -6,7 +6,7 @@ exports.createWindow = () => {
   this.win = new BrowserWindow({
     width: 1200,
     height: 800,
-    //frame: false,
+    frame: false,
     webPreferences: {
       nodeIntegration: true
     }

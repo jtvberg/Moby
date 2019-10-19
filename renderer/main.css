@@ -16,16 +16,17 @@ body {
 
 .card {
   transition: 0.3s;
-  border-radius: 2px;
+  border-radius: 3px;
   margin: 5px;
+  padding: 2px;
   -webkit-app-region: no-drag;
 }
 
 .card:hover {
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.6);
+  box-shadow: 0 4px 8px 0 rgba(82, 82, 82, 0.6);
 }
 
-.cardMenuItem:hover {
+.cardMenuItemDel:hover {
   color: rgb(66, 195, 255);
 }
 
@@ -61,23 +62,39 @@ body {
   transform: rotate(-90deg);
 }
 
+.form-check-inline {
+  margin-right: 0rem;
+}
+
+.cardMenu,
+.menuItem,
+.footer {
+  color: rgb(255, 255, 255, 0.3);
+}
+
 .cardMenu {
   align-content: flex-end;
-  color: #fff;
   font-size: 100%;
   text-align: right;
   width: 100%;
   padding: 1px;
 }
 
+.menuItem {
+  padding: 4px;
+}
+
 .footer {
-  color: rgb(255, 255, 255, 0.2);
   font-size: 150%;
   justify-self: right;
   padding: 0px 5px;
 }
 
-.footer:hover {
+.footer:hover, 
+.menuItem:hover, 
+.cardMenuItemDel:hover, 
+.cardMenuItemClone:hover, 
+.cardMenuItemEdit:hover {
   color: rgb(255, 255, 255);
 }
 
@@ -89,8 +106,8 @@ body {
   grid-gap: 5px;
   background-image: linear-gradient(
     to bottom right,
-    rgb(0, 141, 223),
-    rgb(0, 66, 128)
+    #34495e,
+    #2c3e50
   );
 }
 
@@ -104,7 +121,7 @@ body {
 
 .menu {
   text-align: center;
-  background-color: rgb(0, 141, 223);
+  background-color: #34495e;
   color: #fff;
   border-radius: 5px;
   height: 100vh;
@@ -138,18 +155,6 @@ body {
   background-color: #00000000;
 }
 
-.menuItem {
-  padding: 4px;
-}
-
-.menuItem:hover {
-  color: rgb(66, 195, 255);
-}
-
-.menuItems:active {
-  background-color: blue;
-}
-
 .theme-1.active,
 .theme-2.active,
 .theme-3.active,
@@ -169,21 +174,21 @@ body {
 }
 
 .theme-1 {
-  background-color: midnightblue;
+  background-color: #2980b9;
 }
 
 .theme-2 {
-  background-color: darkred;
+  background-color: #e74c3c;
 }
 
 .theme-3 {
-  background-color: purple;
+  background-color: #9b59b6;
 }
 
 .theme-4 {
-  background-color: orangered;
+  background-color: #e67e22;
 }
 
 .theme-5 {
-  background-color: green;
+  background-color: #27ae60;
 }

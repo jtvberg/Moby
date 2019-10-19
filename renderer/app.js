@@ -1,8 +1,3 @@
-// Objects, ids, functions, elements: camelCase: memberId
-// css class: member-id
-// Html id: member-id
-// JS Class: MemberClass
-
 // Modules
 const { ipcRenderer } = require('electron')
 const tasks = require('./tasks.js')
@@ -11,10 +6,10 @@ require('bootstrap/js/dist/modal')
 
 // Load tasks at startup
 if (tasks.taskList.length) {
-  //tasks.taskList.forEach(addScheduledTasks)
+  // tasks.taskList.forEach(addScheduledTasks)
   tasks.taskList.forEach(tasks.addTask)
-  //addScheduledTasks()
-  //window.setInterval(addScheduledTasks, 10000)
+  // addScheduledTasks()
+  // window.setInterval(addScheduledTasks, 10000)
 }
 
 let desktopPath = ''
@@ -24,7 +19,7 @@ ipcRenderer.on('desktopPath', (e, data) => {
 })
 
 function addScheduledTasks(item) {
-  //console.log(Date().valueOf())
+  // console.log(Date().valueOf())
   var d = new Date()
   var today = d.getDay()
   if (item.Count > 0 && item.WeekDay.includes(today)) {
@@ -33,20 +28,26 @@ function addScheduledTasks(item) {
 }
 
 $('.wrapper').hover(function() {
-  $(`.collapse`).collapse('hide')
+  $('.collapse').collapse('hide')
 })
 
 $('#add-modal').on('show.bs.modal', function(e) {
-  var status = $(e.relatedTarget).data('status-id')
-  $('#taskTitle').val('')
-  $('#taskDetail').val('')
-  $('#taskStatus').val(status)
-  $('#option1')
-    .closest('.btn')
-    .button('toggle')
+  $(this).find('form').trigger('reset')
+  $('#taskStatus').val($(e.relatedTarget).data('status-id'))
+  $('#choose-days').prop('disabled', true)
+  // $('#choose-recur').prop('disabled', true)
 })
 
-$('#edit-modal').on('shown.bs.modal', function() {
+$('#radio-weekly').click(function () { $('#choose-days').prop('disabled', false) })
+$('#radio-biWeekly').click(function () { $('#choose-days').prop('disabled', false) })
+$('#radio-triWeekly').click(function () { $('#choose-days').prop('disabled', false) })
+$('#radio-monthly').click(function () { $('#choose-days').prop('disabled', false) })
+$('#radio-once').click(function () {
+  $('#choose-days').prop('disabled', true)
+  $(':checkbox').prop('checked', false)
+})
+
+$('#edit-modal').on('shown.bs.modal', function () {
   var getTask = tasks.taskList.find(task => task.TaskId == activeTask)
   $('#editTitle').val(getTask.TaskTitle)
   $('#editDetail').val(getTask.TaskDetail)
@@ -54,10 +55,21 @@ $('#edit-modal').on('shown.bs.modal', function() {
   $(`#editOption${getTask.TaskTheme}`)
     .closest('.btn')
     .button('toggle')
+  $('#count-select-edit').val(getTask.Count)
+  var dt = new Date(getTask.StartDate)
+  $('#start-date-edit').val(dt.getMonth() + 1 + '/' + dt.getDate() + '/' + dt.getFullYear())
+  $('#check-sun-edit').prop('checked', getTask.WeekDay.includes(0))
+  $('#check-mon-edit').prop('checked', getTask.WeekDay.includes(1))
+  $('#check-tue-edit').prop('checked', getTask.WeekDay.includes(2))
+  $('#check-wed-edit').prop('checked', getTask.WeekDay.includes(3))
+  $('#check-thu-edit').prop('checked', getTask.WeekDay.includes(4))
+  $('#check-fri-edit').prop('checked', getTask.WeekDay.includes(5))
+  $('#check-sat-edit').prop('checked', getTask.WeekDay.includes(6))
+  $('#choose-recur-edit').val(getTask.MonthDay)
 })
 
 $('#add-button').click(() => {
-  var taskTitle = $('#taskTitle').val() || "No Title"
+  var taskTitle = $('#taskTitle').val() || 'No Title'
   var taskDetail = $('#taskDetail').val()
   var taskTheme = $('#chooseTheme input:radio:checked').val() || 1
   var taskStatus = $('#taskStatus').val()
@@ -72,9 +84,9 @@ $('#add-button').click(() => {
   $('#check-thu').prop('checked') && weekDay.push(4)
   $('#check-fri').prop('checked') && weekDay.push(5)
   $('#check-sat').prop('checked') && weekDay.push(6)
-  var monthDay = $('#chooseRecur input:radio:checked').val() || 0
-  if (weekDay.length < 1 && monthDay > 0 && startDate) {
-    weekDay.push(startDate.getDay())
+  var monthDay = $('#choose-recur input:radio:checked').val() || 0
+  if (weekDay.length < 1 && monthDay > 0) {
+    weekDay.push(new Date(startDate).getDay())
   }
   count *= weekDay.length
   if (startDate > Date.now()) {
@@ -96,9 +108,9 @@ $('#add-button').click(() => {
   tasks.addTask(newTaskData)
 })
 
-$(function() {
-  $('#add-modal').keypress(function(e) {
-    if (e.which == 13 && !$('#taskDetail').is(':focus')) {
+$(function () {
+  $('#add-modal').keypress(function (e) {
+    if (e.which === 13 && !$('#taskDetail').is(':focus')) {
       $('#add-button').click()
     }
   })
@@ -123,8 +135,8 @@ $('#update-button').click(() => {
   $('#edit-modal').modal('hide')
 })
 
-$(function() {
-  $('#edit-modal').keypress(function(e) {
+$(function () {
+  $('#edit-modal').keypress(function (e) {
     if (e.which == 13 && !$('#editDetail').is(':focus')) {
       $('#update-button').click()
     }

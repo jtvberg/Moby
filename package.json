@@ -15,12 +15,18 @@
   "author": "Vandenberg",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron-reload": "^1.5.0"
+    "electron-reload": "^1.5.0",
+    "eslint": "^6.5.1",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.8.1",
     "bootstrap": "^4.3.1",
-    "electron": "^4.2.9",
+    "electron": "^4.2.12",
     "jquery": "^3.4.1",
     "popper.js": "^1.15.0"
   }

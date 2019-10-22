@@ -32,7 +32,7 @@ exports.addTask = task => {
                     </div>
                   </div>`
   $(`#col${task.TaskStatus}`).append(taskHTML)
-  $('#add-modal').modal('hide')
+  $('#task-modal').modal('hide')
   $('.card').on('click', function () {
     window.activeTask = this.id
   })
@@ -42,7 +42,7 @@ exports.addTask = task => {
   $('.cardMenuItemEdit').click(() => {
     $('#schedule-modal').modal('hide')
     $('#restore-modal').modal('hide')
-    $('#edit-modal').modal('show')
+    $('#task-modal').modal('show')
   })
   $('.cardMenuItemDel').click(() => {
     if (activeTask) {

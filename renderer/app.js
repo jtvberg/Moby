@@ -1,7 +1,8 @@
+/* global activeTask */
 // Modules
 const { ipcRenderer } = require('electron')
 const tasks = require('./tasks.js')
-const menu = require('./menu.js')
+// const menu = require('./menu.js')
 require('bootstrap/js/dist/modal')
 
 // Load tasks at startup
@@ -27,27 +28,49 @@ function addScheduledTasks(item) {
   }
 }
 
-$('.wrapper').hover(function() {
+$('.wrapper').hover(() => {
   $('.collapse').collapse('hide')
 })
 
-$('#add-modal').on('show.bs.modal', function(e) {
+$('#add-modal').on('show.bs.modal', function (e) {
+  console.log($(e.relatedTarget).data('type-id'))
   $(this).find('form').trigger('reset')
   $('#taskStatus').val($(e.relatedTarget).data('status-id'))
   $('#choose-days').prop('disabled', true)
-  // $('#choose-recur').prop('disabled', true)
 })
 
-$('#radio-weekly').click(function () { $('#choose-days').prop('disabled', false) })
-$('#radio-biWeekly').click(function () { $('#choose-days').prop('disabled', false) })
-$('#radio-triWeekly').click(function () { $('#choose-days').prop('disabled', false) })
-$('#radio-monthly').click(function () { $('#choose-days').prop('disabled', false) })
-$('#radio-once').click(function () {
+function enableRecur () {
+  $('#choose-days').prop('disabled', false)
+  $('#count-select').prop('disabled', false)
+  $('#recur-count').removeClass('disabled-form-label')
+}
+
+$('#radio-weekly').click(() => {
+  enableRecur()
+})
+
+$('#radio-biWeekly').click(() => {
+  enableRecur()
+})
+
+$('#radio-triWeekly').click(() => {
+  enableRecur()
+})
+
+$('#radio-monthly').click(() => {
+  enableRecur()
+})
+
+$('#radio-once').click(() => {
   $('#choose-days').prop('disabled', true)
+  $('#count-select').val(1)
+  $('#count-select').prop('disabled', true)
   $(':checkbox').prop('checked', false)
+  $('#recur-count').addClass('disabled-form-label')
 })
 
 $('#edit-modal').on('shown.bs.modal', function () {
+  console.log($('.cardMenuItemEdit').data('type-id'))
   var getTask = tasks.taskList.find(task => task.TaskId == activeTask)
   $('#editTitle').val(getTask.TaskTitle)
   $('#editDetail').val(getTask.TaskDetail)
@@ -58,13 +81,15 @@ $('#edit-modal').on('shown.bs.modal', function () {
   $('#count-select-edit').val(getTask.Count)
   var dt = new Date(getTask.StartDate)
   $('#start-date-edit').val(dt.getMonth() + 1 + '/' + dt.getDate() + '/' + dt.getFullYear())
-  $('#check-sun-edit').prop('checked', getTask.WeekDay.includes(0))
-  $('#check-mon-edit').prop('checked', getTask.WeekDay.includes(1))
-  $('#check-tue-edit').prop('checked', getTask.WeekDay.includes(2))
-  $('#check-wed-edit').prop('checked', getTask.WeekDay.includes(3))
-  $('#check-thu-edit').prop('checked', getTask.WeekDay.includes(4))
-  $('#check-fri-edit').prop('checked', getTask.WeekDay.includes(5))
-  $('#check-sat-edit').prop('checked', getTask.WeekDay.includes(6))
+  if (getTask.weekDay) {
+    $('#check-sun-edit').prop('checked', getTask.WeekDay.includes(0))
+    $('#check-mon-edit').prop('checked', getTask.WeekDay.includes(1))
+    $('#check-tue-edit').prop('checked', getTask.WeekDay.includes(2))
+    $('#check-wed-edit').prop('checked', getTask.WeekDay.includes(3))
+    $('#check-thu-edit').prop('checked', getTask.WeekDay.includes(4))
+    $('#check-fri-edit').prop('checked', getTask.WeekDay.includes(5))
+    $('#check-sat-edit').prop('checked', getTask.WeekDay.includes(6))
+  }
   $('#choose-recur-edit').val(getTask.MonthDay)
 })
 
@@ -137,7 +162,7 @@ $('#update-button').click(() => {
 
 $(function () {
   $('#edit-modal').keypress(function (e) {
-    if (e.which == 13 && !$('#editDetail').is(':focus')) {
+    if (e.which === 13 && !$('#editDetail').is(':focus')) {
       $('#update-button').click()
     }
   })
@@ -152,7 +177,7 @@ $('#restore-button').click(() => {
   $('#restore-modal').modal('hide')
 })
 
-let fs = require('fs')
+const fs = require('fs')
 
 $('#export-button').click(() => {
   if (tasks.taskList.length) {
@@ -191,7 +216,7 @@ $('#import-button').click(() => {
 
 exit = e => {
   const remote = require('electron').remote
-  let w = remote.getCurrentWindow()
+  const w = remote.getCurrentWindow()
   w.close()
 }
 
@@ -206,15 +231,15 @@ drop = e => {
   e.preventDefault()
   var data = e.dataTransfer.getData('text')
   let col
-  if (e.target.id.substring(0, 3) == 'col') {
+  if (e.target.id.substring(0, 3) === 'col') {
     e.target.appendChild(document.getElementById(data))
     col = e.target.getAttribute('id').substring(3)
-  } else if (e.target.parentElement.parentElement.id.substring(0, 3) == 'col') {
+  } else if (e.target.parentElement.parentElement.id.substring(0, 3) === 'col') {
     col = e.target.parentElement.parentElement.getAttribute('id').substring(3)
     e.target.parentElement.parentElement.appendChild(
       document.getElementById(data)
     )
-  } else if (e.target.id.substring(0, 4) == 'host') {
+  } else if (e.target.id.substring(0, 4) === 'host') {
     col = e.target.id.substring(4, e.target.id.length)
     document
       .getElementById('col' + col)

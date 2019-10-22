@@ -66,6 +66,10 @@ body {
   margin-right: 0rem;
 }
 
+.disabled-form-label {
+  color: #6c757d;
+}
+
 .cardMenu,
 .menuItem,
 .footer {

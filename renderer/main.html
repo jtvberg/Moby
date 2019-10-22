@@ -19,22 +19,22 @@
       <div class="host" id="hostDo" ondrop="drop(event)" ondragover="allowDrop(event)">
         <div class="header">Do</div>
         <div class="box" id="colDo"></div>
-        <div class="footer fas fa-plus fa-2x" href="#add-modal" data-toggle="modal" data-status-id="Do"></div>
+        <div class="footer fas fa-plus fa-2x" href="#add-modal" data-toggle="modal" data-status-id="Do" data-type-id="new"></div>
       </div>
       <div class="host" id="hostToday" ondrop="drop(event)" ondragover="allowDrop(event)">
         <div class="header">Today</div>
         <div class="box" id="colToday"></div>
-        <div class="footer fas fa-plus fa-2x" href="#add-modal" data-toggle="modal" data-status-id="Today"></div>
+        <div class="footer fas fa-plus fa-2x" href="#add-modal" data-toggle="modal" data-status-id="Today" data-type-id="new"></div>
       </div>
       <div class="host" id="hostDoing" ondrop="drop(event)" ondragover="allowDrop(event)">
         <div class="header">Doing</div>
         <div class="box" id="colDoing" ></div>
-        <div class="footer fas fa-plus fa-2x" href="#add-modal" data-toggle="modal" data-status-id="Doing"></div>
+        <div class="footer fas fa-plus fa-2x" href="#add-modal" data-toggle="modal" data-status-id="Doing" data-type-id="new"></div>
       </div>
       <div class="host" id="hostDone" ondrop="drop(event)" ondragover="allowDrop(event)">
         <div class="header">Done</div>
         <div class="box" id="colDone"></div>
-        <div class="footer fas fa-plus fa-2x" href="#add-modal" data-toggle="modal" data-status-id="Done"></div>
+        <div class="footer fas fa-plus fa-2x" href="#add-modal" data-toggle="modal" data-status-id="Done" data-type-id="new"></div>
       </div>
     </div>
 
@@ -292,9 +292,9 @@
                         </fieldset>
                       </div>
                       <div class="form-group row">
-                        <label class="col-sm-4 col-form-label col-form-label-sm" for="count-select">Recurrence Count</label>
-                        <div class="col-sm-2">
-                          <select class="form-control form-control-sm" id="count-select">
+                        <label class="col-sm-4 col-form-label col-form-label-sm disabled-form-label" for="count-select" id="recur-count">Recurrence Count</label>
+                        <div class="col-sm-3">
+                          <select class="form-control form-control-sm" id="count-select" disabled>
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -305,6 +305,7 @@
                             <option value="8">8</option>
                             <option value="9">9</option>
                             <option value="10">10</option>
+                            <option value="0">Forever</option>
                           </select>
                         </div>
                       </div>

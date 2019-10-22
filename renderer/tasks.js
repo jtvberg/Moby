@@ -26,16 +26,16 @@ exports.addTask = task => {
                       <div class="cardMenu">
                         <div class="cardMenuItemDel fas fa-minus-square" id="del-button"></div>
                         <div class="cardMenuItemClone fas fa-clone" id="clone-button-${task.TaskId}"></div>
-                        <div class="cardMenuItemEdit fas fa-edit" id="edit-button"></div>
+                        <div class="cardMenuItemEdit fas fa-edit" id="edit-button" data-type-id="edit"></div>
                       <div>
                     </div>
                   </div>`
   $(`#col${task.TaskStatus}`).append(taskHTML)
   $('#add-modal').modal('hide')
-  $('.card').on('click', function() {
+  $('.card').on('click', function () {
     window.activeTask = this.id
   })
-  $('.card').hover(function() {
+  $('.card').hover(function () {
     window.activeTask = this.id
   })
   $('.cardMenuItemEdit').click(() => {

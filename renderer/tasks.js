@@ -1,3 +1,4 @@
+/* global tasks, activeTask */
 // Track taskList with array
 exports.taskList = JSON.parse(localStorage.getItem('taskList')) || []
 
@@ -19,7 +20,7 @@ exports.updateTask = (taskList, taskId, taskStatus) => {
 
 // Add task to UI
 exports.addTask = task => {
-  let taskHTML = `<div class="card theme-${task.TaskTheme}" id="${task.TaskId}" data-toggle="collapse" data-target="#c${task.TaskId}" draggable="true" ondragstart="drag(event)">
+  const taskHTML = `<div class="card theme-${task.TaskTheme}" id="${task.TaskId}" data-toggle="collapse" data-target="#c${task.TaskId}" draggable="true" ondragstart="drag(event)">
                     <div id="b${task.TaskId}" class="collapsible">${task.TaskTitle}</div>
                     <div class="collapse collapseContent" id="c${task.TaskId}">
                       <p style="white-space: pre-wrap;">${task.TaskDetail}</p>

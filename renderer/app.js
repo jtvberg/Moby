@@ -19,7 +19,7 @@ ipcRenderer.on('desktopPath', (e, data) => {
   desktopPath = data
 })
 
-function addScheduledTasks(item) {
+function addScheduledTasks (item) {
   // console.log(Date().valueOf())
   var d = new Date()
   var today = d.getDay()
@@ -133,12 +133,10 @@ $('#add-button').click(() => {
   tasks.addTask(newTaskData)
 })
 
-$(function () {
-  $('#add-modal').keypress(function (e) {
-    if (e.which === 13 && !$('#taskDetail').is(':focus')) {
-      $('#add-button').click()
-    }
-  })
+$('#add-modal').keypress(function (e) {
+  if (e.which === 13 && !$('#taskDetail').is(':focus')) {
+    $('#add-button').click()
+  }
 })
 
 $('#update-button').click(() => {
@@ -160,12 +158,10 @@ $('#update-button').click(() => {
   $('#edit-modal').modal('hide')
 })
 
-$(function () {
-  $('#edit-modal').keypress(function (e) {
-    if (e.which === 13 && !$('#editDetail').is(':focus')) {
-      $('#update-button').click()
-    }
-  })
+$('#edit-modal').keypress(function (e) {
+  if (e.which === 13 && !$('#editDetail').is(':focus')) {
+    $('#update-button').click()
+  }
 })
 
 $('#restore-button').click(() => {
@@ -214,20 +210,20 @@ $('#import-button').click(() => {
   })
 })
 
-exit = e => {
+var exit = e => {
   const remote = require('electron').remote
   const w = remote.getCurrentWindow()
   w.close()
 }
 
 // Drag and drop events
-allowDrop = e => {
+var allowDrop = e => {
   e.preventDefault()
 }
-drag = e => {
+var drag = e => {
   e.dataTransfer.setData('text', e.target.id)
 }
-drop = e => {
+var drop = e => {
   e.preventDefault()
   var data = e.dataTransfer.getData('text')
   let col

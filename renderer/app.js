@@ -93,82 +93,55 @@ $('#radio-once').click(() => {
 })
 
 $('#submit-button').click(() => {
+  var taskTitle = $('#task-title').val() || 'No Title'
+  var taskDetail = $('#task-detail').val()
+  var taskTheme = $('#choose-theme input:radio:checked').val() || 1
+  var taskStatus = $('#task-status').val()
+  var taskId = Date.now()
+  var count = $('#count-select').val() || 1
+  var startDate = new Date(Date.parse($('#start-date').val()) || Date.now()).getTime()
+  var monthDay = $('#choose-recur input:radio:checked').val() || 0
+  var weekDay = []
+  $('#check-sun').prop('checked') && weekDay.push(0)
+  $('#check-mon').prop('checked') && weekDay.push(1)
+  $('#check-tue').prop('checked') && weekDay.push(2)
+  $('#check-wed').prop('checked') && weekDay.push(3)
+  $('#check-thu').prop('checked') && weekDay.push(4)
+  $('#check-fri').prop('checked') && weekDay.push(5)
+  $('#check-sat').prop('checked') && weekDay.push(6)
+  if (weekDay.length < 1 && monthDay > 0) {
+    weekDay.push(new Date(startDate).getDay())
+  }
+  count *= weekDay.length
+  if (startDate > Date.now()) {
+    taskStatus = 'Schedule'
+  }
+  var newTaskData = {
+    TaskStatus: taskStatus,
+    TaskId: taskId,
+    TaskTitle: taskTitle,
+    TaskDetail: taskDetail,
+    TaskTheme: taskTheme,
+    Count: count,
+    StartDate: startDate,
+    WeekDay: weekDay,
+    MonthDay: monthDay
+  }
   if (taskType === 'new') {
-    var taskTitle = $('#task-title').val() || 'No Title'
-    var taskDetail = $('#task-detail').val()
-    var taskTheme = $('#choose-theme input:radio:checked').val() || 1
-    var taskStatus = $('#task-status').val()
-    var taskId = Date.now()
-    var count = $('#count-select').val() || 1
-    var startDate = new Date(Date.parse($('#start-date').val()) || Date.now()).getTime()
-    var monthDay = $('#choose-recur input:radio:checked').val() || 0
-    var weekDay = []
-    $('#check-sun').prop('checked') && weekDay.push(0)
-    $('#check-mon').prop('checked') && weekDay.push(1)
-    $('#check-tue').prop('checked') && weekDay.push(2)
-    $('#check-wed').prop('checked') && weekDay.push(3)
-    $('#check-thu').prop('checked') && weekDay.push(4)
-    $('#check-fri').prop('checked') && weekDay.push(5)
-    $('#check-sat').prop('checked') && weekDay.push(6)
-    if (weekDay.length < 1 && monthDay > 0) {
-      weekDay.push(new Date(startDate).getDay())
-    }
-    var monthDay = $('#choose-recur input:radio:checked').val() || 0
-    count *= weekDay.length
-    if (startDate > Date.now()) {
-      taskStatus = 'Schedule'
-    }
-    var newTaskData = {
-      TaskStatus: taskStatus,
-      TaskId: taskId,
-      TaskTitle: taskTitle,
-      TaskDetail: taskDetail,
-      TaskTheme: taskTheme,
-      Count: count,
-      StartDate: startDate,
-      WeekDay: weekDay,
-      MonthDay: monthDay
-    }
     tasks.taskList.push(newTaskData)
-    tasks.saveTasks()
   } else {
-    var count = $('#count-select').val() || 1
-    var monthDay = $('#choose-recur input:radio:checked').val() || 0
-    var weekDay = []
-    $('#check-sun').prop('checked') && weekDay.push(0)
-    $('#check-mon').prop('checked') && weekDay.push(1)
-    $('#check-tue').prop('checked') && weekDay.push(2)
-    $('#check-wed').prop('checked') && weekDay.push(3)
-    $('#check-thu').prop('checked') && weekDay.push(4)
-    $('#check-fri').prop('checked') && weekDay.push(5)
-    $('#check-sat').prop('checked') && weekDay.push(6)
-    if (weekDay.length < 1 && monthDay > 0) {
-      weekDay.push(new Date(startDate).getDay())
-    }
-    count *= weekDay.length
     var getTask = tasks.taskList.find(task => task.TaskId == activeTask)
-    getTask.TaskTitle = $('#task-title').val()
-    getTask.TaskDetail = $('#task-detail').val()
-    getTask.TaskTheme = $('#choose-theme input:radio:checked').val() || 1
+    getTask.TaskTitle = taskTitle
+    getTask.TaskDetail = taskDetail
+    getTask.TaskTheme = taskTheme
     getTask.TaskStatus = taskStatus
     getTask.Count = count
-    getTask.StartDate = new Date(Date.parse($('#start-date').val()) || Date.now()).getTime()
+    getTask.StartDate = startDate
     getTask.WeekDay = weekDay
     getTask.MonthDay = monthDay
-    tasks.saveTasks()
     document.getElementById(getTask.TaskId).remove()
-    var newTaskData = {
-      TaskStatus: getTask.TaskStatus,
-      TaskId: getTask.TaskId,
-      TaskTitle: getTask.TaskTitle,
-      TaskDetail: getTask.TaskDetail,
-      TaskTheme: getTask.TaskTheme,
-      Count: getTask.Count,
-      StartDate: getTask.StartDate,
-      WeekDay: getTask.WeekDay,
-      MonthDay: getTask.MonthDay
-    }
   }
+  tasks.saveTasks()
   tasks.addTask(newTaskData)
 })
 
@@ -182,7 +155,7 @@ $('#restore-button').click(() => {
   document
     .getElementById('colDo')
     .appendChild(document.getElementById(activeTask))
-  tasks.updateTask(tasks.taskList, activeTask, 'Do')
+  tasks.updateTaskStatus(tasks.taskList, activeTask, 'Do')
   tasks.saveTasks()
   $('#restore-modal').modal('hide')
 })
@@ -222,21 +195,21 @@ $('#import-button').click(() => {
   })
 })
 
-var exit = e => {
+const exit = e => {
   const remote = require('electron').remote
   const w = remote.getCurrentWindow()
   w.close()
 }
 
-var allowDrop = e => {
+const allowDrop = e => {
   e.preventDefault()
 }
 
-var drag = e => {
+const drag = e => {
   e.dataTransfer.setData('text', e.target.id)
 }
 
-var drop = e => {
+const drop = e => {
   e.preventDefault()
   var data = e.dataTransfer.getData('text')
   let col
@@ -256,7 +229,7 @@ var drop = e => {
   } else {
     return
   }
-  tasks.updateTask(tasks.taskList, data, col)
+  tasks.updateTaskStatus(tasks.taskList, data, col)
   tasks.saveTasks()
 }
 

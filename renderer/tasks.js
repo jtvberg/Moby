@@ -7,15 +7,10 @@ exports.saveTasks = () => {
   localStorage.setItem('taskList', JSON.stringify(this.taskList))
 }
 
-// Update task details
-exports.updateTask = (taskList, taskId, taskStatus) => {
-  // Update Status
-  for (var i = 0; i < taskList.length; i++) {
-    if (taskList[i].TaskId == taskId) {
-      taskList[i].TaskStatus = taskStatus
-      return
-    }
-  }
+// Update task status
+exports.updateTaskStatus = (taskList, taskId, taskStatus) => {
+  var getTask = taskList.find(task => task.TaskId == taskId)
+  getTask.TaskStatus = taskStatus
 }
 
 // Add task to UI
@@ -49,24 +44,23 @@ exports.addTask = task => {
       document
         .getElementById('colArchive')
         .appendChild(document.getElementById(activeTask))
-      tasks.updateTask(tasks.taskList, activeTask, 'Archive')
+      tasks.updateTaskStatus(tasks.taskList, activeTask, 'Archive')
       tasks.saveTasks()
     }
   })
   $(`#clone-button-${task.TaskId}`).click(() => {
     if (activeTask) {
       var getTask = tasks.taskList.find(task => task.TaskId == activeTask)
-      var newTaskTitle = getTask.TaskTitle
-      var newTaskDetail = getTask.TaskDetail
-      var newTaskTheme = getTask.TaskTheme
-      var newTaskStatus = 'Do'
-      var newTaskId = new Date().valueOf()
       var newTaskData = {
-        TaskStatus: newTaskStatus,
-        TaskId: newTaskId,
-        TaskTitle: newTaskTitle,
-        TaskDetail: newTaskDetail,
-        TaskTheme: newTaskTheme
+        TaskStatus: 'Do',
+        TaskId: new Date().valueOf(),
+        TaskTitle: getTask.TaskTitle,
+        TaskDetail: getTask.TaskDetail,
+        TaskTheme: getTask.TaskTheme,
+        Count: getTask.Count,
+        StartDate: getTask.StartDate,
+        WeekDay: getTask.WeekDay,
+        MonthDay: getTask.MonthDay
       }
       tasks.taskList.push(newTaskData)
       tasks.saveTasks()

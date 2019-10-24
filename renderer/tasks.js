@@ -9,8 +9,7 @@ exports.saveTasks = () => {
 
 // Update task status
 exports.updateTaskStatus = (taskList, taskId, taskStatus) => {
-  var getTask = taskList.find(task => task.TaskId == taskId)
-  getTask.TaskStatus = taskStatus
+  taskList.find(task => task.TaskId == taskId).TaskStatus = taskStatus
 }
 
 // Add task to UI

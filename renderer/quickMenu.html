@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Moby</title>
+    <link rel="stylesheet" href="../node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="quickMenu.css">
+  </head>
+  <body>
+    <div class="quick-arrow"></div>
+    <div class="quick-body">
+      <form id="task-form">
+        <div class="form-group">
+          <input class="form-control" id="task-title" placeholder="Title">
+        </div>
+        <div class="form-group">
+          <textarea class="form-control" id="task-detail" placeholder="Detail"></textarea>
+        </div>
+        <label for="choose-theme">Color</label>
+        <div class="btn-group btn-group-toggle btn-group-lg" id="choose-theme" data-toggle="buttons">
+          <label class="btn theme-1" active>
+            <input type="radio" name="options" id="option-1" autocomplete="off" checked value="1"> 
+          </label>
+          <label class="btn theme-2">
+            <input type="radio" name="options" id="option-2" autocomplete="off" value="2"> 
+          </label>
+          <label class="btn theme-3">
+            <input type="radio" name="options" id="option-3" autocomplete="off" value="3">
+          </label>
+          <label class="btn theme-4">
+            <input type="radio" name="options" id="option-4" autocomplete="off" value="4"> 
+          </label>
+          <label class="btn theme-5">
+            <input type="radio" name="options" id="option-5" autocomplete="off" value="5"> 
+          </label>
+        </div>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button id="submit-button" type="button" class="btn btn-primary">Save Changes</button>
+      </form>
+    </div>
+    <script>
+    window.$ = window.jQuery = require('jquery');
+    window.Bootstrap = require('bootstrap');
+    var activeTask;
+    </script>
+    <script src="../node_modules/popper.js/dist/umd/popper.min.js"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="./app.js"></script>
+  </body>
+</html>

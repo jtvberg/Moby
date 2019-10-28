@@ -1,10 +1,9 @@
-const { app, ipcMain } = require('electron')
+const { app } = require('electron')
 const mainWindow = require('./mainWindow')
+const quickMenu = require('./quickMenuWindow')
 
 // Enable Electron-Reload (dev only)
 require('electron-reload')(__dirname)
-
-let desktopPath = app.getPath('desktop')
 
 // Create main window post electron init
 app.on('ready', () => {
@@ -12,12 +11,14 @@ app.on('ready', () => {
   mainWindow.win.webContents.on('dom-ready', () => {
     mainWindow.win.webContents.send('desktopPath', app.getPath('desktop'))
   })
-  //mainWindow.win.setFullScreen(true)
+  // mainWindow.win.setFullScreen(true)
+  quickMenu.createTray()
+  quickMenu.createQuickMenu()
 })
 
 // Close app on window close
 app.on('window-all-closed', () => {
-  //if (process.platform !== 'darwin')
+  // if (process.platform !== 'darwin')
   app.quit()
 })
 

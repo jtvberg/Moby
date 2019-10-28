@@ -9,12 +9,13 @@
   </head>
   <body>
     <div class="wrapper">
+      <div></div>
       <div class="menu">
-        <div class="menuItem fas fa-archive fa-2x" href="#restore-modal" data-toggle="modal"></div>
+        <div class="menuItem fas fa-archive fa-2x" href="#restore-modal" data-toggle="modal" style="padding-top: 0;"></div>
         <div class="menuItem fas fa-calendar fa-2x" href="#schedule-modal" data-toggle="modal"></div>
         <div class="menuItem fas fa-download fa-2x" id="export-button"></div>
         <div class="menuItem fas fa-upload fa-2x" id="import-button"></div>
-        <div class="menuItem fas fa-sign-out-alt fa-2x" onclick="exit(event)"></div>
+        <!-- <div class="menuItem fas fa-sign-out-alt fa-2x" onclick="exit(event)"></div> -->
       </div>
       <div class="host" id="hostDo" ondrop="drop(event)" ondragover="allowDrop(event)">
         <div class="header">Do</div>
@@ -40,7 +41,7 @@
 
     <div class="logo"><img src="res/moby1_w_l.png" draggable="false"></div>
 
-    <div id="task-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div id="task-modal" class="modal fade" tabindex="-1" role="dialog" style="-webkit-app-region: no-drag">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -122,7 +123,7 @@
                             <label class="form-check-label" for="radio-Monthly">Monthly</label>
                           </div>
                         </div>
-                        <fieldset disabled id="choose-days">
+                        <fieldset disabled hidden id="choose-days">
                           <div class="form-check form-check-inline form-control-sm">
                             <input type="checkbox" class="form-check-input" id="check-sun">
                             <label class="form-check-label" for="check-sun">Sun</label>
@@ -167,7 +168,7 @@
                             <option value="8">8</option>
                             <option value="9">9</option>
                             <option value="10">10</option>
-                            <option value="0">Forever</option>
+                            <option value="-1">Forever</option>
                           </select>
                         </div>
                       </div>

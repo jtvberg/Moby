@@ -1,17 +1,17 @@
 const { BrowserWindow } = require('electron')
 
-exports.win
-
 exports.createWindow = () => {
   this.win = new BrowserWindow({
     width: 1200,
     height: 800,
-    frame: false,
+    // frame: false,
+    // titleBarStyle: 'customButtonsOnHover',
+    // titleBarStyle: 'hiddenInset',
+    titleBarStyle: 'hidden',
     webPreferences: {
       nodeIntegration: true
     }
   })
-
   // open DevTools remove for dist
   this.win.webContents.openDevTools()
   // HTML to open
@@ -19,5 +19,13 @@ exports.createWindow = () => {
 
   this.win.on('closed', () => {
     this.win = null
+  })
+
+  this.win.on('enter-full-screen', () => {
+    this.win.webContents.send('efs')
+  })
+
+  this.win.on('leave-full-screen', () => {
+    this.win.webContents.send('lfs')
   })
 }

@@ -3,30 +3,47 @@
 const { ipcRenderer } = require('electron')
 const tasks = require('./tasks.js')
 const fs = require('fs')
+
 // const menu = require('./menu.js')
 require('bootstrap/js/dist/modal')
 var desktopPath = ''
 var taskType = ''
+
 // Load tasks at startup
 if (tasks.taskList.length) {
   tasks.taskList.forEach(tasks.addTask)
-  window.setInterval(addScheduledTasks, 10000)
+  addScheduledTasks()
 }
+
+window.setInterval(addScheduledTasks, 1000000)
 
 ipcRenderer.on('desktopPath', (e, data) => {
   desktopPath = data
 })
 
-function addScheduledTasks () {
-  var d = new Date()
-  var today = d.getDay()
-  // if in 'schedule' status && date < now
-  // && if getDay integer in days[]
-  // if count = 1 move scheduled to today
-  // if count > 1 clone task to today and reduce count (except forever)
+ipcRenderer.on('efs', (e) => {
+  $('.wrapper').css('grid-template-rows', '0px 1fr')
+})
 
-  if (item.Count > 0 && item.WeekDay.includes(today)) {
-    item.TaskStatus = 'Today'
+ipcRenderer.on('lfs', (e) => {
+  $('.wrapper').css('grid-template-rows', '17px 1fr')
+})
+
+function addScheduledTasks () {
+  // if in 'schedule' status && date < now
+  // if count = 1 move scheduled to today
+  // if count > 1 clone task to today, reduce count (except forever -1) and update start date
+  if (tasks.taskList.length) {
+    tasks.taskList.forEach((item) => {
+      if (item.TaskStatus === 'Schedule' && item.StartDate < Date.now()) {
+        tasks.cloneTask(item.TaskId)
+        var i = item.Count > 0 ? item.Count - 1 : item.Count
+        var getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(item.TaskId))
+        getTask.Count = i
+        getTask.StartDate = getTask.StartDate + (86400000 * 7 * getTask.MonthDay)
+        tasks.saveTasks()
+      }
+    })
   }
 }
 
@@ -44,7 +61,7 @@ $('#task-modal').on('show.bs.modal', function (e) {
   } else {
     taskType = 'edit'
     $('#task-modal-title').html('Edit Task')
-    var getTask = tasks.taskList.find(task => task.TaskId == activeTask)
+    var getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(activeTask))
     $('#task-title').val(getTask.TaskTitle)
     $('#task-detail').val(getTask.TaskDetail)
     $('#task-status').val(getTask.TaskStatus)
@@ -63,7 +80,7 @@ $('#task-modal').on('show.bs.modal', function (e) {
       $('#check-fri').prop('checked', getTask.WeekDay.includes(5))
       $('#check-sat').prop('checked', getTask.WeekDay.includes(6))
     }
-    $('#choose-recur').val(getTask.MonthDay)
+    $('#radio-recur').val(getTask.MonthDay)
   }
 })
 
@@ -117,10 +134,10 @@ $('#submit-button').click(() => {
   if (weekDay.length < 1 && monthDay > 0) {
     weekDay.push(new Date(startDate).getDay())
   }
-  count *= weekDay.length
-  if (startDate > Date.now()) {
+  count *= weekDay.length > 0 ? weekDay.length : 1
+  //if (startDate > Date.now()) {
     taskStatus = 'Schedule'
-  }
+  //}
   var newTaskData = {
     TaskStatus: taskStatus,
     TaskId: taskId,
@@ -135,7 +152,7 @@ $('#submit-button').click(() => {
   if (taskType === 'new') {
     tasks.taskList.push(newTaskData)
   } else {
-    var getTask = tasks.taskList.find(task => task.TaskId == activeTask)
+    var getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(activeTask))
     getTask.TaskTitle = taskTitle
     getTask.TaskDetail = taskDetail
     getTask.TaskTheme = taskTheme
@@ -168,6 +185,7 @@ $('#restore-button').click(() => {
 $('#export-button').click(() => {
   if (tasks.taskList.length) {
     var JSONexport = JSON.stringify(tasks.taskList)
+    console.log(desktopPath)
     fs.writeFile(`${desktopPath}/moby_export.txt`, JSONexport, err => {
       if (err) {
         alert('An error during the export ' + err.message)

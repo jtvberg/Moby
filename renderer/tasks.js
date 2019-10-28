@@ -9,7 +9,28 @@ exports.saveTasks = () => {
 
 // Update task status
 exports.updateTaskStatus = (taskList, taskId, taskStatus) => {
-  taskList.find(task => task.TaskId == taskId).TaskStatus = taskStatus
+  taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).TaskStatus = taskStatus
+}
+
+exports.cloneTask = (taskId) => {
+  if (taskId) {
+    var getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId))
+    var newTaskStatus = getTask.StartDate > Date.now() ? 'Schedule' : 'Do'
+    var newTaskData = {
+      TaskStatus: newTaskStatus,
+      TaskId: new Date().valueOf(),
+      TaskTitle: getTask.TaskTitle,
+      TaskDetail: getTask.TaskDetail,
+      TaskTheme: getTask.TaskTheme,
+      Count: getTask.Count,
+      StartDate: getTask.StartDate,
+      WeekDay: getTask.WeekDay,
+      MonthDay: getTask.MonthDay
+    }
+    tasks.taskList.push(newTaskData)
+    tasks.saveTasks()
+    tasks.addTask(newTaskData)
+  }
 }
 
 // Add task to UI
@@ -48,22 +69,6 @@ exports.addTask = task => {
     }
   })
   $(`#clone-button-${task.TaskId}`).click(() => {
-    if (activeTask) {
-      var getTask = tasks.taskList.find(task => task.TaskId == activeTask)
-      var newTaskData = {
-        TaskStatus: 'Do',
-        TaskId: new Date().valueOf(),
-        TaskTitle: getTask.TaskTitle,
-        TaskDetail: getTask.TaskDetail,
-        TaskTheme: getTask.TaskTheme,
-        Count: getTask.Count,
-        StartDate: getTask.StartDate,
-        WeekDay: getTask.WeekDay,
-        MonthDay: getTask.MonthDay
-      }
-      tasks.taskList.push(newTaskData)
-      tasks.saveTasks()
-      tasks.addTask(newTaskData)
-    }
+    this.cloneTask(activeTask)
   })
 }

@@ -1,10 +1,29 @@
 body {
   overflow-x: hidden;
   overflow-y: hidden;
-  margin: 0px;
   background-color: rgba(0, 0, 0, 0);
   -webkit-user-select: none;
   -webkit-app-region: drag;
+}
+
+.wrapper {
+  display: grid;
+  grid-template-columns: 40px 1fr 1fr 1fr 1fr 1px;
+  grid-template-rows: 17px 1fr;
+  align-items: start;
+  grid-gap: 5px;
+  background-image: linear-gradient(to bottom right, #34495e, #2c3e50);
+}
+
+.host {
+  display: grid;
+  grid-row: 2;
+  grid-template-rows: 25px 1fr 25px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  max-height: 100vh;
+  padding: 5px 0px;
+  z-index: 1001;
 }
 
 .header {
@@ -12,6 +31,27 @@ body {
   font-size: 120%;
   justify-self: center;
   font-weight: bold;
+}
+
+.box {
+  grid-row: 2;
+  min-height: 35px;
+  max-height: auto;
+  overflow-y: scroll;
+}
+
+.footer {
+  font-size: 150%;
+  justify-self: right;
+  padding: 0px 5px;
+}
+
+.logo {
+  z-index: 1000;
+  position: fixed;
+  bottom: -20px;
+  right: -30px;
+  opacity: 0.02;
 }
 
 .card {
@@ -88,39 +128,12 @@ body {
   padding: 4px;
 }
 
-.footer {
-  font-size: 150%;
-  justify-self: right;
-  padding: 0px 5px;
-}
-
-.footer:hover, 
-.menuItem:hover, 
-.cardMenuItemDel:hover, 
-.cardMenuItemClone:hover, 
+.footer:hover,
+.menuItem:hover,
+.cardMenuItemDel:hover,
+.cardMenuItemClone:hover,
 .cardMenuItemEdit:hover {
   color: rgb(255, 255, 255);
-}
-
-.wrapper {
-  display: grid;
-  grid-template-columns: 40px 1fr 1fr 1fr 1fr 1px;
-  grid-template-rows: 17px 1fr;
-  align-items: start;
-  grid-gap: 5px;
-  background-image: linear-gradient(
-    to bottom right,
-    #34495e,
-    #2c3e50
-  );
-}
-
-.logo {
-  z-index: 1000;
-  position: fixed;
-  bottom: -20px;
-  right: -30px;
-  opacity: 0.02;
 }
 
 .menu {
@@ -130,25 +143,6 @@ body {
   color: #fff;
   border-radius: 3px;
   height: 100vh;
-}
-
-.host {
-  display: grid;
-  grid-row: 2;
-  grid-template-rows: 25px 1fr 25px;
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 5px;
-  max-height: 100vh;
-  padding: 5px 0px;
-  margin: 0px 0px;
-  z-index: 1001;
-}
-
-.box {
-  grid-row: 2;
-  min-height: 35px;
-  max-height: 100vh;
-  overflow-y: scroll;
 }
 
 ::-webkit-scrollbar {

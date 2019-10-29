@@ -32,7 +32,7 @@ exports.createQuickMenu = () => {
   // open DevTools remove for dist
   this.quickMenu = new BrowserWindow({
     width: 360,
-    height: 560,
+    height: 360,
     show: false,
     frame: false,
     hasShadow: false,

@@ -15,7 +15,7 @@ if (tasks.taskList.length) {
   addScheduledTasks()
 }
 
-window.setInterval(addScheduledTasks, 1000000)
+window.setInterval(addScheduledTasks, 100000000)
 
 ipcRenderer.on('desktopPath', (e, data) => {
   desktopPath = data
@@ -33,6 +33,7 @@ function addScheduledTasks () {
   // if in 'schedule' status && date < now
   // if count = 1 move scheduled to today
   // if count > 1 clone task to today, reduce count (except forever -1) and update start date
+  console.log('addSchedule run')
   if (tasks.taskList.length) {
     tasks.taskList.forEach((item) => {
       if (item.TaskStatus === 'Schedule' && item.StartDate < Date.now()) {
@@ -62,6 +63,7 @@ $('#task-modal').on('show.bs.modal', function (e) {
     taskType = 'edit'
     $('#task-modal-title').html('Edit Task')
     var getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(activeTask))
+    console.log(activeTask)
     $('#task-title').val(getTask.TaskTitle)
     $('#task-detail').val(getTask.TaskDetail)
     $('#task-status').val(getTask.TaskStatus)

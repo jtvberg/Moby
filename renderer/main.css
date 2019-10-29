@@ -9,9 +9,10 @@ body {
 .wrapper {
   display: grid;
   grid-template-columns: 40px 1fr 1fr 1fr 1fr 1px;
-  grid-template-rows: 17px 1fr;
+  grid-template-rows: 17px 1fr 3px;
   align-items: start;
   grid-gap: 5px;
+  height: 100vh;
   background-image: linear-gradient(to bottom right, #34495e, #2c3e50);
 }
 
@@ -21,9 +22,10 @@ body {
   grid-template-rows: 25px 1fr 25px;
   background-color: rgba(255, 255, 255, 0.2);
   border-radius: 5px;
-  max-height: 100vh;
+  max-height: 100%;
   padding: 5px 0px;
   z-index: 1001;
+  overflow: auto;
 }
 
 .header {
@@ -36,7 +38,6 @@ body {
 .box {
   grid-row: 2;
   min-height: 35px;
-  max-height: auto;
   overflow-y: scroll;
 }
 
@@ -44,6 +45,16 @@ body {
   font-size: 150%;
   justify-self: right;
   padding: 0px 5px;
+}
+
+.menu {
+  grid-row-start: 2;
+  grid-row-end: 4;
+  text-align: center;
+  background-color: #34495e;
+  color: #fff;
+  border-radius: 3px;
+  height: 100%;
 }
 
 .logo {
@@ -136,23 +147,9 @@ body {
   color: rgb(255, 255, 255);
 }
 
-.menu {
-  grid-row: 2;
-  text-align: center;
-  background-color: #34495e;
-  color: #fff;
-  border-radius: 3px;
-  height: 100vh;
-}
-
 ::-webkit-scrollbar {
   width: 0px;
   background: transparent;
-}
-
-.edge {
-  width: 5px;
-  background-color: #00000000;
 }
 
 .theme-1.active,

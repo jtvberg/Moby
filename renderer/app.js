@@ -137,9 +137,9 @@ $('#submit-button').click(() => {
     weekDay.push(new Date(startDate).getDay())
   }
   count *= weekDay.length > 0 ? weekDay.length : 1
-  //if (startDate > Date.now()) {
+  if (startDate > Date.now()) {
     taskStatus = 'Schedule'
-  //}
+  }
   var newTaskData = {
     TaskStatus: taskStatus,
     TaskId: taskId,
@@ -222,8 +222,7 @@ $('#import-button').click(() => {
 
 const exit = e => {
   const remote = require('electron').remote
-  const w = remote.getCurrentWindow()
-  w.close()
+  remote.app.exit()
 }
 
 const allowDrop = e => {

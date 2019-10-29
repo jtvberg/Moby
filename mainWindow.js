@@ -4,6 +4,8 @@ exports.createWindow = () => {
   this.win = new BrowserWindow({
     width: 1200,
     height: 800,
+    minWidth: 320,
+    minHeight: 220,
     // frame: false,
     // titleBarStyle: 'customButtonsOnHover',
     // titleBarStyle: 'hiddenInset',

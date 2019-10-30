@@ -15,7 +15,7 @@ if (tasks.taskList.length) {
   addScheduledTasks()
 }
 
-window.setInterval(addScheduledTasks, 100000000)
+window.setInterval(addScheduledTasks, 86400000)
 
 ipcRenderer.on('desktopPath', (e, data) => {
   desktopPath = data
@@ -36,7 +36,7 @@ function addScheduledTasks () {
   console.log('addSchedule run')
   if (tasks.taskList.length) {
     tasks.taskList.forEach((item) => {
-      if (item.TaskStatus === 'Schedule' && item.StartDate < Date.now()) {
+      if (item.TaskStatus === 'schedule' && item.StartDate < Date.now()) {
         tasks.cloneTask(item.TaskId)
         var i = item.Count > 0 ? item.Count - 1 : item.Count
         var getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(item.TaskId))
@@ -50,6 +50,18 @@ function addScheduledTasks () {
 
 $('.wrapper').hover(() => {
   $('.collapse').collapse('hide')
+})
+
+$('#do-button').click(() => {
+
+})
+
+$('#today-button').click(() => {
+
+})
+
+$('#doing-button').click(() => {
+
 })
 
 $('#task-modal').on('show.bs.modal', function (e) {
@@ -120,7 +132,7 @@ $('#submit-button').click(() => {
   var taskTitle = $('#task-title').val() || 'No Title'
   var taskDetail = $('#task-detail').val()
   var taskTheme = $('#choose-theme input:radio:checked').val() || 1
-  var taskStatus = $('#task-status').val()
+  var taskStatus = $('#task-status').val().toLowerCase()
   var taskId = Date.now()
   var count = $('#count-select').val() || 1
   var startDate = new Date(Date.parse($('#start-date').val()) || Date.now()).getTime()
@@ -138,7 +150,7 @@ $('#submit-button').click(() => {
   }
   count *= weekDay.length > 0 ? weekDay.length : 1
   if (startDate > Date.now()) {
-    taskStatus = 'Schedule'
+    taskStatus = 'schedule'
   }
   var newTaskData = {
     TaskStatus: taskStatus,
@@ -177,9 +189,9 @@ $('#task-modal').keypress(function (e) {
 
 $('#restore-button').click(() => {
   document
-    .getElementById('colDo')
+    .getElementById('col-do')
     .appendChild(document.getElementById(activeTask))
-  tasks.updateTaskStatus(tasks.taskList, activeTask, 'Do')
+  tasks.updateTaskStatus(tasks.taskList, activeTask, 'do')
   tasks.saveTasks()
   $('#restore-modal').modal('hide')
 })
@@ -239,16 +251,16 @@ const drop = e => {
   let col
   if (e.target.id.substring(0, 3) === 'col') {
     e.target.appendChild(document.getElementById(data))
-    col = e.target.getAttribute('id').substring(3)
+    col = e.target.getAttribute('id').substring(4)
   } else if (e.target.parentElement.parentElement.id.substring(0, 3) === 'col') {
-    col = e.target.parentElement.parentElement.getAttribute('id').substring(3)
+    col = e.target.parentElement.parentElement.getAttribute('id').substring(4)
     e.target.parentElement.parentElement.appendChild(
       document.getElementById(data)
     )
   } else if (e.target.id.substring(0, 4) === 'host') {
-    col = e.target.id.substring(4, e.target.id.length)
+    col = e.target.id.substring(5, e.target.id.length)
     document
-      .getElementById('col' + col)
+      .getElementById('col-' + col)
       .appendChild(document.getElementById(data))
   } else {
     return

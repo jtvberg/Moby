@@ -12,10 +12,10 @@
     <div class="quick-body">
       <form id="task-form">
         <div class="form-group">
-          <input class="form-control" id="task-title" placeholder="Title">
+          <input class="form-control" id="quick-task-title" placeholder="Title">
         </div>
         <div class="form-group">
-          <textarea class="form-control" id="task-detail" placeholder="Detail"></textarea>
+          <textarea class="form-control" id="quick-task-detail" placeholder="Detail" style="max-height: 257px;"></textarea>
         </div>
         <label for="choose-theme">Color</label>
         <div class="btn-group btn-group-toggle btn-group-lg" id="choose-theme" data-toggle="buttons">
@@ -35,8 +35,11 @@
             <input type="radio" name="options" id="option-5" autocomplete="off" value="5"> 
           </label>
         </div>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button id="submit-button" type="button" class="btn btn-primary">Save Changes</button>
+        <div class="footer">
+          <button id="do-button" type="button" class="btn btn-primary">Do</button>
+          <button id="today-button" type="button" class="btn btn-primary">Today</button>
+          <button id="doing-button" type="button" class="btn btn-primary">Doing</button>
+        </div>
       </form>
     </div>
     <script>

@@ -32,7 +32,8 @@ exports.createQuickMenu = () => {
   // open DevTools remove for dist
   this.quickMenu = new BrowserWindow({
     width: 360,
-    height: 233,
+    height: 'auto',
+    maxHeight: 400,
     show: false,
     frame: false,
     hasShadow: false,
@@ -47,5 +48,5 @@ exports.createQuickMenu = () => {
       this.quickMenu.hide()
     }
   })
-  this.quickMenu.webContents.openDevTools()
+  // this.quickMenu.webContents.openDevTools()
 }

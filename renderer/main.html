@@ -10,30 +10,30 @@
   <body>
     <div class="wrapper">
        <div class="menu">
-        <div class="menuItem fas fa-archive fa-2x" href="#restore-modal" data-toggle="modal" style="padding-top: 0;"></div>
-        <div class="menuItem fas fa-calendar fa-2x" href="#schedule-modal" data-toggle="modal"></div>
-        <div class="menuItem fas fa-download fa-2x" id="export-button"></div>
-        <div class="menuItem fas fa-upload fa-2x" id="import-button"></div>
-        <div class="menuItem fas fa-sign-out-alt fa-2x" onclick="exit(event)"></div>
+        <div class="menu-item fas fa-archive fa-2x" href="#restore-modal" data-toggle="modal" style="padding-top: 0;"></div>
+        <div class="menu-item fas fa-calendar fa-2x" href="#schedule-modal" data-toggle="modal"></div>
+        <div class="menu-item fas fa-download fa-2x" id="export-button"></div>
+        <div class="menu-item fas fa-upload fa-2x" id="import-button"></div>
+        <div class="menu-item fas fa-sign-out-alt fa-2x" onclick="exit(event)"></div>
       </div> 
-      <div class="host" id="hostDo" ondrop="drop(event)" ondragover="allowDrop(event)">
+      <div class="host" id="host-do" ondrop="drop(event)" ondragover="allowDrop(event)">
         <div class="header">Do</div>
-        <div class="box" id="colDo"></div>
+        <div class="box" id="col-do"></div>
         <div class="footer fas fa-plus fa-2x" href="#task-modal" data-toggle="modal" data-status-id="Do" data-type-id="new"></div>
       </div>
-      <div class="host" id="hostToday" ondrop="drop(event)" ondragover="allowDrop(event)">
+      <div class="host" id="host-today" ondrop="drop(event)" ondragover="allowDrop(event)">
         <div class="header">Today</div>
-        <div class="box" id="colToday"></div>
+        <div class="box" id="col-today"></div>
         <div class="footer fas fa-plus fa-2x" href="#task-modal" data-toggle="modal" data-status-id="Today" data-type-id="new"></div>
       </div>
-      <div class="host" id="hostDoing" ondrop="drop(event)" ondragover="allowDrop(event)">
+      <div class="host" id="host-doing" ondrop="drop(event)" ondragover="allowDrop(event)">
         <div class="header">Doing</div>
-        <div class="box" id="colDoing" ></div>
+        <div class="box" id="col-doing" ></div>
         <div class="footer fas fa-plus fa-2x" href="#task-modal" data-toggle="modal" data-status-id="Doing" data-type-id="new"></div>
       </div>
-      <div class="host" id="hostDone" ondrop="drop(event)" ondragover="allowDrop(event)">
+      <div class="host" id="host-done" ondrop="drop(event)" ondragover="allowDrop(event)">
         <div class="header">Done</div>
-        <div class="box" id="colDone"></div>
+        <div class="box" id="col-done"></div>
         <div class="footer fas fa-plus fa-2x" href="#task-modal" data-toggle="modal" data-status-id="Done" data-type-id="new"></div>
       </div>
     </div>
@@ -45,8 +45,8 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="task-modal-title">New Task</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+            <button type="button" class="close" data-dismiss="modal">
+              <span>&times;</span>
             </button>
           </div>
           <div class="modal-body">
@@ -86,7 +86,7 @@
               <div class="panel-group" id="panel-recur">
                 <div class="panel">
                   <div class="panel-header">
-                    <a data-toggle="collapse" data-target="#collapse-sched" aria-expanded="true" aria-controls="collapseOne">
+                    <a data-toggle="collapse" data-target="#collapse-sched">
                       <i class="fa fa-chevron-down"></i>
                       Schedule & Recurrence
                     </a>
@@ -190,13 +190,13 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">Restore Task</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+            <button type="button" class="close" data-dismiss="modal">
+            <span>&times;</span>
             </button>
           </div>
           <div class="modal-body">
-            <div class="host" id="hostArchive">
-              <div class="box" id="colArchive"></div>
+            <div class="host" id="host-archive">
+              <div class="box" id="col-archive"></div>
             </div>
           </div>
           <div class="modal-footer">
@@ -212,13 +212,13 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">Scheduled Tasks</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+            <button type="button" class="close" data-dismiss="modal">
+            <span>&times;</span>
             </button>
           </div>
           <div class="modal-body">
-            <div class="host" id="hostSchedule">
-              <div class="box" id="colSchedule"></div>
+            <div class="host" id="host-schedule">
+              <div class="box" id="col-schedule"></div>
             </div>
           </div>
           <div class="modal-footer">

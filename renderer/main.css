@@ -77,7 +77,7 @@ body {
   box-shadow: 0 4px 8px 0 rgba(82, 82, 82, 0.6);
 }
 
-.cardMenuItemDel:hover {
+.card-menu-item-del:hover {
   color: rgb(66, 195, 255);
 }
 
@@ -87,7 +87,7 @@ body {
   border: none;
 }
 
-.collapseContent {
+.collapse-content {
   font-size: 75%;
 }
 
@@ -121,13 +121,13 @@ body {
   color: #6c757d;
 }
 
-.cardMenu,
-.menuItem,
+.card-menu,
+.menu-item,
 .footer {
   color: rgb(255, 255, 255, 0.3);
 }
 
-.cardMenu {
+.card-menu {
   align-content: flex-end;
   font-size: 100%;
   text-align: right;
@@ -135,15 +135,15 @@ body {
   padding: 1px;
 }
 
-.menuItem {
+.menu-item {
   padding: 4px;
 }
 
 .footer:hover,
-.menuItem:hover,
-.cardMenuItemDel:hover,
-.cardMenuItemClone:hover,
-.cardMenuItemEdit:hover {
+.menu-item:hover,
+.card-menu-item-del:hover,
+.card-menu-item-clone:hover,
+.card-menu-item-edit:hover {
   color: rgb(255, 255, 255);
 }
 

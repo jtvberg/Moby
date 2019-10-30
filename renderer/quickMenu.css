@@ -8,7 +8,7 @@ body {
 }
 
 .quick-body {
-    border-radius: 3px;
+    border-radius: 5px;
     background-image: linear-gradient(
       to bottom right,
       #34495e,
@@ -16,6 +16,10 @@ body {
     );
     padding: 5px;
     color: #fff;
+}
+
+.form-group {
+    margin-bottom: 5px;
 }
 
 .quick-arrow {
@@ -28,6 +32,10 @@ body {
     border-bottom: 15px solid #34495e;
     left: 45%;
     position: relative;
+}
+
+.footer {
+    text-align: right;
 }
 
 .theme-1.active,

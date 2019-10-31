@@ -15,7 +15,7 @@ exports.createWindow = () => {
     }
   })
   // open DevTools remove for dist
-  // this.win.webContents.openDevTools()
+  this.win.webContents.openDevTools()
   // HTML to open
   this.win.loadURL(`file://${__dirname}/renderer/main.html`)
 

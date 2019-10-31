@@ -1,6 +1,6 @@
 const { app } = require('electron')
 const mainWindow = require('./mainWindow')
-const quickMenu = require('./quickMenuWindow')
+const quickWindow = require('./quickMenuWindow')
 
 // Enable Electron-Reload (dev only)
 require('electron-reload')(__dirname)
@@ -12,8 +12,8 @@ app.on('ready', () => {
     mainWindow.win.webContents.send('desktopPath', app.getPath('desktop'))
   })
   // mainWindow.win.setFullScreen(true)
-  quickMenu.createTray()
-  quickMenu.createQuickMenu()
+  quickWindow.createTray()
+  quickWindow.createQuickMenu()
 })
 
 // Close app on window close

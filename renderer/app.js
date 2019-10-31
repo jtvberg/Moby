@@ -52,16 +52,34 @@ $('.wrapper').hover(() => {
   $('.collapse').collapse('hide')
 })
 
-$('#do-button').click(() => {
+function quickTask (type) {
+  var taskId = Date.now()
+  var newTaskData = {
+    TaskStatus: type,
+    TaskId: taskId,
+    TaskTitle: $('#quick-task-title').val() || 'No Title',
+    TaskDetail: $('#quick-task-detail').val(),
+    TaskTheme: $('#quick-choose-theme input:radio:checked').val() || 1,
+    Count: 1,
+    StartDate: taskId,
+    WeekDay: [],
+    MonthDay: 0
+  }
+  tasks.taskList.push(newTaskData)
+  tasks.saveTasks()
+  tasks.addTask(newTaskData)
+}
 
+$('#do-button').click(() => {
+  quickTask('do')
 })
 
 $('#today-button').click(() => {
-
+  quickTask('today')
 })
 
 $('#doing-button').click(() => {
-
+  quickTask('doing')
 })
 
 $('#task-modal').on('show.bs.modal', function (e) {
@@ -75,7 +93,6 @@ $('#task-modal').on('show.bs.modal', function (e) {
     taskType = 'edit'
     $('#task-modal-title').html('Edit Task')
     var getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(activeTask))
-    console.log(activeTask)
     $('#task-title').val(getTask.TaskTitle)
     $('#task-detail').val(getTask.TaskDetail)
     $('#task-status').val(getTask.TaskStatus)

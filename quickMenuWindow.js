@@ -29,7 +29,6 @@ const getWindowPosition = () => {
 }
 
 exports.createQuickMenu = () => {
-  // open DevTools remove for dist
   this.quickMenu = new BrowserWindow({
     width: 360,
     height: 'auto',
@@ -39,8 +38,14 @@ exports.createQuickMenu = () => {
     hasShadow: false,
     fullscreenable: false,
     resizable: false,
-    transparent: true
+    transparent: true,
+    webPreferences: {
+      nodeIntegration: true
+    }
   })
+  // open DevTools remove for dist
+  this.quickMenu.openDevTools()
+  // HTML to open
   this.quickMenu.loadURL(`file://${__dirname}/renderer/quickMenu.html`)
   // Hide the window when it loses focus
   this.quickMenu.on('blur', () => {
@@ -48,5 +53,4 @@ exports.createQuickMenu = () => {
       this.quickMenu.hide()
     }
   })
-  // this.quickMenu.webContents.openDevTools()
 }

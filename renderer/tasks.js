@@ -12,6 +12,7 @@ exports.updateTaskStatus = (taskList, taskId, taskStatus) => {
   taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).TaskStatus = taskStatus
 }
 
+// Clone task to 'do'
 exports.cloneTask = (taskId) => {
   if (taskId) {
     var getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId))

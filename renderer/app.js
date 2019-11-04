@@ -4,18 +4,16 @@ const { ipcRenderer } = require('electron')
 const tasks = require('./tasks.js')
 const fs = require('fs')
 
-// const menu = require('./menu.js')
 require('bootstrap/js/dist/modal')
 var desktopPath = ''
 var taskType = ''
 
 // Load tasks at startup
-if (tasks.taskList.length) {
+if (tasks.taskList.length && document.getElementById('main-window')) {
   tasks.taskList.forEach(tasks.addTask)
   addScheduledTasks()
+  window.setInterval(addScheduledTasks, 86400000)
 }
-
-window.setInterval(addScheduledTasks, 86400000)
 
 ipcRenderer.on('desktopPath', (e, data) => {
   desktopPath = data
@@ -113,6 +111,10 @@ $('#task-modal').on('show.bs.modal', function (e) {
     }
     $('#radio-recur').val(getTask.MonthDay)
   }
+})
+
+$('#task-modal').on('shown.bs.modal', function (e) {
+  $('#task-title').focus()
 })
 
 function enableRecur () {

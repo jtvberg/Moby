@@ -4,7 +4,8 @@
   "description": "It will task you",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "watch": "nodemon --exec 'electron .'"
   },
   "repository": "https://github.com/jtvberg",
   "keywords": [
@@ -16,18 +17,19 @@
   "license": "CC0-1.0",
   "devDependencies": {
     "electron-reload": "^1.5.0",
-    "eslint": "^6.5.1",
+    "eslint": "^6.6.0",
     "eslint-config-standard": "^14.1.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1"
+    "eslint-plugin-standard": "^4.0.1",
+    "nodemon": "^1.19.4"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.8.1",
+    "@fortawesome/fontawesome-free": "^5.11.2",
     "bootstrap": "^4.3.1",
-    "electron": "^4.2.12",
+    "electron": "^7.0.0",
     "jquery": "^3.4.1",
-    "popper.js": "^1.15.0"
+    "popper.js": "^1.16.0"
   }
 }

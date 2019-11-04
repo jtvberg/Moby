@@ -1,19 +1,108 @@
 const { app } = require('electron')
-const mainWindow = require('./mainWindow')
-const quickWindow = require('./quickMenuWindow')
+const { BrowserWindow, Tray } = require('electron')
+const path = require('path')
 
 // Enable Electron-Reload (dev only)
 require('electron-reload')(__dirname)
 
-// Create main window post electron init
-app.on('ready', () => {
-  mainWindow.createWindow()
-  mainWindow.win.webContents.on('dom-ready', () => {
-    mainWindow.win.webContents.send('desktopPath', app.getPath('desktop'))
+let win
+const createWindow = () => {
+  win = new BrowserWindow({
+    width: 1200,
+    height: 800,
+    minWidth: 320,
+    minHeight: 220,
+    // frame: false,
+    // titleBarStyle: 'customButtonsOnHover',
+    // titleBarStyle: 'hiddenInset',
+    titleBarStyle: 'hidden',
+    webPreferences: {
+      nodeIntegration: true
+    }
   })
-  // mainWindow.win.setFullScreen(true)
-  quickWindow.createTray()
-  quickWindow.createQuickMenu()
+  // open DevTools remove for dist
+  win.webContents.openDevTools()
+  // HTML to open
+  win.loadURL(`file://${__dirname}/renderer/main.html`)
+
+  win.on('closed', () => {
+    win = null
+  })
+
+  win.on('enter-full-screen', () => {
+    win.webContents.send('efs')
+  })
+
+  win.on('leave-full-screen', () => {
+    win.webContents.send('lfs')
+  })
+}
+
+let tray
+const createTray = () => {
+  tray = new Tray(path.join(__dirname, 'renderer/res/moby1_icon_19.png'))
+  tray.on('click', function (e) {
+    toggleQuickMenu()
+  })
+
+  const toggleQuickMenu = () => {
+    quickMenu.isVisible() ? quickMenu.hide() : showQuickMenu()
+  }
+
+  const showQuickMenu = () => {
+    const position = getWindowPosition()
+    quickMenu.setPosition(position.x, position.y, false)
+    quickMenu.show()
+  }
+
+  const getWindowPosition = () => {
+    const windowBounds = quickMenu.getBounds()
+    const trayBounds = tray.getBounds()
+    // Center window horizontally below the tray icon
+    const x = Math.round(trayBounds.x + (trayBounds.width / 2) - (windowBounds.width / 2))
+    // Position window 4 pixels vertically below the tray icon
+    const y = Math.round(trayBounds.y + trayBounds.height + 4)
+    return { x: x, y: y }
+  }
+}
+
+let quickMenu
+const createQuickMenu = () => {
+  quickMenu = new BrowserWindow({
+    width: 360,
+    height: 'auto',
+    maxHeight: 400,
+    show: false,
+    frame: false,
+    hasShadow: false,
+    fullscreenable: false,
+    resizable: false,
+    transparent: true,
+    webPreferences: {
+      nodeIntegration: true
+    }
+  })
+  // open DevTools remove for dist
+  quickMenu.openDevTools()
+  // HTML to open
+  quickMenu.loadURL(`file://${__dirname}/renderer/quickMenu.html`)
+  // Hide the window when it loses focus
+  quickMenu.on('blur', () => {
+    if (!quickMenu.webContents.isDevToolsOpened()) {
+      quickMenu.hide()
+    }
+  })
+}
+
+// Create windows, tray, post electron init
+app.on('ready', () => {
+  createWindow()
+  createTray()
+  createQuickMenu()
+  win.webContents.on('dom-ready', () => {
+    win.webContents.send('desktopPath', app.getPath('desktop'))
+  })
+  // win.setFullScreen(true)
 })
 
 // Close app on window close
@@ -22,7 +111,6 @@ app.on('window-all-closed', () => {
   app.quit()
 })
 
-// Create window if none on activate (mac behavior)
 app.on('activate', () => {
-  if (mainWindow === null) mainWindow.createWindow()
+  if (win === null) createWindow()
 })

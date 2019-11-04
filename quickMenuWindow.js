@@ -6,26 +6,26 @@ exports.createTray = () => {
   this.tray.on('click', function (e) {
     toggleQuickMenu()
   })
-}
 
-const toggleQuickMenu = () => {
-  this.quickMenu.isVisible() ? this.quickMenu.hide() : showQuickMenu()
-}
+  const toggleQuickMenu = () => {
+    this.quickMenu.isVisible() ? this.quickMenu.hide() : showQuickMenu()
+  }
 
-const showQuickMenu = () => {
-  const position = getWindowPosition()
-  this.quickMenu.setPosition(position.x, position.y, false)
-  this.quickMenu.show()
-}
+  const showQuickMenu = () => {
+    const position = getWindowPosition()
+    this.quickMenu.setPosition(position.x, position.y, false)
+    this.quickMenu.show()
+  }
 
-const getWindowPosition = () => {
-  const windowBounds = this.quickMenu.getBounds()
-  const trayBounds = this.tray.getBounds()
-  // Center window horizontally below the tray icon
-  const x = Math.round(trayBounds.x + (trayBounds.width / 2) - (windowBounds.width / 2))
-  // Position window 4 pixels vertically below the tray icon
-  const y = Math.round(trayBounds.y + trayBounds.height + 4)
-  return { x: x, y: y }
+  const getWindowPosition = () => {
+    const windowBounds = this.quickMenu.getBounds()
+    const trayBounds = this.tray.getBounds()
+    // Center window horizontally below the tray icon
+    const x = Math.round(trayBounds.x + (trayBounds.width / 2) - (windowBounds.width / 2))
+    // Position window 4 pixels vertically below the tray icon
+    const y = Math.round(trayBounds.y + trayBounds.height + 4)
+    return { x: x, y: y }
+  }
 }
 
 exports.createQuickMenu = () => {

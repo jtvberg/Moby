@@ -36,7 +36,6 @@ exports.cloneTask = (taskId) => {
 
 // Add task to UI
 exports.addTask = task => {
-  console.log('addTask')
   const taskHTML = `<div class="card theme-${task.TaskTheme}" id="${task.TaskId}" data-toggle="collapse" data-target="#c${task.TaskId}" draggable="true" ondragstart="drag(event)">
                     <div id="b${task.TaskId}" class="collapsible">${task.TaskTitle}</div>
                     <div class="collapse collapse-content" id="c${task.TaskId}">

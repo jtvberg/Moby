@@ -1,5 +1,5 @@
 const { app } = require('electron')
-const { BrowserWindow, Tray } = require('electron')
+const { BrowserWindow, Tray, ipcMain } = require('electron')
 const path = require('path')
 
 // Enable Electron-Reload (dev only)
@@ -12,16 +12,13 @@ const createWindow = () => {
     height: 800,
     minWidth: 320,
     minHeight: 220,
-    // frame: false,
-    // titleBarStyle: 'customButtonsOnHover',
-    // titleBarStyle: 'hiddenInset',
     titleBarStyle: 'hidden',
     webPreferences: {
       nodeIntegration: true
     }
   })
   // open DevTools remove for dist
-  win.webContents.openDevTools()
+  // win.webContents.openDevTools()
   // HTML to open
   win.loadURL(`file://${__dirname}/renderer/main.html`)
 
@@ -83,7 +80,7 @@ const createQuickMenu = () => {
     }
   })
   // open DevTools remove for dist
-  quickMenu.openDevTools()
+  // quickMenu.openDevTools()
   // HTML to open
   quickMenu.loadURL(`file://${__dirname}/renderer/quickMenu.html`)
   // Hide the window when it loses focus
@@ -91,6 +88,10 @@ const createQuickMenu = () => {
     if (!quickMenu.webContents.isDevToolsOpened()) {
       quickMenu.hide()
     }
+  })
+
+  quickMenu.on('show', () => {
+    quickMenu.webContents.send('quick-reset')
   })
 }
 
@@ -111,6 +112,11 @@ app.on('window-all-closed', () => {
   app.quit()
 })
 
+// Create window if non exists on activation
 app.on('activate', () => {
   if (win === null) createWindow()
+})
+
+ipcMain.on('quick-task', (e, data) => {
+  win.webContents.send('quick-data', data)
 })

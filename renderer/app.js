@@ -3,10 +3,9 @@
 const { ipcRenderer } = require('electron')
 const tasks = require('./tasks.js')
 const fs = require('fs')
-
 require('bootstrap/js/dist/modal')
-var desktopPath = ''
-var taskType = ''
+let desktopPath = ''
+let taskType = ''
 
 // Load tasks at startup
 if (tasks.taskList.length && document.getElementById('main-window')) {
@@ -27,11 +26,16 @@ ipcRenderer.on('lfs', (e) => {
   $('.wrapper').css('grid-template-rows', '17px 1fr')
 })
 
+ipcRenderer.on('quick-data', (e, data) => {
+  tasks.taskList.push(data)
+  tasks.saveTasks()
+  tasks.addTask(data)
+})
+
 function addScheduledTasks () {
   // if in 'schedule' status && date < now
   // if count = 1 move scheduled to today
   // if count > 1 clone task to today, reduce count (except forever -1) and update start date
-  console.log('addSchedule run')
   if (tasks.taskList.length) {
     tasks.taskList.forEach((item) => {
       if (item.TaskStatus === 'schedule' && item.StartDate < Date.now()) {
@@ -45,40 +49,6 @@ function addScheduledTasks () {
     })
   }
 }
-
-$('.wrapper').hover(() => {
-  $('.collapse').collapse('hide')
-})
-
-function quickTask (type) {
-  var taskId = Date.now()
-  var newTaskData = {
-    TaskStatus: type,
-    TaskId: taskId,
-    TaskTitle: $('#quick-task-title').val() || 'No Title',
-    TaskDetail: $('#quick-task-detail').val(),
-    TaskTheme: $('#quick-choose-theme input:radio:checked').val() || 1,
-    Count: 1,
-    StartDate: taskId,
-    WeekDay: [],
-    MonthDay: 0
-  }
-  tasks.taskList.push(newTaskData)
-  tasks.saveTasks()
-  tasks.addTask(newTaskData)
-}
-
-$('#do-button').click(() => {
-  quickTask('do')
-})
-
-$('#today-button').click(() => {
-  quickTask('today')
-})
-
-$('#doing-button').click(() => {
-  quickTask('doing')
-})
 
 $('#task-modal').on('show.bs.modal', function (e) {
   if ($(e.relatedTarget).data('type-id') === 'new') {
@@ -218,7 +188,6 @@ $('#restore-button').click(() => {
 $('#export-button').click(() => {
   if (tasks.taskList.length) {
     var JSONexport = JSON.stringify(tasks.taskList)
-    console.log(desktopPath)
     fs.writeFile(`${desktopPath}/moby_export.txt`, JSONexport, err => {
       if (err) {
         alert('An error during the export ' + err.message)
@@ -249,6 +218,10 @@ $('#import-button').click(() => {
       alert('No records found')
     }
   })
+})
+
+$('.wrapper').hover(() => {
+  $('.collapse').collapse('hide')
 })
 
 const exit = e => {

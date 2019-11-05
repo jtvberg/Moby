@@ -1,3 +1,4 @@
+// Modules and variable definition
 const { app } = require('electron')
 const { BrowserWindow, Tray, ipcMain } = require('electron')
 const path = require('path')
@@ -5,6 +6,7 @@ const path = require('path')
 // Enable Electron-Reload (dev only)
 require('electron-reload')(__dirname)
 
+// Create main app window
 let win
 const createWindow = () => {
   win = new BrowserWindow({
@@ -17,6 +19,7 @@ const createWindow = () => {
       nodeIntegration: true
     }
   })
+
   // open DevTools remove for dist
   // win.webContents.openDevTools()
   // HTML to open
@@ -26,6 +29,7 @@ const createWindow = () => {
     win = null
   })
 
+  // IPC events/channels to communicate screen state
   win.on('enter-full-screen', () => {
     win.webContents.send('efs')
   })
@@ -35,6 +39,7 @@ const createWindow = () => {
   })
 }
 
+// Create tray icon and calculate positions
 let tray
 const createTray = () => {
   tray = new Tray(path.join(__dirname, 'renderer/res/moby1_icon_19.png'))
@@ -63,6 +68,7 @@ const createTray = () => {
   }
 }
 
+// Create window attached to tray icon press
 let quickMenu
 const createQuickMenu = () => {
   quickMenu = new BrowserWindow({
@@ -89,7 +95,7 @@ const createQuickMenu = () => {
       quickMenu.hide()
     }
   })
-
+  // IPC event/channel to communicate showing of window (used to reset fields)
   quickMenu.on('show', () => {
     quickMenu.webContents.send('quick-reset')
   })
@@ -101,12 +107,12 @@ app.on('ready', () => {
   createTray()
   createQuickMenu()
   win.webContents.on('dom-ready', () => {
+    // IPC event to send system desktop path
     win.webContents.send('desktopPath', app.getPath('desktop'))
   })
-  // win.setFullScreen(true)
 })
 
-// Close app on window close
+// Close app on window close; uncomment option for mac behavior
 app.on('window-all-closed', () => {
   // if (process.platform !== 'darwin')
   app.quit()
@@ -117,6 +123,7 @@ app.on('activate', () => {
   if (win === null) createWindow()
 })
 
+// IPC channel to pass task data from tray to app
 ipcMain.on('quick-task', (e, data) => {
   win.webContents.send('quick-data', data)
 })

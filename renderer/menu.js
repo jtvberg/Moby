@@ -1,5 +1,5 @@
-// Modules
-const {remote, shell} = require('electron')
+// Modules and variable definition
+const { remote, shell } = require('electron')
 
 // Menu template object
 const template = [
@@ -8,8 +8,8 @@ const template = [
     submenu: [
       {
         label: 'Add New',
-        accelerator: 'CmdOrCtrl+O',
-        click () { $('.open-add-modal').click() }
+        accelerator: 'CmdOrCtrl+N',
+        click () { $('#task-modal').modal('show') }
       },
       {
         label: 'Open Task',
@@ -27,59 +27,26 @@ const template = [
       {
         label: 'Search Tasks',
         accelerator: 'CmdOrCtrl+S',
-        click() { $('#search').focus() }
+        click () { $('#search').focus() }
       }
     ]
   },
   {
-    label: 'Edit',
-    submenu: [
-      {
-        role: 'undo'
-      },
-      {
-        role: 'redo'
-      },
-      {
-        type: 'separator'
-      },
-      {
-        role: 'cut'
-      },
-      {
-        role: 'copy'
-      },
-      {
-        role: 'paste'
-      },
-      {
-        role: 'pasteandmatchstyle'
-      },
-      {
-        role: 'delete'
-      },
-      {
-        role: 'selectall'
-      }
-    ]
+    role: 'editMenu'
   },
   {
-    role: 'window',
-    submenu: [
-      {
-        role: 'minimize'
-      },
-      {
-        role: 'close'
-      }
-    ]
+    role: 'windowMenu'
   },
   {
     role: 'help',
     submenu: [
       {
         label: 'Learn More',
-        click () { shell.openExternal('https://') }
+        click () { shell.openExternal('https://github.com/jtvberg/Moby') }
+      },
+      {
+        label: 'Toggle Dev Tools',
+        role: 'toggleDevTools'
       }
     ]
   }
@@ -87,7 +54,6 @@ const template = [
 
 // Mac specific
 if (process.platform === 'darwin') {
-
   // Add first menu item
   template.unshift({
     label: remote.app.getName(),

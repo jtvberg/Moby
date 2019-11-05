@@ -7,7 +7,7 @@ exports.saveTasks = () => {
   localStorage.setItem('taskList', JSON.stringify(this.taskList))
 }
 
-// Update task status
+// Update task status helper function
 exports.updateTaskStatus = (taskList, taskId, taskStatus) => {
   taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).TaskStatus = taskStatus
 }
@@ -34,7 +34,7 @@ exports.cloneTask = (taskId) => {
   }
 }
 
-// Add task to UI
+// Add task(s) to UI
 exports.addTask = task => {
   const taskHTML = `<div class="card theme-${task.TaskTheme}" id="${task.TaskId}" data-toggle="collapse" data-target="#c${task.TaskId}" draggable="true" ondragstart="drag(event)">
                     <div id="b${task.TaskId}" class="collapsible">${task.TaskTitle}</div>
@@ -49,12 +49,14 @@ exports.addTask = task => {
                   </div>`
   $(`#col-${task.TaskStatus}`).append(taskHTML)
   $('#task-modal').modal('hide')
+  // Active task setting events
   $('.card').on('click', function () {
     window.activeTask = this.id
   })
   $('.card').hover(function () {
     window.activeTask = this.id
   })
+  // Task mini-menu events
   $('.card-menu-item-edit').click(() => {
     $('#schedule-modal').modal('hide')
     $('#restore-modal').modal('hide')

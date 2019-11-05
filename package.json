@@ -1,5 +1,5 @@
 {
-  "name": "moby",
+  "name": "Moby",
   "version": "1.0.0",
   "description": "It will task you",
   "main": "main.js",
@@ -8,7 +8,7 @@
     "debug": "electron --inspect=6969 .",
     "break": "electron --inspect-brk=6969 ."
   },
-  "repository": "https://github.com/jtvberg",
+  "repository": "https://github.com/jtvberg/Moby",
   "keywords": [
     "Electron",
     "task",

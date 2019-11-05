@@ -1,7 +1,7 @@
 /* global activeTask */
-// Modules
+// Modules and variable definition
 const { ipcRenderer } = require('electron')
-const tasks = require('./tasks.js')
+const tasks = require('./tasks')
 const fs = require('fs')
 require('bootstrap/js/dist/modal')
 let desktopPath = ''
@@ -14,10 +14,12 @@ if (tasks.taskList.length && document.getElementById('main-window')) {
   window.setInterval(addScheduledTasks, 86400000)
 }
 
+// IPC event to get system desktop path
 ipcRenderer.on('desktopPath', (e, data) => {
   desktopPath = data
 })
 
+// IPC events/channels to act on screen state
 ipcRenderer.on('efs', (e) => {
   $('.wrapper').css('grid-template-rows', '0px 1fr')
 })
@@ -26,16 +28,20 @@ ipcRenderer.on('lfs', (e) => {
   $('.wrapper').css('grid-template-rows', '17px 1fr')
 })
 
+// IPC event to get task data from tray window
 ipcRenderer.on('quick-data', (e, data) => {
   tasks.taskList.push(data)
   tasks.saveTasks()
   tasks.addTask(data)
 })
 
+// Scheduled tasks handler
 function addScheduledTasks () {
-  // if in 'schedule' status && date < now
-  // if count = 1 move scheduled to today
-  // if count > 1 clone task to today, reduce count (except forever -1) and update start date
+  /* Schedule logic
+  if in 'schedule' status && date < now
+  if count = 1 move scheduled to today
+  if count > 1 clone task to today, reduce count (except forever -1) and update start date
+  */
   if (tasks.taskList.length) {
     tasks.taskList.forEach((item) => {
       if (item.TaskStatus === 'schedule' && item.StartDate < Date.now()) {
@@ -50,6 +56,7 @@ function addScheduledTasks () {
   }
 }
 
+// Task modal load recieves new vs edit
 $('#task-modal').on('show.bs.modal', function (e) {
   if ($(e.relatedTarget).data('type-id') === 'new') {
     taskType = 'new'
@@ -83,16 +90,19 @@ $('#task-modal').on('show.bs.modal', function (e) {
   }
 })
 
+// Focus title field on modal 'shown'
 $('#task-modal').on('shown.bs.modal', function (e) {
   $('#task-title').focus()
 })
 
+// Recurrence elements enable logic
 function enableRecur () {
   $('#choose-days').prop('disabled', false)
   $('#count-select').prop('disabled', false)
   $('#recur-count').removeClass('disabled-form-label')
 }
 
+// Active radio button change events
 $('#radio-weekly').click(() => {
   enableRecur()
 })
@@ -117,6 +127,7 @@ $('#radio-once').click(() => {
   $('#recur-count').addClass('disabled-form-label')
 })
 
+// Task modal submit task logic
 $('#submit-button').click(() => {
   var taskTitle = $('#task-title').val() || 'No Title'
   var taskDetail = $('#task-detail').val()
@@ -170,12 +181,14 @@ $('#submit-button').click(() => {
   tasks.addTask(newTaskData)
 })
 
+// Execute task modal submit on enter except when in detail field
 $('#task-modal').keypress(function (e) {
   if (e.which === 13 && !$('#task-detail').is(':focus')) {
     $('#submit-button').click()
   }
 })
 
+// Restore archived task to 'Do' column
 $('#restore-button').click(() => {
   document
     .getElementById('col-do')
@@ -185,6 +198,7 @@ $('#restore-button').click(() => {
   $('#restore-modal').modal('hide')
 })
 
+// Exports all tasks to file to desktop
 $('#export-button').click(() => {
   if (tasks.taskList.length) {
     var JSONexport = JSON.stringify(tasks.taskList)
@@ -200,6 +214,8 @@ $('#export-button').click(() => {
   }
 })
 
+// Imports all tasks (even duplicates) from file from desktop
+// TODO: handle dupes
 $('#import-button').click(() => {
   fs.readFile(`${desktopPath}/moby_export.txt`, (err, data) => {
     if (err) {
@@ -220,15 +236,19 @@ $('#import-button').click(() => {
   })
 })
 
+// Collapse all task elements on hover outside of tasks
+// TODO: Fix cludgie implementation
 $('.wrapper').hover(() => {
   $('.collapse').collapse('hide')
 })
 
+// Completely close app
 const exit = e => {
   const remote = require('electron').remote
   remote.app.exit()
 }
 
+// Task drag and drop events
 const allowDrop = e => {
   e.preventDefault()
 }

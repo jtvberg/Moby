@@ -5,7 +5,7 @@ const tasks = require('./tasks')
 const fs = require('fs')
 require('bootstrap/js/dist/modal')
 let desktopPath = ''
-let taskType = ''
+let taskType = 1
 
 // Load tasks at startup
 if (tasks.taskList.length && document.getElementById('main-window')) {
@@ -56,16 +56,34 @@ function addScheduledTasks () {
   }
 }
 
-// Task modal load recieves new vs edit
+// Task menu commands
+window.openTask = (type) => {
+  taskType = type
+  $('#task-modal').modal('show')
+}
+
+window.deleteTask = () => {
+  if (activeTask) {
+    document
+      .getElementById('col-archive')
+      .appendChild(document.getElementById(activeTask))
+    tasks.updateTaskStatus(tasks.taskList, activeTask, 'archive')
+    tasks.saveTasks()
+  }
+}
+
+// Task modal load; recieves new vs edit
 $('#task-modal').on('show.bs.modal', function (e) {
-  if ($(e.relatedTarget).data('type-id') === 'new') {
-    taskType = 'new'
+  console.log($(e.relatedTarget).data('type-id'))
+  console.log($(e.currentTarget).data('type-id'))
+  taskType = $(e.relatedTarget).data('type-id') === 'new' ? taskType = 0 : 1
+  $('#collapse-sched').collapse('hide')
+  if (taskType === 0) {
     $('#task-modal-title').html('New Task')
     $(this).find('form').trigger('reset')
     $('#task-status').val($(e.relatedTarget).data('status-id'))
     $('#choose-days').prop('disabled', true)
   } else {
-    taskType = 'edit'
     $('#task-modal-title').html('Edit Task')
     var getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(activeTask))
     $('#task-title').val(getTask.TaskTitle)
@@ -163,7 +181,7 @@ $('#submit-button').click(() => {
     WeekDay: weekDay,
     MonthDay: monthDay
   }
-  if (taskType === 'new') {
+  if (taskType === 0) {
     tasks.taskList.push(newTaskData)
   } else {
     var getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(activeTask))
@@ -238,9 +256,9 @@ $('#import-button').click(() => {
 
 // Collapse all task elements on hover outside of tasks
 // TODO: Fix cludgie implementation
-$('.wrapper').hover(() => {
-  $('.collapse').collapse('hide')
-})
+// $('.wrapper').hover(() => {
+//   $('.collapse').collapse('hide')
+// })
 
 // Completely close app
 const exit = e => {

@@ -37,7 +37,7 @@ exports.cloneTask = (taskId) => {
 // Add task(s) to UI
 exports.addTask = task => {
   const taskHTML = `<div class="card theme-${task.TaskTheme}" id="${task.TaskId}" data-toggle="collapse" data-target="#c${task.TaskId}" draggable="true" ondragstart="drag(event)">
-                    <div id="b${task.TaskId}" class="collapsible">${task.TaskTitle}</div>
+                    <div id="b${task.TaskId}" >${task.TaskTitle}</div>
                     <div class="collapse collapse-content" id="c${task.TaskId}">
                       <p style="white-space: pre-wrap;">${task.TaskDetail}</p>
                       <div class="card-menu">
@@ -53,9 +53,10 @@ exports.addTask = task => {
   $('.card').on('click', function () {
     window.activeTask = this.id
   })
-  $('.card').hover(function () {
-    window.activeTask = this.id
-  })
+  // TODO: Fix cludgie implementation
+  // $('.card').hover(function () {
+  //   window.activeTask = this.id
+  // })
   // Task mini-menu events
   $('.card-menu-item-edit').click(() => {
     $('#schedule-modal').modal('hide')

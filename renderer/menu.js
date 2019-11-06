@@ -7,19 +7,19 @@ const template = [
     label: 'Tasks',
     submenu: [
       {
-        label: 'Add New',
+        label: 'New Task',
         accelerator: 'CmdOrCtrl+N',
-        click () { $('#task-modal').modal('show') }
+        click () { window.openTask(0) }
       },
       {
-        label: 'Open Task',
+        label: 'Edit Task',
         accelerator: 'CmdOrCtrl+Enter',
-        click () { window.openItem() }
+        click () { window.openTask(1) }
       },
       {
         label: 'Delete Task',
         accelerator: 'CmdOrCtrl+Backspace',
-        click () { window.deleteItem() }
+        click () { window.deleteTask() }
       },
       {
         type: 'separator'

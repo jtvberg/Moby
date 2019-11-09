@@ -9,12 +9,12 @@ const template = [
       {
         label: 'New Task',
         accelerator: 'CmdOrCtrl+N',
-        click () { window.openTask(0) }
+        click () { window.openTask('new') }
       },
       {
         label: 'Edit Task',
         accelerator: 'CmdOrCtrl+Enter',
-        click () { window.openTask(1) }
+        click () { window.openTask('edit') }
       },
       {
         label: 'Delete Task',
@@ -27,7 +27,7 @@ const template = [
       {
         label: 'Search Tasks',
         accelerator: 'CmdOrCtrl+S',
-        click () { $('#search').focus() }
+        click () { alert('Would\'nt that be cool?') }
       }
     ]
   },
@@ -88,31 +88,6 @@ if (process.platform === 'darwin') {
       }
     ]
   })
-
-  // Mac extra window options
-  template[3].submenu = [
-    {
-      label: 'Close',
-      accelerator: 'CmdOrCtrl+W',
-      role: 'close'
-    },
-    {
-      label: 'Minimize',
-      accelerator: 'CmdOrCtrl+M',
-      role: 'minimize'
-    },
-    {
-      label: 'Zoom',
-      role: 'zoom'
-    },
-    {
-      type: 'separator'
-    },
-    {
-      label: 'Bring All to Front',
-      role: 'front'
-    }
-  ]
 }
 
 // Add menu to app

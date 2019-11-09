@@ -43,26 +43,17 @@ exports.addTask = task => {
                       <div class="card-menu">
                         <div class="card-menu-item-del fas fa-minus-square" id="del-button"></div>
                         <div class="card-menu-item-clone fas fa-clone" id="clone-button-${task.TaskId}"></div>
-                        <div class="card-menu-item-edit fas fa-edit" id="edit-button" data-type-id="edit"></div>
+                        <div class="card-menu-item-edit fas fa-edit" id="edit-button" href="#task-modal" data-toggle="modal" data-type-id="edit"></div>
                       <div>
                     </div>
                   </div>`
   $(`#col-${task.TaskStatus}`).append(taskHTML)
   $('#task-modal').modal('hide')
-  // Active task setting events
+  // Active task setting event
   $('.card').on('click', function () {
     window.activeTask = this.id
   })
-  // TODO: Fix cludgie implementation
-  // $('.card').hover(function () {
-  //   window.activeTask = this.id
-  // })
-  // Task mini-menu events
-  $('.card-menu-item-edit').click(() => {
-    $('#schedule-modal').modal('hide')
-    $('#restore-modal').modal('hide')
-    $('#task-modal').modal('show')
-  })
+  // Delete active task (send to archive)
   $('.card-menu-item-del').click(() => {
     if (activeTask) {
       document
@@ -72,6 +63,7 @@ exports.addTask = task => {
       tasks.saveTasks()
     }
   })
+  // Clone active task (to 'do')
   $(`#clone-button-${task.TaskId}`).click(() => {
     this.cloneTask(activeTask)
   })

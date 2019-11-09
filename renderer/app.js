@@ -5,7 +5,7 @@ const tasks = require('./tasks')
 const fs = require('fs')
 require('bootstrap/js/dist/modal')
 let desktopPath = ''
-let taskType = 1
+let taskType = 'new'
 
 // Load tasks at startup
 if (tasks.taskList.length && document.getElementById('main-window')) {
@@ -20,11 +20,11 @@ ipcRenderer.on('desktopPath', (e, data) => {
 })
 
 // IPC events/channels to act on screen state
-ipcRenderer.on('efs', (e) => {
+ipcRenderer.on('efs', () => {
   $('.wrapper').css('grid-template-rows', '0px 1fr')
 })
 
-ipcRenderer.on('lfs', (e) => {
+ipcRenderer.on('lfs', () => {
   $('.wrapper').css('grid-template-rows', '17px 1fr')
 })
 
@@ -72,23 +72,30 @@ window.deleteTask = () => {
   }
 }
 
-// Task modal load; recieves new vs edit
+// Task modal load event
 $('#task-modal').on('show.bs.modal', function (e) {
-  console.log($(e.relatedTarget).data('type-id'))
-  console.log($(e.currentTarget).data('type-id'))
-  taskType = $(e.relatedTarget).data('type-id') === 'new' ? taskType = 0 : 1
+  var type = $(e.relatedTarget).data('type-id') ? $(e.relatedTarget).data('type-id') : taskType
+  var status = $(e.relatedTarget).data('status-id') ? $(e.relatedTarget).data('status-id') : 'Do'
+  loadTaskModal(type, status)
+})
+
+// Task modal load function; recieves new vs edit
+function loadTaskModal (type, status) {
+  taskType = type
+  $('#schedule-modal').modal('hide')
+  $('#restore-modal').modal('hide')
   $('#collapse-sched').collapse('hide')
-  if (taskType === 0) {
+  if (type === 'new') {
     $('#task-modal-title').html('New Task')
-    $(this).find('form').trigger('reset')
-    $('#task-status').val($(e.relatedTarget).data('status-id'))
+    $('form').get(0).reset()
+    $('#task-status').val(status)
     $('#choose-days').prop('disabled', true)
   } else {
     $('#task-modal-title').html('Edit Task')
     var getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(activeTask))
     $('#task-title').val(getTask.TaskTitle)
     $('#task-detail').val(getTask.TaskDetail)
-    $('#task-status').val(getTask.TaskStatus)
+    $('#task-status').val(getTask.TaskStatus.replace(/^\w/, c => c.toUpperCase()))
     $(`#option-${getTask.TaskTheme}`)
       .closest('.btn')
       .button('toggle')
@@ -106,7 +113,7 @@ $('#task-modal').on('show.bs.modal', function (e) {
     }
     $('#radio-recur').val(getTask.MonthDay)
   }
-})
+}
 
 // Focus title field on modal 'shown'
 $('#task-modal').on('shown.bs.modal', function (e) {

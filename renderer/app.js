@@ -11,7 +11,9 @@ let taskType = 'new'
 if (tasks.taskList.length && document.getElementById('main-window')) {
   tasks.taskList.forEach(tasks.addTask)
   addScheduledTasks()
+  archiveDoneTasks()
   window.setInterval(addScheduledTasks, 86400000)
+  window.setInterval(archiveDoneTasks, 86400000)
 }
 
 // IPC event to get system desktop path
@@ -50,6 +52,19 @@ function addScheduledTasks () {
         var getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(item.TaskId))
         getTask.Count = i
         getTask.StartDate = getTask.StartDate + (86400000 * 7 * getTask.MonthDay)
+        tasks.saveTasks()
+      }
+    })
+  }
+}
+
+function archiveDoneTasks () {
+  if (tasks.taskList.length) {
+    tasks.taskList.forEach((item) => {
+      if (item.TaskStatus === 'done' && item.StatusDate < Date.now() + (86400000 * 7)) {
+        var getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(item.TaskId))
+        getTask.StatusDate = Date.now()
+        getTask.TaskStatus = 'archive'
         tasks.saveTasks()
       }
     })
@@ -163,6 +178,8 @@ $('#submit-button').click(() => {
   var startDate = new Date(Date.parse($('#start-date').val()) || Date.now()).getTime()
   var monthDay = $('#choose-recur input:radio:checked').val() || 0
   var weekDay = []
+  var statusDate = Date.now()
+  var tags = []
   $('#check-sun').prop('checked') && weekDay.push(0)
   $('#check-mon').prop('checked') && weekDay.push(1)
   $('#check-tue').prop('checked') && weekDay.push(2)
@@ -186,12 +203,17 @@ $('#submit-button').click(() => {
     Count: count,
     StartDate: startDate,
     WeekDay: weekDay,
-    MonthDay: monthDay
+    MonthDay: monthDay,
+    StatusDate: statusDate,
+    Tags: tags
   }
   if (taskType === 0) {
     tasks.taskList.push(newTaskData)
   } else {
     var getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(activeTask))
+    if (getTask.Status === status) {
+      statusDate = getTask.StatusDate
+    }
     getTask.TaskTitle = taskTitle
     getTask.TaskDetail = taskDetail
     getTask.TaskTheme = taskTheme
@@ -200,6 +222,8 @@ $('#submit-button').click(() => {
     getTask.StartDate = startDate
     getTask.WeekDay = weekDay
     getTask.MonthDay = monthDay
+    getTask.Tags = tags
+    getTask.StatusDate = statusDate
     document.getElementById(getTask.TaskId).remove()
   }
   tasks.saveTasks()

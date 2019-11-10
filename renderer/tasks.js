@@ -10,6 +10,7 @@ exports.saveTasks = () => {
 // Update task status helper function
 exports.updateTaskStatus = (taskList, taskId, taskStatus) => {
   taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).TaskStatus = taskStatus
+  taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).StatusDate = Date.now()
 }
 
 // Clone task to 'do'
@@ -26,7 +27,8 @@ exports.cloneTask = (taskId) => {
       Count: getTask.Count,
       StartDate: getTask.StartDate,
       WeekDay: getTask.WeekDay,
-      MonthDay: getTask.MonthDay
+      MonthDay: getTask.MonthDay,
+      Tags: getTask.Tags
     }
     tasks.taskList.push(newTaskData)
     tasks.saveTasks()
@@ -36,10 +38,17 @@ exports.cloneTask = (taskId) => {
 
 // Add task(s) to UI
 exports.addTask = task => {
+  let tagHTML = ''
+  if (task.Tags && task.Tags.length > 0) {
+    task.Tags.forEach((item) => {
+      tagHTML += `<div class="card tags">${item}</div>`
+    })
+  }
   const taskHTML = `<div class="card theme-${task.TaskTheme}" id="${task.TaskId}" data-toggle="collapse" data-target="#c${task.TaskId}" draggable="true" ondragstart="drag(event)">
                     <div id="b${task.TaskId}" >${task.TaskTitle}</div>
                     <div class="collapse collapse-content" id="c${task.TaskId}">
                       <p style="white-space: pre-wrap;">${task.TaskDetail}</p>
+                      <div class="tag-box" id="t${task.TaskId}">${tagHTML}</div>
                       <div class="card-menu">
                         <div class="card-menu-item-del fas fa-minus-square" id="del-button"></div>
                         <div class="card-menu-item-clone fas fa-clone" id="clone-button-${task.TaskId}"></div>

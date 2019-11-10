@@ -211,3 +211,15 @@ body {
 .theme-5 {
   background-color: #27ae60;
 }
+
+.tag-box {
+  display: flex;
+}
+
+.tags {
+  background-color: gray;
+  color: lightgray;
+  width: fit-content;
+  height: 22px;
+  margin: 1px;
+}

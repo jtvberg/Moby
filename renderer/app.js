@@ -47,7 +47,7 @@ function addScheduledTasks () {
   if (tasks.taskList.length) {
     tasks.taskList.forEach((item) => {
       if (item.TaskStatus === 'schedule' && item.StartDate < Date.now()) {
-        tasks.cloneTask(item.TaskId)
+        tasks.cloneTask(item.TaskId, 'today')
         var i = item.Count > 0 ? item.Count - 1 : item.Count
         var getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(item.TaskId))
         getTask.Count = i
@@ -58,32 +58,36 @@ function addScheduledTasks () {
   }
 }
 
+// Archive a specific task
+function archiveTask (taskId) {
+  document
+    .getElementById('col-archive')
+    .appendChild(document.getElementById(activeTask))
+  tasks.updateTaskStatus(taskId, 'archive')
+  tasks.saveTasks()
+}
+
+// Move tasks to Archive from Done after 1 week
 function archiveDoneTasks () {
   if (tasks.taskList.length) {
     tasks.taskList.forEach((item) => {
       if (item.TaskStatus === 'done' && item.StatusDate < Date.now() + (86400000 * 7)) {
-        var getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(item.TaskId))
-        getTask.StatusDate = Date.now()
-        getTask.TaskStatus = 'archive'
-        tasks.saveTasks()
+        archiveTask(item.TaskId)
       }
     })
   }
 }
 
-// Task menu commands
+// Task menu commands; Edit selected task
 window.openTask = (type) => {
   taskType = type
   $('#task-modal').modal('show')
 }
 
+// Task menu commands; Archive selected task
 window.deleteTask = () => {
   if (activeTask) {
-    document
-      .getElementById('col-archive')
-      .appendChild(document.getElementById(activeTask))
-    tasks.updateTaskStatus(tasks.taskList, activeTask, 'archive')
-    tasks.saveTasks()
+    archiveTask(activeTask)
   }
 }
 
@@ -211,7 +215,7 @@ $('#submit-button').click(() => {
     tasks.taskList.push(newTaskData)
   } else {
     var getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(activeTask))
-    if (getTask.Status === status) {
+    if (getTask.TaskStatus === taskStatus) {
       statusDate = getTask.StatusDate
     }
     getTask.TaskTitle = taskTitle
@@ -228,6 +232,7 @@ $('#submit-button').click(() => {
   }
   tasks.saveTasks()
   tasks.addTask(newTaskData)
+  $('#task-modal').modal('hide')
 })
 
 // Execute task modal submit on enter except when in detail field
@@ -242,12 +247,13 @@ $('#restore-button').click(() => {
   document
     .getElementById('col-do')
     .appendChild(document.getElementById(activeTask))
-  tasks.updateTaskStatus(tasks.taskList, activeTask, 'do')
+  tasks.updateTaskStatus(activeTask, 'do')
   tasks.saveTasks()
   $('#restore-modal').modal('hide')
 })
 
 // Exports all tasks to file to desktop
+// TODO: prompt for location
 $('#export-button').click(() => {
   if (tasks.taskList.length) {
     var JSONexport = JSON.stringify(tasks.taskList)
@@ -326,6 +332,6 @@ const drop = e => {
   } else {
     return
   }
-  tasks.updateTaskStatus(tasks.taskList, data, col)
+  tasks.updateTaskStatus(data, col)
   tasks.saveTasks()
 }

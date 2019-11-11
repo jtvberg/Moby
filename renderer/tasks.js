@@ -8,16 +8,17 @@ exports.saveTasks = () => {
 }
 
 // Update task status helper function
-exports.updateTaskStatus = (taskList, taskId, taskStatus) => {
-  taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).TaskStatus = taskStatus
-  taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).StatusDate = Date.now()
+exports.updateTaskStatus = (taskId, taskStatus) => {
+  this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).TaskStatus = taskStatus
+  this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).StatusDate = Date.now()
 }
 
 // Clone task to 'do'
-exports.cloneTask = (taskId) => {
+exports.cloneTask = (taskId, taskStatus) => {
   if (taskId) {
     var getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId))
-    var newTaskStatus = getTask.StartDate > Date.now() ? 'schedule' : 'do'
+    // var newTaskStatus = taskStatus ? getTask.StartDate > Date.now() ? 'schedule' : 'do' : taskStatus
+    var newTaskStatus = taskStatus !== undefined ? taskStatus : getTask.StartDate > Date.now() ? 'schedule' : 'do'
     var newTaskData = {
       TaskStatus: newTaskStatus,
       TaskId: new Date().valueOf(),
@@ -56,8 +57,8 @@ exports.addTask = task => {
                       <div>
                     </div>
                   </div>`
+  // Add task HTML to host
   $(`#col-${task.TaskStatus}`).append(taskHTML)
-  $('#task-modal').modal('hide')
   // Active task setting event
   $('.card').on('click', function () {
     window.activeTask = this.id
@@ -68,7 +69,7 @@ exports.addTask = task => {
       document
         .getElementById('col-archive')
         .appendChild(document.getElementById(activeTask))
-      tasks.updateTaskStatus(tasks.taskList, activeTask, 'archive')
+      tasks.updateTaskStatus(activeTask, 'archive')
       tasks.saveTasks()
     }
   })

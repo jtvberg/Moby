@@ -62,7 +62,7 @@ function addScheduledTasks () {
 function archiveTask (taskId) {
   document
     .getElementById('col-archive')
-    .appendChild(document.getElementById(activeTask))
+    .appendChild(document.getElementById(taskId))
   tasks.updateTaskStatus(taskId, 'archive')
   tasks.saveTasks()
 }
@@ -71,7 +71,7 @@ function archiveTask (taskId) {
 function archiveDoneTasks () {
   if (tasks.taskList.length) {
     tasks.taskList.forEach((item) => {
-      if (item.TaskStatus === 'done' && item.StatusDate < Date.now() + (86400000 * 7)) {
+      if (item.TaskStatus === 'done' && item.StatusDate < Date.now() - (86400000 * 7)) {
         archiveTask(item.TaskId)
       }
     })

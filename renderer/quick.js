@@ -13,7 +13,9 @@ function quickTask (type) {
     Count: 1,
     StartDate: taskId,
     WeekDay: [],
-    MonthDay: 0
+    MonthDay: 0,
+    StatusDate: taskId,
+    Tags: []
   }
   // IPC event/channel to send new task data to app via main
   ipcRenderer.send('quick-task', newTaskData)

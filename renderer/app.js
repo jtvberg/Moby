@@ -7,7 +7,7 @@ require('bootstrap/js/dist/modal')
 let desktopPath = ''
 let taskType = 'new'
 
-// Load tasks at startup
+// Load tasks at startup; Evaluate for sceduled task; Archive off tasks in 'Done' for more than a week
 if (tasks.taskList.length && document.getElementById('main-window')) {
   tasks.taskList.forEach(tasks.addTask)
   addScheduledTasks()
@@ -41,18 +41,21 @@ ipcRenderer.on('quick-data', (e, data) => {
 function addScheduledTasks () {
   /* Schedule logic
   if in 'schedule' status && date < now
-  if count = 1 move scheduled to today
-  if count > 1 clone task to today, reduce count (except forever -1) and update start date
+  if count > 0 or  clone task to today, reduce count (except forever -1) and update start date
   */
   if (tasks.taskList.length) {
     tasks.taskList.forEach((item) => {
       if (item.TaskStatus === 'schedule' && item.StartDate < Date.now()) {
         tasks.cloneTask(item.TaskId, 'today')
         var i = item.Count > 0 ? item.Count - 1 : item.Count
-        var getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(item.TaskId))
-        getTask.Count = i
-        getTask.StartDate = getTask.StartDate + (86400000 * 7 * getTask.MonthDay)
-        tasks.saveTasks()
+        if (i === 0) {
+          archiveTask(item.TaskId)
+        } else {
+          var getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(item.TaskId))
+          getTask.Count = i
+          getTask.StartDate = getTask.StartDate + (86400000 * 7)
+          tasks.saveTasks()
+        }
       }
     })
   }
@@ -171,8 +174,14 @@ $('#radio-once').click(() => {
   $('#recur-count').addClass('disabled-form-label')
 })
 
-// Task modal submit task logic
+// Task modal submit event
 $('#submit-button').click(() => {
+  submitTask()
+  $('#task-modal').modal('hide')
+})
+
+// Task submittal from modal
+function submitTask () {
   var taskTitle = $('#task-title').val() || 'No Title'
   var taskDetail = $('#task-detail').val()
   var taskTheme = $('#choose-theme input:radio:checked').val() || 1
@@ -211,7 +220,7 @@ $('#submit-button').click(() => {
     StatusDate: statusDate,
     Tags: tags
   }
-  if (taskType === 0) {
+  if (taskType === 'new') {
     tasks.taskList.push(newTaskData)
   } else {
     var getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(activeTask))
@@ -232,8 +241,7 @@ $('#submit-button').click(() => {
   }
   tasks.saveTasks()
   tasks.addTask(newTaskData)
-  $('#task-modal').modal('hide')
-})
+}
 
 // Execute task modal submit on enter except when in detail field
 $('#task-modal').keypress(function (e) {

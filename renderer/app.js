@@ -278,23 +278,37 @@ $('#export-button').click(() => {
 })
 
 // Imports all tasks (even duplicates) from file from desktop
-// TODO: handle dupes
 $('#import-button').click(() => {
   fs.readFile(`${desktopPath}/moby_export.txt`, (err, data) => {
     if (err) {
       alert('An error during the import ' + err.message)
       return
     }
-    var JSONimport = JSON.parse(data)
+    try {
+      var JSONimport = JSON.parse(data)
+    } catch (error) {
+      alert(error)
+    }
     if (JSONimport.length) {
-      JSONimport.forEach(item => {
-        tasks.taskList.push(item)
+      var i = 0
+      JSONimport.forEach(task => {
+        // debugger
+        if (!tasks.taskList.some(e => e.TaskId === task.TaskId)) {
+          tasks.taskList.push(task)
+          tasks.addTask(task)
+          i++
+        }
       })
       tasks.saveTasks()
-      JSONimport.forEach(tasks.addTask)
-      alert('The import has completed succesfully')
+      if (i > 1) {
+        alert(`${i} tasks imported succesfully`)
+      } else if (i === 1) {
+        alert('1 task imported succesfully')
+      } else {
+        alert('No new tasks found')
+      }
     } else {
-      alert('No records found')
+      alert('No tasks found')
     }
   })
 })

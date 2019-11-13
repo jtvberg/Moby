@@ -299,28 +299,38 @@ $('#import-button').click(() => {
   })
 })
 
-// Collapse all task elements on hover outside of tasks
-// TODO: Fix cludgie implementation
-// $('.wrapper').hover(() => {
-//   $('.collapse').collapse('hide')
-// })
+// Theme toggle event
+const themeToggle = (e) => {
+  toggleTheme($(e.currentTarget).data('theme-id'))
+}
+
+// Theme toggle task show
+function toggleTheme (themeId) {
+  if ($(`#theme${themeId}-button`).hasClass(`color-${themeId}`)) {
+    $(`#theme${themeId}-button`).removeClass(`color-${themeId}`)
+    $(`.theme-${themeId}`).hide()
+  } else {
+    $(`#theme${themeId}-button`).addClass(`color-${themeId}`)
+    $(`.theme-${themeId}`).show()
+  }
+}
 
 // Completely close app
-const exit = e => {
+const exit = (e) => {
   const remote = require('electron').remote
   remote.app.exit()
 }
 
 // Task drag and drop events
-const allowDrop = e => {
+const allowDrop = (e) => {
   e.preventDefault()
 }
 
-const drag = e => {
+const drag = (e) => {
   e.dataTransfer.setData('text', e.target.id)
 }
 
-const drop = e => {
+const drop = (e) => {
   e.preventDefault()
   var data = e.dataTransfer.getData('text')
   let col

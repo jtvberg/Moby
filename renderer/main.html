@@ -15,6 +15,13 @@
         <div class="menu-item fas fa-download fa-2x" id="export-button"></div>
         <div class="menu-item fas fa-upload fa-2x" id="import-button"></div>
         <div class="menu-item fas fa-sign-out-alt fa-2x" onclick="exit(event)"></div>
+        <div class="theme-toggle">
+          <div class="color-item fas fa-square fa-2x color-1" id="theme1-button" data-theme-id="1" onclick="themeToggle(event)"></div>
+          <div class="color-item fas fa-square fa-2x color-2" id="theme2-button" data-theme-id="2" onclick="themeToggle(event)"></div>
+          <div class="color-item fas fa-square fa-2x color-3" id="theme3-button" data-theme-id="3" onclick="themeToggle(event)"></div>
+          <div class="color-item fas fa-square fa-2x color-4" id="theme4-button" data-theme-id="4" onclick="themeToggle(event)"></div>
+          <div class="color-item fas fa-square fa-2x color-5" id="theme5-button" data-theme-id="5" onclick="themeToggle(event)"></div>
+        </div>
       </div> 
       <div class="host" id="host-do" ondrop="drop(event)" ondragover="allowDrop(event)">
         <div class="header">Do</div>
@@ -67,19 +74,19 @@
               </div>
               <label for="choose-theme">Color</label>
               <div class="btn-group btn-group-toggle btn-group-lg" id="choose-theme" data-toggle="buttons">
-                <label class="btn theme-1" active>
+                <label class="btn theme-select-1" active>
                   <input type="radio" name="options" id="option-1" autocomplete="off" checked value="1"> 
                 </label>
-                <label class="btn theme-2">
+                <label class="btn theme-select-2">
                   <input type="radio" name="options" id="option-2" autocomplete="off" value="2"> 
                 </label>
-                <label class="btn theme-3">
+                <label class="btn theme-select-3">
                   <input type="radio" name="options" id="option-3" autocomplete="off" value="3">
                 </label>
-                <label class="btn theme-4">
+                <label class="btn theme-select-4">
                   <input type="radio" name="options" id="option-4" autocomplete="off" value="4"> 
                 </label>
-                <label class="btn theme-5">
+                <label class="btn theme-select-5">
                   <input type="radio" name="options" id="option-5" autocomplete="off" value="5"> 
                 </label>
               </div>

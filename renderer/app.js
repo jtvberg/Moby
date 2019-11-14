@@ -265,34 +265,38 @@ $('#restore-button').click(() => {
 $('#export-button').click(() => {
   if (tasks.taskList.length) {
     var JSONexport = JSON.stringify(tasks.taskList)
-    fs.writeFile(`${desktopPath}/moby_export.txt`, JSONexport, err => {
+    fs.writeFile(`${desktopPath}/moby_export_${Date.now()}.txt`, JSONexport, err => {
       if (err) {
-        alert('An error during the export ' + err.message)
+        alert('An error occured during the export ' + err.message)
         return
       }
-      alert(
-        'The export has completed succesfully and is located on your desktop'
-      )
+      alert('The export has completed succesfully and is located on your desktop')
     })
+  } else {
+    alert('Nothing to export')
   }
 })
 
 // Imports all tasks (even duplicates) from file from desktop
 $('#import-button').click(() => {
-  fs.readFile(`${desktopPath}/moby_export.txt`, (err, data) => {
+  let latestExport = 0
+  const searchString = 'moby_export_'
+  fs.readdirSync(desktopPath).filter(file => (file.split('.').pop().toLowerCase() === 'txt') && (file.substring(0, searchString.length) === searchString)).forEach((file) => {
+    latestExport = file.substring(searchString.length, file.length - 4) > latestExport ? file.substring(searchString.length, file.length - 4) : latestExport
+  })
+  fs.readFile(`${desktopPath}/${searchString}${latestExport}.txt`, (err, data) => {
     if (err) {
-      alert('An error during the import ' + err.message)
+      alert('An error occured during the import ' + err.message)
       return
     }
     try {
       var JSONimport = JSON.parse(data)
-    } catch (error) {
-      alert(error)
+    } catch (err) {
+      alert(err)
     }
     if (JSONimport.length) {
       var i = 0
       JSONimport.forEach(task => {
-        // debugger
         if (!tasks.taskList.some(e => e.TaskId === task.TaskId)) {
           tasks.taskList.push(task)
           tasks.addTask(task)

@@ -53,7 +53,7 @@ function addScheduledTasks () {
         tasks.cloneTask(item.TaskId, 'today')
         var i = item.Count > 0 ? item.Count - 1 : item.Count
         if (i === 0) {
-          archiveTask(item.TaskId)
+          this.archiveTask(item.TaskId)
         } else {
           var getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(item.TaskId))
           getTask.Count = i
@@ -65,21 +65,12 @@ function addScheduledTasks () {
   }
 }
 
-// Archive a specific task
-function archiveTask (taskId) {
-  document
-    .getElementById('col-archive')
-    .appendChild(document.getElementById(taskId))
-  tasks.updateTaskStatus(taskId, 'archive')
-  tasks.saveTasks()
-}
-
 // Move tasks to Archive from Done after 1 week
 function archiveDoneTasks () {
   if (tasks.taskList.length) {
     tasks.taskList.forEach((item) => {
       if (item.TaskStatus === 'done' && item.StatusDate < Date.now() - (86400000 * 7)) {
-        archiveTask(item.TaskId)
+        tasks.archiveTask(item.TaskId)
       }
     })
   }
@@ -93,9 +84,7 @@ window.openTask = (type) => {
 
 // Task menu commands; Archive selected task
 window.deleteTask = () => {
-  if (activeTask) {
-    archiveTask(activeTask)
-  }
+  tasks.archiveTask(activeTask)
 }
 
 // Task modal load event
@@ -180,72 +169,9 @@ $('#radio-once').click(() => {
 
 // Task modal submit event
 $('#submit-button').click(() => {
-  submitTask()
+  tasks.submitTask(taskType)
   $('#task-modal').modal('hide')
 })
-
-// Task submittal from modal
-function submitTask () {
-  var taskTitle = $('#task-title').val() || 'No Title'
-  var taskDetail = $('#task-detail').val()
-  var taskTheme = $('#choose-theme input:radio:checked').val() || 1
-  var taskStatus = $('#task-status').val().toLowerCase()
-  var taskId = Date.now()
-  var count = $('#count-select').val() || 1
-  var startDate = new Date(Date.parse($('#start-date').val()) || Date.now()).getTime()
-  var monthDay = $('#choose-recur input:radio:checked').val() || 0
-  var weekDay = []
-  var statusDate = Date.now()
-  var tags = []
-  $('#check-sun').prop('checked') && weekDay.push(0)
-  $('#check-mon').prop('checked') && weekDay.push(1)
-  $('#check-tue').prop('checked') && weekDay.push(2)
-  $('#check-wed').prop('checked') && weekDay.push(3)
-  $('#check-thu').prop('checked') && weekDay.push(4)
-  $('#check-fri').prop('checked') && weekDay.push(5)
-  $('#check-sat').prop('checked') && weekDay.push(6)
-  if (weekDay.length < 1 && monthDay > 0) {
-    weekDay.push(new Date(startDate).getDay())
-  }
-  count *= weekDay.length > 0 ? weekDay.length : 1
-  if (startDate > Date.now()) {
-    taskStatus = 'schedule'
-  }
-  var newTaskData = {
-    TaskStatus: taskStatus,
-    TaskId: taskId,
-    TaskTitle: taskTitle,
-    TaskDetail: taskDetail,
-    TaskTheme: taskTheme,
-    Count: count,
-    StartDate: startDate,
-    WeekDay: weekDay,
-    MonthDay: monthDay,
-    StatusDate: statusDate,
-    Tags: tags
-  }
-  if (taskType === 'new') {
-    tasks.taskList.push(newTaskData)
-  } else {
-    var getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(activeTask))
-    if (getTask.TaskStatus === taskStatus) {
-      statusDate = getTask.StatusDate
-    }
-    getTask.TaskTitle = taskTitle
-    getTask.TaskDetail = taskDetail
-    getTask.TaskTheme = taskTheme
-    getTask.TaskStatus = taskStatus
-    getTask.Count = count
-    getTask.StartDate = startDate
-    getTask.WeekDay = weekDay
-    getTask.MonthDay = monthDay
-    getTask.Tags = tags
-    getTask.StatusDate = statusDate
-    document.getElementById(getTask.TaskId).remove()
-  }
-  tasks.saveTasks()
-  tasks.addTask(newTaskData)
-}
 
 // Execute task modal submit on enter except when in detail field
 $('#task-modal').keypress(function (e) {
@@ -256,11 +182,7 @@ $('#task-modal').keypress(function (e) {
 
 // Restore archived task to 'Do' column
 $('#restore-button').click(() => {
-  document
-    .getElementById('col-do')
-    .appendChild(document.getElementById(activeTask))
-  tasks.updateTaskStatus(activeTask, 'do')
-  tasks.saveTasks()
+  tasks.restoreTask(activeTask)
   $('#restore-modal').modal('hide')
 })
 
@@ -375,5 +297,4 @@ const drop = (e) => {
     return
   }
   tasks.updateTaskStatus(data, col)
-  tasks.saveTasks()
 }

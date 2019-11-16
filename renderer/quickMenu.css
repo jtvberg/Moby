@@ -32,6 +32,12 @@ body {
 
 .footer {
   text-align: right;
+  display: flex;
+  place-content: flex-end;
+}
+
+.btn {
+  margin: 0px 1px 0px 4px;
 }
 
 .theme-1.active,

@@ -9,18 +9,19 @@
   </head>
   <body id="main-window">
     <div class="wrapper">
-       <div class="menu">
+      <div class="top-bar"></div>
+      <div class="menu">
         <div class="menu-item fas fa-archive fa-2x" href="#restore-modal" data-toggle="modal" style="padding-top: 0;"></div>
         <div class="menu-item fas fa-calendar fa-2x" href="#schedule-modal" data-toggle="modal"></div>
         <div class="menu-item fas fa-download fa-2x" id="export-button"></div>
         <div class="menu-item fas fa-upload fa-2x" id="import-button"></div>
         <div class="menu-item fas fa-sign-out-alt fa-2x" onclick="exit(event)"></div>
         <div class="theme-toggle">
-          <div class="color-item fas fa-square fa-2x color-1" id="theme1-button" data-theme-id="1" onclick="themeToggle(event)"></div>
-          <div class="color-item fas fa-square fa-2x color-2" id="theme2-button" data-theme-id="2" onclick="themeToggle(event)"></div>
-          <div class="color-item fas fa-square fa-2x color-3" id="theme3-button" data-theme-id="3" onclick="themeToggle(event)"></div>
-          <div class="color-item fas fa-square fa-2x color-4" id="theme4-button" data-theme-id="4" onclick="themeToggle(event)"></div>
-          <div class="color-item fas fa-square fa-2x color-5" id="theme5-button" data-theme-id="5" onclick="themeToggle(event)"></div>
+          <div class="color-item fas fa-square fa-2x color-1" id="theme1-button" data-theme-id="1" onclick="toggleThemeClick(event)"></div>
+          <div class="color-item fas fa-square fa-2x color-2" id="theme2-button" data-theme-id="2" onclick="toggleThemeClick(event)"></div>
+          <div class="color-item fas fa-square fa-2x color-3" id="theme3-button" data-theme-id="3" onclick="toggleThemeClick(event)"></div>
+          <div class="color-item fas fa-square fa-2x color-4" id="theme4-button" data-theme-id="4" onclick="toggleThemeClick(event)"></div>
+          <div class="color-item fas fa-square fa-2x color-5" id="theme5-button" data-theme-id="5" onclick="toggleThemeClick(event)"></div>
         </div>
       </div> 
       <div class="host" id="host-do" ondrop="drop(event)" ondragover="allowDrop(event)">

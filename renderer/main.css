@@ -55,6 +55,13 @@ body {
   padding: 0px 5px;
 }
 
+.top-bar {
+  grid-row: 1;
+  grid-column-start: 1;
+  grid-column-end: 6;
+  height: 20px;
+}
+
 .menu {
   display: flex;
   flex-direction: column;
@@ -72,7 +79,7 @@ body {
   justify-content: flex-end;
   position: fixed;
   padding: 6px;
-  bottom: 1px;
+  bottom: 0px;
 }
 
 .logo {

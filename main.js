@@ -127,3 +127,8 @@ app.on('activate', () => {
 ipcMain.on('quick-task', (e, data) => {
   win.webContents.send('quick-data', data)
 })
+
+// IPC channel to maximize window
+ipcMain.on('win-max', () => {
+  win.maximize()
+})

@@ -37,6 +37,10 @@ ipcRenderer.on('quick-data', (e, data) => {
   tasks.addTask(data)
 })
 
+// IPC event to maximize window on top bar double click
+$('.top-bar').dblclick(() => {
+  ipcRenderer.send('win-max')
+})
 // Scheduled tasks handler
 function addScheduledTasks () {
   /* Schedule logic
@@ -281,9 +285,11 @@ $('#export-button').click(() => {
 $('#import-button').click(() => {
   let latestExport = 0
   const searchString = 'moby_export_'
+  // Find the latest export file by extenstion and suffix
   fs.readdirSync(desktopPath).filter(file => (file.split('.').pop().toLowerCase() === 'txt') && (file.substring(0, searchString.length) === searchString)).forEach((file) => {
     latestExport = file.substring(searchString.length, file.length - 4) > latestExport ? file.substring(searchString.length, file.length - 4) : latestExport
   })
+  // Read in the latest file ignoring dupes by ID (not date or content)
   fs.readFile(`${desktopPath}/${searchString}${latestExport}.txt`, (err, data) => {
     if (err) {
       alert('An error occured during the import ' + err.message)
@@ -318,7 +324,7 @@ $('#import-button').click(() => {
 })
 
 // Theme toggle event
-const themeToggle = (e) => {
+const toggleThemeClick = (e) => {
   toggleTheme($(e.currentTarget).data('theme-id'))
 }
 

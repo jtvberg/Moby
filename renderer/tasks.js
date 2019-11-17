@@ -1,4 +1,14 @@
 /* global activeTask */
+// Modules and variable definition
+const { ipcRenderer } = require('electron')
+const fs = require('fs')
+let desktopPath = ''
+
+// IPC event to get system desktop path
+ipcRenderer.on('desktopPath', (e, data) => {
+  desktopPath = data
+})
+
 // Track taskList with array
 exports.taskList = JSON.parse(localStorage.getItem('taskList')) || []
 
@@ -158,4 +168,63 @@ exports.restoreTask = (taskId) => {
     this.updateTaskStatus(taskId, 'do')
     this.saveTasks()
   }
+}
+
+// Exports all tasks to file to desktop
+// TODO: prompt for location
+exports.exportTasks = () => {
+  if (this.taskList.length) {
+    var JSONexport = JSON.stringify(this.taskList)
+    fs.writeFile(`${desktopPath}/moby_export_${Date.now()}.txt`, JSONexport, err => {
+      if (err) {
+        alert('An error occured during the export ' + err.message)
+        return
+      }
+      alert('The export has completed succesfully and is located on your desktop')
+    })
+  } else {
+    alert('Nothing to export')
+  }
+}
+
+// Imports all tasks (even duplicates) from file from desktop
+exports.importTasks = () => {
+  let latestExport = 0
+  const searchString = 'moby_export_'
+  // Find the latest export file by extenstion and suffix
+  fs.readdirSync(desktopPath).filter(file => (file.split('.').pop().toLowerCase() === 'txt') && (file.substring(0, searchString.length) === searchString)).forEach((file) => {
+    latestExport = file.substring(searchString.length, file.length - 4) > latestExport ? file.substring(searchString.length, file.length - 4) : latestExport
+  })
+  // Read in the latest file ignoring dupes by ID (not date or content)
+  fs.readFile(`${desktopPath}/${searchString}${latestExport}.txt`, (err, data) => {
+    if (err) {
+      alert('An error occured during the import ' + err.message)
+      return
+    }
+    try {
+      var JSONimport = JSON.parse(data)
+    } catch (err) {
+      alert(err)
+    }
+    if (JSONimport.length) {
+      var i = 0
+      JSONimport.forEach(task => {
+        if (!this.taskList.some(e => e.TaskId === task.TaskId)) {
+          this.taskList.push(task)
+          this.addTask(task)
+          i++
+        }
+      })
+      this.saveTasks()
+      if (i > 1) {
+        alert(`${i} tasks imported succesfully`)
+      } else if (i === 1) {
+        alert('1 task imported succesfully')
+      } else {
+        alert('No new tasks found')
+      }
+    } else {
+      alert('No tasks found')
+    }
+  })
 }

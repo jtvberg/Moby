@@ -95,6 +95,16 @@ window.deleteTask = () => {
   tasks.archiveTask(activeTask)
 }
 
+// Task menu commands; Expand all tasks
+window.expandAll = () => {
+  expandAll()
+}
+
+// Task menu commands; Collapse all tasks
+window.collapseAll = () => {
+  collapseAll()
+}
+
 // Task modal load event
 $('#task-modal').on('show.bs.modal', function (e) {
   var type = $(e.relatedTarget).data('type-id') ? $(e.relatedTarget).data('type-id') : taskType
@@ -267,6 +277,14 @@ function toggleTheme (themeId) {
     $(`#theme${themeId}-button`).addClass(`color-${themeId}`)
     $(`.theme-${themeId}`).show()
   }
+}
+
+const expandAll = (e) => {
+  $('.collapse').collapse('show')
+}
+
+const collapseAll = (e) => {
+  $('.collapse').collapse('hide')
 }
 
 // Completely close app

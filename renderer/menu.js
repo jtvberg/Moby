@@ -25,6 +25,19 @@ const template = [
         type: 'separator'
       },
       {
+        label: 'Expand All Tasks',
+        accelerator: 'CmdOrCtrl+Down',
+        click () { window.expandAll() }
+      },
+      {
+        label: 'Collapse All Tasks',
+        accelerator: 'CmdOrCtrl+Up',
+        click () { window.collapseAll() }
+      },
+      {
+        type: 'separator'
+      },
+      {
         label: 'Search Tasks',
         accelerator: 'CmdOrCtrl+S',
         click () { alert('Would\'nt that be cool?') }

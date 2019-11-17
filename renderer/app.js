@@ -45,8 +45,9 @@ $('.top-bar').dblclick(() => {
 // Scheduled tasks handler
 function addScheduledTasks () {
   /* Schedule logic
-  if in 'schedule' status && date < now
-  if count > 0 or  clone task to today, reduce count (except forever -1) and update start date
+  if in 'schedule' status && date < now:
+  if count > 0 or -1 clone task to today, reduce count (except forever -1) and update start date
+  if count of scheduled item is 0, archive it
   */
   if (tasks.taskList.length) {
     tasks.taskList.forEach((item) => {
@@ -58,7 +59,7 @@ function addScheduledTasks () {
         } else {
           var getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(item.TaskId))
           getTask.Count = i
-          getTask.StartDate = getTask.StartDate + (86400000 * 7)
+          getTask.StartDate = getTask.StartDate + (86400000 * 7 * getTask.MonthDay)
           tasks.saveTasks()
         }
       }

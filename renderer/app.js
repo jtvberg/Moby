@@ -37,10 +37,18 @@ ipcRenderer.on('quick-data', (e, data) => {
   tasks.addTask(data)
 })
 
+let winMax = false
 // IPC event to maximize window on top bar double click
 $('.top-bar').dblclick(() => {
-  ipcRenderer.send('win-max')
+  if (!winMax) {
+    ipcRenderer.send('win-max')
+    winMax = true
+  } else {
+    ipcRenderer.send('win-restore')
+    winMax = false
+  }
 })
+
 // Scheduled tasks handler
 function addScheduledTasks () {
   /* Schedule logic

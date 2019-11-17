@@ -132,3 +132,8 @@ ipcMain.on('quick-task', (e, data) => {
 ipcMain.on('win-max', () => {
   win.maximize()
 })
+
+// IPC channel to restore window
+ipcMain.on('win-restore', () => {
+  win.unmaximize()
+})

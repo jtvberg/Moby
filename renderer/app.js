@@ -85,24 +85,34 @@ function archiveDoneTasks () {
 }
 
 // Task menu commands; Edit selected task
-window.openTask = (type) => {
+window.openTaskMenu = (type) => {
   taskType = type
   $('#task-modal').modal('show')
 }
 
 // Task menu commands; Archive selected task
-window.deleteTask = () => {
+window.archiveTaskMenu = () => {
   tasks.archiveTask(activeTask)
 }
 
 // Task menu commands; Expand all tasks
-window.expandAll = () => {
+window.expandAllMenu = () => {
   expandAll()
 }
 
 // Task menu commands; Collapse all tasks
-window.collapseAll = () => {
+window.collapseAllMenu = () => {
   collapseAll()
+}
+
+// Task menu commands; Export all tasks
+window.exportTasksMenu = () => {
+  exportTasks()
+}
+
+// Task menu commands; Import all tasks
+window.importTasksMenu = () => {
+  importTasks()
 }
 
 // Task modal load event
@@ -204,9 +214,14 @@ $('#restore-button').click(() => {
   $('#restore-modal').modal('hide')
 })
 
+// Export task event
+$('#export-button').click(() => {
+  exportTasks()
+})
+
 // Exports all tasks to file to desktop
 // TODO: prompt for location
-$('#export-button').click(() => {
+function exportTasks () {
   if (tasks.taskList.length) {
     var JSONexport = JSON.stringify(tasks.taskList)
     fs.writeFile(`${desktopPath}/moby_export_${Date.now()}.txt`, JSONexport, err => {
@@ -219,10 +234,15 @@ $('#export-button').click(() => {
   } else {
     alert('Nothing to export')
   }
+}
+
+// Import task event
+$('#import-button').click(() => {
+  importTasks()
 })
 
 // Imports all tasks (even duplicates) from file from desktop
-$('#import-button').click(() => {
+function importTasks () {
   let latestExport = 0
   const searchString = 'moby_export_'
   // Find the latest export file by extenstion and suffix
@@ -261,7 +281,7 @@ $('#import-button').click(() => {
       alert('No tasks found')
     }
   })
-})
+}
 
 // Theme toggle event
 const toggleThemeClick = (e) => {

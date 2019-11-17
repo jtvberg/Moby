@@ -9,17 +9,17 @@ const template = [
       {
         label: 'New Task',
         accelerator: 'CmdOrCtrl+N',
-        click () { window.openTask('new') }
+        click () { window.openTaskMenu('new') }
       },
       {
         label: 'Edit Task',
         accelerator: 'CmdOrCtrl+Enter',
-        click () { window.openTask('edit') }
+        click () { window.openTaskMenu('edit') }
       },
       {
         label: 'Delete Task',
         accelerator: 'CmdOrCtrl+Backspace',
-        click () { window.deleteTask() }
+        click () { window.archiveTaskMenu() }
       },
       {
         type: 'separator'
@@ -27,12 +27,23 @@ const template = [
       {
         label: 'Expand All Tasks',
         accelerator: 'CmdOrCtrl+Down',
-        click () { window.expandAll() }
+        click () { window.expandAllMenu() }
       },
       {
         label: 'Collapse All Tasks',
         accelerator: 'CmdOrCtrl+Up',
-        click () { window.collapseAll() }
+        click () { window.collapseAllMenu() }
+      },
+      {
+        type: 'separator'
+      },
+      {
+        label: 'Export Tasks',
+        click () { window.exportTasksMenu() }
+      },
+      {
+        label: 'Import Tasks',
+        click () { window.importTasksMenu() }
       },
       {
         type: 'separator'

@@ -148,7 +148,7 @@ function loadTaskModal (type, status) {
       $('#check-fri').prop('checked', getTask.WeekDay.includes(5))
       $('#check-sat').prop('checked', getTask.WeekDay.includes(6))
     }
-    $('#radio-recur').val(getTask.MonthDay)
+    $(`input[name=radio-recur][value=${getTask.MonthDay}]`).prop('checked', true)
   }
 }
 

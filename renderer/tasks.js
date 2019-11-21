@@ -21,6 +21,7 @@ exports.saveTasks = () => {
 exports.updateTaskStatus = (taskId, taskStatus) => {
   this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).TaskStatus = taskStatus
   this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).StatusDate = Date.now()
+  $(`#a${taskId}`).text('0')
   this.saveTasks()
 }
 
@@ -120,18 +121,24 @@ exports.addTask = task => {
       tagHTML += `<div class="card tags">${item}</div>`
     })
   }
+  const taskDays = Math.floor((Date.now() - task.StatusDate) / 86400000)
+
+  // <div class="band theme-${task.TaskTheme}">${taskDays}</div>
   const taskHTML = `<div class="card theme-${task.TaskTheme}" id="${task.TaskId}" data-toggle="collapse" data-target="#c${task.TaskId}" draggable="true" ondragstart="drag(event)">
-                    <div id="b${task.TaskId}" >${task.TaskTitle}</div>
-                    <div class="collapse collapse-content" id="c${task.TaskId}">
-                      <p style="white-space: pre-wrap;">${task.TaskDetail}</p>
-                      <div class="tag-box" id="t${task.TaskId}">${tagHTML}</div>
-                      <div class="card-menu">
-                        <div class="card-menu-item-del fas fa-minus-square" id="del-button"></div>
-                        <div class="card-menu-item-clone fas fa-clone" id="clone-button-${task.TaskId}"></div>
-                        <div class="card-menu-item-edit fas fa-edit" id="edit-button" href="#task-modal" data-toggle="modal" data-type-id="edit"></div>
-                      <div>
-                    </div>
-                  </div>`
+                      <div style="clear: both" id="b${task.TaskId}">
+                        <span class="title">${task.TaskTitle}</span>
+                        <span class="age" id="a${task.TaskId}">${taskDays}</span>
+                      </div>
+                      <div class="collapse collapse-content" id="c${task.TaskId}">
+                        <p style="white-space: pre-wrap;">${task.TaskDetail}</p>
+                        <div class="tag-box" id="t${task.TaskId}">${tagHTML}</div>
+                        <div class="card-menu">
+                          <div class="card-menu-item-del fas fa-minus-square" id="del-button"></div>
+                          <div class="card-menu-item-clone fas fa-clone" id="clone-button-${task.TaskId}"></div>
+                          <div class="card-menu-item-edit fas fa-edit" id="edit-button" href="#task-modal" data-toggle="modal" data-type-id="edit"></div>
+                        <div>
+                      </div>
+                    </div>`
   // Add task HTML to host
   $(`#col-${task.TaskStatus}`).append(taskHTML)
   // Active task setting event

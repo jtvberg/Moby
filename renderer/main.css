@@ -124,6 +124,14 @@ body {
   box-shadow: 0 4px 8px 0 rgba(82, 82, 82, 0.6);
 }
 
+.title {
+  float: left;
+}
+
+.age {
+  float: right;
+}
+
 .card-menu-item-del:hover {
   color: rgb(66, 195, 255);
 }

@@ -11,13 +11,17 @@
     <div class="wrapper">
       <div class="top-bar"></div>
       <div class="menu">
-        <div class="menu-item fas fa-archive fa-2x" href="#restore-modal" data-toggle="modal" style="padding-top: 0;"></div>
-        <div class="menu-item fas fa-calendar fa-2x" href="#schedule-modal" data-toggle="modal"></div>
-        <div class="menu-item fas fa-download fa-2x" id="export-button"></div>
-        <div class="menu-item fas fa-upload fa-2x" id="import-button"></div>
-        <div class="menu-item fas fa-expand-arrows-alt fa-2x" onclick="expandAll(event)"></div>
-        <div class="menu-item fas fa-compress-arrows-alt fa-2x" onclick="collapseAll(event)"></div>
-        <div class="menu-item fas fa-sign-out-alt fa-2x" onclick="exit(event)"></div>
+        <span href="#restore-modal" data-toggle="modal">
+          <div class="menu-item fas fa-archive fa-2x" data-toggle="tooltip" title="Restore from Archive" style="padding-top: 0;"></div>
+        </span>
+        <span href="#restore-modal" data-toggle="modal">
+          <div class="menu-item fas fa-calendar fa-2x" data-toggle="tooltip" title="Scheduled Tasks"></div>
+        </span>
+        <div class="menu-item fas fa-download fa-2x" id="export-button" data-toggle="tooltip" title="Export All to File"></div>
+        <div class="menu-item fas fa-upload fa-2x" id="import-button" data-toggle="tooltip" title="Import from File"></div>
+        <div class="menu-item fas fa-expand-arrows-alt fa-2x" data-toggle="tooltip" title="Expand All" onclick="expandAll(event)"></div>
+        <div class="menu-item fas fa-compress-arrows-alt fa-2x" data-toggle="tooltip" title="Collapse All" onclick="collapseAll(event)"></div>
+        <div class="menu-item fas fa-sign-out-alt fa-2x" data-toggle="tooltip" title="Exit" onclick="exit(event)"></div>
         <div class="theme-toggle">
           <div class="color-item fas fa-square fa-2x color-1" id="theme1-button" data-theme-id="1" onclick="toggleThemeClick(event)"></div>
           <div class="color-item fas fa-square fa-2x color-2" id="theme2-button" data-theme-id="2" onclick="toggleThemeClick(event)"></div>

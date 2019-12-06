@@ -72,6 +72,7 @@ exports.submitTask = (taskType) => {
     if (getTask.TaskStatus === taskStatus) {
       statusDate = getTask.StatusDate
     }
+    newTaskData.TaskId = activeTask
     getTask.TaskTitle = taskTitle
     getTask.TaskDetail = taskDetail
     getTask.TaskTheme = taskTheme

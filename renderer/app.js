@@ -132,7 +132,7 @@ function loadTaskModal (type, status) {
     $('#choose-days').prop('disabled', true)
   } else {
     $('#task-modal-title').html('Edit Task')
-    var getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(activeTask))
+    const getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(activeTask))
     $('#task-title').val(getTask.TaskTitle)
     $('#task-detail').val(getTask.TaskDetail)
     $('#task-status').val(getTask.TaskStatus.replace(/^\w/, c => c.toUpperCase()))

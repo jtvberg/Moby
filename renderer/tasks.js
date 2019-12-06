@@ -133,9 +133,11 @@ exports.addTask = task => {
                         <p style="white-space: pre-wrap;">${task.TaskDetail}</p>
                         <div class="tag-box" id="t${task.TaskId}">${tagHTML}</div>
                         <div class="card-menu">
-                          <div class="card-menu-item-del fas fa-minus-square" id="del-button"></div>
-                          <div class="card-menu-item-clone fas fa-clone" id="clone-button-${task.TaskId}"></div>
-                          <div class="card-menu-item-edit fas fa-edit" id="edit-button" href="#task-modal" data-toggle="modal" data-type-id="edit"></div>
+                          <div class="card-menu-item-del fas fa-minus-square" id="del-button" data-toggle="tooltip" title="Archive Task" ></div>
+                          <div class="card-menu-item-clone fas fa-clone" id="clone-button-${task.TaskId}" data-toggle="tooltip" title="Clone Task"></div>
+                          <span data-toggle="tooltip" title="Edit Task">
+                            <div class="card-menu-item-edit fas fa-edit" id="edit-button" href="#task-modal" data-toggle="modal" data-type-id="edit"></div>
+                          </span>
                         <div>
                       </div>
                     </div>`

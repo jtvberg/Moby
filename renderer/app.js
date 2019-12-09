@@ -13,9 +13,6 @@ if (tasks.taskList.length && document.getElementById('main-window')) {
   archiveDoneTasks()
   window.setInterval(addScheduledTasks, 86400000)
   window.setInterval(archiveDoneTasks, 86400000)
-  $(function () {
-    $('[data-toggle="tooltip"]').tooltip({ delay: { show: 800, hide: 100 }})
-  })
 }
 
 // IPC events/channels to act on screen state
@@ -85,6 +82,11 @@ function archiveDoneTasks () {
 window.openTaskMenu = (type) => {
   taskType = type
   $('#task-modal').modal('show')
+}
+
+// Task menu commands; Archive selected task
+window.cloneTaskMenu = () => {
+  tasks.cloneTask(activeTask)
 }
 
 // Task menu commands; Archive selected task

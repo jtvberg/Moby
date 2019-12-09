@@ -17,6 +17,11 @@ const template = [
         click () { window.openTaskMenu('edit') }
       },
       {
+        label: 'Clone Task',
+        accelerator: 'CmdOrCtrl+L',
+        click () { window.cloneTaskMenu() }
+      },
+      {
         label: 'Delete Task',
         accelerator: 'CmdOrCtrl+Backspace',
         click () { window.archiveTaskMenu() }

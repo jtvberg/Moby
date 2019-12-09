@@ -123,7 +123,6 @@ exports.addTask = task => {
     })
   }
   const taskDays = Math.floor((Date.now() - task.StatusDate) / 86400000)
-
   // <div class="band theme-${task.TaskTheme}">${taskDays}</div>
   const taskHTML = `<div class="card theme-${task.TaskTheme}" id="${task.TaskId}" data-toggle="collapse" data-target="#c${task.TaskId}" draggable="true" ondragstart="drag(event)">
                       <div style="clear: both" id="b${task.TaskId}">
@@ -134,7 +133,7 @@ exports.addTask = task => {
                         <p style="white-space: pre-wrap;">${task.TaskDetail}</p>
                         <div class="tag-box" id="t${task.TaskId}">${tagHTML}</div>
                         <div class="card-menu">
-                          <div class="card-menu-item-del fas fa-minus-square" id="del-button" data-toggle="tooltip" title="Archive Task" ></div>
+                          <div class="card-menu-item-del fas fa-minus-square" id="del-button-${task.TaskId}" data-toggle="tooltip" title="Archive Task" ></div>
                           <div class="card-menu-item-clone fas fa-clone" id="clone-button-${task.TaskId}" data-toggle="tooltip" title="Clone Task"></div>
                           <span data-toggle="tooltip" title="Edit Task">
                             <div class="card-menu-item-edit fas fa-edit" id="edit-button" href="#task-modal" data-toggle="modal" data-type-id="edit"></div>
@@ -145,11 +144,11 @@ exports.addTask = task => {
   // Add task HTML to host
   $(`#col-${task.TaskStatus}`).append(taskHTML)
   // Active task setting event
-  $('.card').on('click', function () {
+  $(`#${task.TaskId}`).on('click', function () {
     window.activeTask = this.id
   })
   // Delete active task (send to archive)
-  $('.card-menu-item-del').click(() => {
+  $(`#del-button-${task.TaskId}`).click(() => {
     if (activeTask) {
       this.archiveTask(activeTask)
     }
@@ -159,6 +158,10 @@ exports.addTask = task => {
     if (activeTask) {
       this.cloneTask(activeTask)
     }
+  })
+  // Initialize tooltips
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip({ delay: { show: 700, hide: 100 } })
   })
 }
 

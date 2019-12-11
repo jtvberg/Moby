@@ -6,13 +6,15 @@ require('bootstrap/js/dist/modal')
 let taskType = 'new'
 let winMax = false
 
-// Load tasks at startup; Evaluate for sceduled task; Archive off tasks in 'Done' for more than a week
+// Load tasks at startup; Evaluate for scheduled task; Archive off tasks in 'Done' for more than a week; Update task age in UI
 if (tasks.taskList.length && document.getElementById('main-window')) {
   tasks.taskList.forEach(tasks.addTask)
   addScheduledTasks()
   archiveDoneTasks()
-  window.setInterval(addScheduledTasks, 86400000)
-  window.setInterval(archiveDoneTasks, 86400000)
+  updateTaskAge()
+  window.setInterval(addScheduledTasks, 3600000)
+  window.setInterval(archiveDoneTasks, 3600000)
+  window.setInterval(updateTaskAge, 3600000)
 }
 
 // IPC events/channels to act on screen state
@@ -74,6 +76,15 @@ function archiveDoneTasks () {
       if (item.TaskStatus === 'done' && item.StatusDate < Date.now() - (86400000 * 7)) {
         tasks.archiveTask(item.TaskId)
       }
+    })
+  }
+}
+
+// Update task age field
+function updateTaskAge () {
+  if (tasks.taskList.length) {
+    tasks.taskList.forEach((item) => {
+      $(`#a${item.taskId}`).text(Math.floor((Date.now() - item.StatusDate) / 86400000))
     })
   }
 }

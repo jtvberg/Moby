@@ -40,6 +40,10 @@ const template = [
         click () { window.collapseAllMenu() }
       },
       {
+        label: 'Toggle Task Age',
+        click () { window.toggleAgeMenu() }
+      },
+      {
         type: 'separator'
       },
       {

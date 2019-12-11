@@ -115,6 +115,11 @@ window.collapseAllMenu = () => {
   collapseAll()
 }
 
+// Task menu commands; Toggle age on tasks
+window.toggleAgeMenu = () => {
+  toggleAge()
+}
+
 // Task menu commands; Export all tasks
 window.exportTasksMenu = () => {
   tasks.exportTasks()
@@ -256,6 +261,14 @@ const expandAll = (e) => {
 
 const collapseAll = (e) => {
   $('.collapse').collapse('hide')
+}
+
+const toggleAge = (e) => {
+  if ($('.aging').is(':visible')) {
+    $('.aging').hide()
+  } else {
+    $('.aging').show()
+  }
 }
 
 // Completely close app

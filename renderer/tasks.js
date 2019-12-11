@@ -127,7 +127,7 @@ exports.addTask = task => {
   const taskHTML = `<div class="card theme-${task.TaskTheme}" id="${task.TaskId}" data-toggle="collapse" data-target="#c${task.TaskId}" draggable="true" ondragstart="drag(event)">
                       <div style="clear: both" id="b${task.TaskId}">
                         <span class="title">${task.TaskTitle}</span>
-                        <span class="age" id="a${task.TaskId}">${taskDays}</span>
+                        <span class="aging" id="a${task.TaskId}">${taskDays}</span>
                       </div>
                       <div class="collapse collapse-content" id="c${task.TaskId}">
                         <p style="white-space: pre-wrap;">${task.TaskDetail}</p>

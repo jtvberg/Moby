@@ -239,11 +239,6 @@ $('#import-button').click(() => {
   tasks.importTasks()
 })
 
-// Theme toggle event
-const toggleThemeClick = (e) => {
-  toggleTheme($(e.currentTarget).data('theme-id'))
-}
-
 // Theme toggle task show
 function toggleTheme (themeId) {
   if ($(`#theme${themeId}-button`).hasClass(`color-${themeId}`)) {
@@ -255,14 +250,17 @@ function toggleTheme (themeId) {
   }
 }
 
+// Expand all tasks event
 const expandAll = (e) => {
   $('.collapse').collapse('show')
 }
 
+// Collapse all tasks event
 const collapseAll = (e) => {
   $('.collapse').collapse('hide')
 }
 
+// Toggle aging on tasks event
 const toggleAge = (e) => {
   if ($('.aging').is(':visible')) {
     $('.aging').hide()
@@ -271,21 +269,31 @@ const toggleAge = (e) => {
   }
 }
 
+// Theme toggle event
+// eslint-disable-next-line no-unused-vars
+const toggleThemeClick = (e) => {
+  toggleTheme($(e.currentTarget).data('theme-id'))
+}
+
 // Completely close app
+// eslint-disable-next-line no-unused-vars
 const exit = (e) => {
   const remote = require('electron').remote
   remote.app.exit()
 }
 
 // Task drag and drop events
+// eslint-disable-next-line no-unused-vars
 const allowDrop = (e) => {
   e.preventDefault()
 }
 
+// eslint-disable-next-line no-unused-vars
 const drag = (e) => {
   e.dataTransfer.setData('text', e.target.id)
 }
 
+// eslint-disable-next-line no-unused-vars
 const drop = (e) => {
   e.preventDefault()
   var data = e.dataTransfer.getData('text')

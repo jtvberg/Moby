@@ -123,11 +123,11 @@ exports.addTask = task => {
     })
   }
   const taskDays = Math.floor((Date.now() - task.StatusDate) / 86400000)
-  // <div class="band theme-${task.TaskTheme}">${taskDays}</div>
+  const showAge = $('.aging').is(':visible') ? 'style' : 'style="display: none;"'
   const taskHTML = `<div class="card theme-${task.TaskTheme}" id="${task.TaskId}" data-toggle="collapse" data-target="#c${task.TaskId}" draggable="true" ondragstart="drag(event)">
                       <div style="clear: both" id="b${task.TaskId}">
                         <span class="title">${task.TaskTitle}</span>
-                        <span class="aging" id="a${task.TaskId}">${taskDays}</span>
+                        <span class="aging" id="a${task.TaskId}" ${showAge}>${taskDays}</span>
                       </div>
                       <div class="collapse collapse-content" id="c${task.TaskId}">
                         <p style="white-space: pre-wrap;">${task.TaskDetail}</p>

@@ -84,7 +84,7 @@ function archiveDoneTasks () {
 function updateTaskAge () {
   if (tasks.taskList.length) {
     tasks.taskList.forEach((item) => {
-      $(`#a${item.taskId}`).text(Math.floor((Date.now() - item.StatusDate) / 86400000))
+      $(`#a${item.TaskId}`).text(Math.floor((Date.now() - item.StatusDate) / 86400000))
     })
   }
 }

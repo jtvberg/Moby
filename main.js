@@ -42,10 +42,12 @@ const createWindow = () => {
 // Create tray icon and calculate positions
 let tray
 const createTray = () => {
-  tray = new Tray(path.join(__dirname, 'renderer/res/moby1_icon_19.png'))
-  tray.on('click', function (e) {
-    toggleQuickMenu()
-  })
+  if (process.platform === 'darwin') {
+    tray = new Tray(path.join(__dirname, 'renderer/res/moby1_icon_19.png'))
+    tray.on('click', function (e) {
+      toggleQuickMenu()
+    })
+  }
 
   const toggleQuickMenu = () => {
     quickMenu.isVisible() ? quickMenu.hide() : showQuickMenu()

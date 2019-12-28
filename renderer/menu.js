@@ -41,6 +41,7 @@ const template = [
       },
       {
         label: 'Toggle Task Age',
+        type: 'checkbox',
         click () { window.toggleAgeMenu() }
       },
       {

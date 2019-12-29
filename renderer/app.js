@@ -6,6 +6,11 @@ require('bootstrap/js/dist/modal')
 let taskType = 'new'
 let winMax = false
 
+// Remove menubar space for non MacOS
+if (process.platform !== 'darwin') {
+  $('.wrapper').css('grid-template-rows', '0px 1fr')
+}
+
 // Load tasks at startup; Evaluate for scheduled task; Archive off tasks in 'Done' for more than a week; Update task age in UI
 if (tasks.taskList.length && document.getElementById('main-window')) {
   tasks.taskList.forEach(tasks.addTask)

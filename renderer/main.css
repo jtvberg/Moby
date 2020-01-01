@@ -192,12 +192,14 @@ body {
 
 .menu-item {
   padding: 4px;
+  -webkit-app-region: no-drag;
 }
 
 .color-item {
   padding: 2px 0px 0px 0px;
   border-color: rgb(81, 190, 233) !important;
   border-width: 2px solid !important;
+  -webkit-app-region: no-drag;
 }
 
 .color-item:hover {

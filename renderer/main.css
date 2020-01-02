@@ -34,6 +34,7 @@ body {
   padding: 5px 0px;
   z-index: 1001;
   overflow: auto;
+  -webkit-app-region: no-drag;
 }
 
 .header {

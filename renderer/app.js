@@ -6,9 +6,11 @@ require('bootstrap/js/dist/modal')
 let taskType = 'new'
 let winMax = false
 
-// Remove menubar space for non MacOS
-if (process.platform !== 'darwin') {
-  $('.wrapper').css('grid-template-rows', '0px 1fr')
+// Remove title bar buttons for MacOS
+if (process.platform === 'darwin') {
+  $('.title-bar-btns').hide()
+} else {
+  $('#restore-button').hide()
 }
 
 // Load tasks at startup; Evaluate for scheduled task; Archive off tasks in 'Done' for more than a week; Update task age in UI
@@ -24,7 +26,9 @@ if (tasks.taskList.length && document.getElementById('main-window')) {
 
 // IPC events/channels to act on screen state
 ipcRenderer.on('efs', () => {
-  $('.wrapper').css('grid-template-rows', '0px 1fr')
+  if (process.platform === 'darwin') {
+    $('.wrapper').css('grid-template-rows', '0px 1fr')
+  }
 })
 
 ipcRenderer.on('lfs', () => {
@@ -38,16 +42,40 @@ ipcRenderer.on('quick-data', (e, data) => {
   tasks.addTask(data)
 })
 
-// IPC event to maximize window on top bar double click
+// Title bar events: minimize
+$('#min-button').click(() => {
+  ipcRenderer.send('win-min')
+})
+
+// Title bar double click even to max / restore
 $('.top-bar').dblclick(() => {
+  maxRestoreWindow()
+})
+
+// Title bar events: maximize
+$('#max-button').click(() => {
+  maxRestoreWindow()
+})
+
+// Title bar events: restore
+$('#restore-button').click(() => {
+  maxRestoreWindow()
+})
+
+// IPC event to maximize / restore window
+function maxRestoreWindow () {
   if (!winMax) {
     ipcRenderer.send('win-max')
+    $('#restore-button').show()
+    $('#max-button').hide()
     winMax = true
   } else {
     ipcRenderer.send('win-restore')
     winMax = false
+    $('#max-button').show()
+    $('#restore-button').hide()
   }
-})
+}
 
 // Scheduled tasks handler
 function addScheduledTasks () {

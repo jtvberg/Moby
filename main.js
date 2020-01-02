@@ -140,3 +140,8 @@ ipcMain.on('win-max', () => {
 ipcMain.on('win-restore', () => {
   win.unmaximize()
 })
+
+// IPC channel to minimize window
+ipcMain.on('win-min', () => {
+  win.minimize()
+})

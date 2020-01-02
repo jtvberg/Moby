@@ -14,16 +14,13 @@ const createWindow = () => {
     height: 800,
     minWidth: 320,
     minHeight: 390,
+    titleBarStyle: 'hidden',
+    frame: false,
     webPreferences: {
       nodeIntegration: true
     }
   })
 
-  if (process.platform === 'darwin') {
-    win.titleBarStyle = 'hidden'
-  } else {
-    win.frame = false
-  }
   // open DevTools remove for dist
   // win.webContents.openDevTools()
   // HTML to open

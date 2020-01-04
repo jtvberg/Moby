@@ -48,7 +48,8 @@ $('#min-button').click(() => {
 })
 
 // Title bar double click even to max / restore
-$('.top-bar').dblclick(() => {
+$('.title-bar').dblclick(() => {
+  console.log('topBar')
   maxRestoreWindow()
 })
 
@@ -66,14 +67,18 @@ $('#restore-button').click(() => {
 function maxRestoreWindow () {
   if (!winMax) {
     ipcRenderer.send('win-max')
-    $('#restore-button').show()
-    $('#max-button').hide()
     winMax = true
+    if (process.platform !== 'darwin') {
+      $('#restore-button').show()
+      $('#max-button').hide()
+    }
   } else {
     ipcRenderer.send('win-restore')
     winMax = false
-    $('#max-button').show()
-    $('#restore-button').hide()
+    if (process.platform !== 'darwin') {
+      $('#max-button').show()
+      $('#restore-button').hide()
+    }
   }
 }
 

@@ -42,28 +42,22 @@ ipcRenderer.on('quick-data', (e, data) => {
   tasks.addTask(data)
 })
 
-// Title bar events: minimize
+// Title bar/IPC event: minimize
 $('#min-button').click(() => {
   ipcRenderer.send('win-min')
 })
 
-// Title bar double click even to max / restore
+// Title bar double click event to maximize/restore window
 $('.title-bar').dblclick(() => {
-  console.log('topBar')
   maxRestoreWindow()
 })
 
-// Title bar events: maximize
-$('#max-button').click(() => {
+// Title bar events: max, restore
+$('#max-button, #restore-button').click(() => {
   maxRestoreWindow()
 })
 
-// Title bar events: restore
-$('#restore-button').click(() => {
-  maxRestoreWindow()
-})
-
-// IPC event to maximize / restore window
+// IPC event to maximize/restore window
 function maxRestoreWindow () {
   if (!winMax) {
     ipcRenderer.send('win-max')
@@ -82,7 +76,7 @@ function maxRestoreWindow () {
   }
 }
 
-// Scheduled tasks handler
+// Scheduled tasks method
 function addScheduledTasks () {
   /* Schedule logic
   if in 'schedule' status && date < now:
@@ -224,19 +218,7 @@ function enableRecur () {
 }
 
 // Active radio button change events
-$('#radio-weekly').click(() => {
-  enableRecur()
-})
-
-$('#radio-biWeekly').click(() => {
-  enableRecur()
-})
-
-$('#radio-triWeekly').click(() => {
-  enableRecur()
-})
-
-$('#radio-monthly').click(() => {
+$('#radio-weekly, #radio-biWeekly, #radio-triWeekly, #radio-monthly').click(() => {
   enableRecur()
 })
 

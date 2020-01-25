@@ -15,45 +15,46 @@ const ctb = new customTitlebar.Titlebar({
 let winMax = false
 
 // Remove title bar buttons for MacOS
-if (process.platform === 'darwin') {
-  $('.title-bar-btns').hide()
-} else {
-  $('#restore-button').hide()
-  $('.wrapper').css('grid-template-rows', '0px 1fr')
-  $('#title-bar-btns').remove()
-}
+// if (process.platform === 'darwin') {
+  // $('.title-bar-btns').hide()
+// } else {
+  // $('#restore-button').hide()
+  // $('.wrapper').css('grid-template-rows', '0px 1fr')
+  // $('#title-bar-btns').remove()
+// }
 
-// Title bar/IPC event: minimize
-$('#min-button').click(() => {
-  ipcRenderer.send('win-min')
-})
+// // Title bar/IPC event: minimize
+// $('#min-button').click(() => {
+//   ipcRenderer.send('win-min')
+// })
 
 // Title bar double click event to maximize/restore window
-$('.title-bar').dblclick(() => {
+$('.titlebar-drag-region').dblclick(() => {
   maxRestoreWindow()
+  console.log('title click')
 })
 
-// Title bar events: max, restore
-$('#max-button, #restore-button').click(() => {
-  maxRestoreWindow()
-})
+// // Title bar events: max, restore
+// $('#max-button, #restore-button').click(() => {
+//   maxRestoreWindow()
+// })
 
 // IPC event to maximize/restore window
 function maxRestoreWindow () {
   if (!winMax) {
     ipcRenderer.send('win-max')
     winMax = true
-    if (process.platform !== 'darwin') {
-      $('#restore-button').show()
-      $('#max-button').hide()
-    }
+    // if (process.platform !== 'darwin') {
+    //   $('#restore-button').show()
+    //   $('#max-button').hide()
+    // }
   } else {
     ipcRenderer.send('win-restore')
     winMax = false
-    if (process.platform !== 'darwin') {
-      $('#max-button').show()
-      $('#restore-button').hide()
-    }
+    // if (process.platform !== 'darwin') {
+    //   $('#max-button').show()
+    //   $('#restore-button').hide()
+    // }
   }
 }
 
@@ -74,14 +75,14 @@ if (tasks.taskList.length && document.getElementById('main-window')) {
   window.setInterval(updateTaskAge, 3600000)
 }
 
-// IPC events/channels to act on screen state
-ipcRenderer.on('efs', () => {
-  $('.wrapper').css('grid-template-rows', '0px 1fr')
-})
+// // IPC events/channels to act on screen state
+// ipcRenderer.on('efs', () => {
+//   $('.wrapper').css('grid-template-rows', '0px 1fr')
+// })
 
-ipcRenderer.on('lfs', () => {
-  $('.wrapper').css('grid-template-rows', '17px 1fr')
-})
+// ipcRenderer.on('lfs', () => {
+//   $('.wrapper').css('grid-template-rows', '17px 1fr')
+// })
 
 // IPC event to get task data from tray window
 ipcRenderer.on('quick-data', (e, data) => {

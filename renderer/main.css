@@ -17,7 +17,7 @@ body {
 .wrapper {
   display: grid;
   grid-template-columns: 40px 1fr 1fr 1fr 1fr 1px;
-  grid-template-rows: 17px 1fr 3px;
+  grid-template-rows: 1px 1fr;
   align-items: start;
   grid-gap: 5px;
   height: 100vh;
@@ -56,7 +56,12 @@ body {
   padding: 0px 5px;
 }
 
-.title-bar {
+.titlebar, 
+.window-title {
+  font-weight: bold;
+  font-size: 100% !important;
+}
+/* .title-bar {
   display: flex;
   justify-content: flex-end;
   grid-row: 1;
@@ -68,7 +73,7 @@ body {
 .title-bar-btns {
   padding: 2px;
   -webkit-app-region: no-drag;
-}
+} */
 
 .menu {
   display: flex;

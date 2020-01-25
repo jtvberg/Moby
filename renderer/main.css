@@ -62,6 +62,11 @@ body {
   font-size: 100% !important;
 }
 
+.inactive {
+  background-color: #34495e !important;
+  color: rgb(255, 255, 255, 0.3) !important;
+}
+
 .menubar {
   font-weight: normal;
 }

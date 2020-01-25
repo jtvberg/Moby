@@ -146,6 +146,7 @@ exports.addTask = task => {
   // Active task setting event
   $(`#${task.TaskId}`).on('click', function () {
     window.activeTask = this.id
+    $('.window-title').text(`Moby: ${task.TaskTitle}`)
   })
   // Delete active task (send to archive)
   $(`#del-button-${task.TaskId}`).click(() => {

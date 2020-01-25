@@ -4,12 +4,20 @@
   --orange: #e67e22;
   --purple: #9b59b6;
   --green: #27ae60;
+  --dark: #000;
+  --light: #fff;
+  --gray: #b9b9b9;
+  --trans: #00000000;
+  --opaque: #ffffff2a;
+  --highlight: #32b3d3;
+  --background1: #34495e;
+  --background2: #2c3e50;
 }
 
 body {
   overflow-x: hidden;
   overflow-y: hidden;
-  background-color: rgba(0, 0, 0, 0);
+  background-color: var(--dark);
   -webkit-user-select: none;
   -webkit-app-region: drag;
 }
@@ -17,18 +25,18 @@ body {
 .wrapper {
   display: grid;
   grid-template-columns: 40px 1fr 1fr 1fr 1fr 1px;
-  grid-template-rows: 1px 1fr;
+  grid-template-rows: 0px 1fr;
   align-items: start;
   grid-gap: 5px;
   height: 100vh;
-  background-image: linear-gradient(to bottom right, #34495e, #2c3e50);
+  background-image: linear-gradient(to bottom right, var(--background1), var(--background2));
 }
 
 .host {
   display: grid;
   grid-row: 2;
   grid-template-rows: 25px 1fr 25px;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: var(--opaque);
   border-radius: 5px;
   max-height: 100%;
   padding: 5px 0px;
@@ -38,7 +46,7 @@ body {
 }
 
 .header {
-  color: #fff;
+  color: var(--light);
   font-size: 120%;
   justify-self: center;
   font-weight: bold;
@@ -58,13 +66,13 @@ body {
 
 .titlebar, 
 .window-title {
-  font-weight: bold;
+  font-weight: 500;
   font-size: 100% !important;
 }
 
 .inactive {
-  background-color: #34495e !important;
-  color: rgb(255, 255, 255, 0.3) !important;
+  background-color: var(--background1) !important;
+  color: var(--opaque) !important;
 }
 
 .menubar {
@@ -77,7 +85,7 @@ body {
   grid-row-start: 2;
   grid-row-end: 4;
   text-align: center;
-  background-color: #34495e;
+  background-color: var(--background1);
   border-radius: 3px;
   height: inherit;
 }
@@ -100,25 +108,25 @@ body {
 }
 
 .modal-header {
-  border-bottom: 1px solid #34495e;
+  border-bottom: 1px solid var(--background1);
 }
 
 .close {
-  color: #b9b9b9;
+  color: var(--gray);
 }
 
 .close:hover {
-  color: #fff;
+  color: var(--light);
 }
 
 .modal-content {
-  border-color: #34495e;
-  background-color: #2c3e50;
-  color: #b9b9b9;
+  border-color: var(--background1);
+  background-color: var(--background2);
+  color: var(--light);
 }
 
 .modal-footer {
-  border-top: 1px solid #34495e;
+  border-top: 1px solid var(--background1);
 }
 
 .card {
@@ -141,13 +149,9 @@ body {
   float: right;
 }
 
-.card-menu-item-del:hover {
-  color: rgb(66, 195, 255);
-}
-
 .collapsible {
   width: 100%;
-  background-color: #00000000;
+  background-color: var(--trans);
   border: none;
 }
 
@@ -157,7 +161,7 @@ body {
 
 .panel {
   border-width: 1px;
-  border-color: rgb(206, 212, 218);
+  border-color: var(--gray);
   padding: 2px;
 }
 
@@ -166,7 +170,7 @@ body {
 }
 
 .panel-header:hover {
-  color: rgb(25, 165, 201);
+  color: var(--highlight);
 }
 
 .panel-header .fa {
@@ -182,14 +186,13 @@ body {
 }
 
 .disabled-form-label {
-  color: #6c757d;
+  color: var(--gray);
 }
 
 .card-menu,
 .menu-item,
-.title-bar-btns,
 .footer {
-  color: rgb(255, 255, 255, 0.3);
+  color: var(--opaque);
 }
 
 .card-menu {
@@ -207,13 +210,13 @@ body {
 
 .color-item {
   padding: 2px 0px 0px 0px;
-  border-color: rgb(81, 190, 233) !important;
+  border-color: var(--highlight) !important;
   border-width: 2px solid !important;
   -webkit-app-region: no-drag;
 }
 
 .color-item:hover {
-  color: gray;
+  color: var(--gray);
 }
 
 .footer:hover,
@@ -222,12 +225,12 @@ body {
 .card-menu-item-del:hover,
 .card-menu-item-clone:hover,
 .card-menu-item-edit:hover {
-  color: rgb(255, 255, 255);
+  color: var(--light);
 }
 
 ::-webkit-scrollbar {
   width: 0px;
-  background: transparent;
+  background: var(--trans);
 }
 
 .theme-1.active,
@@ -235,7 +238,7 @@ body {
 .theme-3.active,
 .theme-4.active,
 .theme-5.active {
-  border-color: rgb(81, 190, 233) !important;
+  border-color: var(--highlight) !important;
   border-width: 2px 1px !important;
 }
 
@@ -244,7 +247,7 @@ body {
 .theme-3,
 .theme-4,
 .theme-5 {
-  color: #fff;
+  color: var(--light);
   font-weight: bold;
 }
 
@@ -313,8 +316,8 @@ body {
 }
 
 .tags {
-  background-color: gray;
-  color: lightgray;
+  background-color: var(--gray);
+  color: var(--light);
   width: fit-content;
   height: 22px;
   margin: 1px;

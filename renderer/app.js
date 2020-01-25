@@ -3,14 +3,61 @@
 const { ipcRenderer } = require('electron')
 const tasks = require('./tasks')
 require('bootstrap/js/dist/modal')
+require('./menu.js')
+const customTitlebar = require('custom-electron-titlebar')
 let taskType = 'new'
-let winMax = false
 
-// Remove title bar buttons for MacOS
-if (process.platform === 'darwin') {
-  $('.title-bar-btns').hide()
-} else {
-  $('#restore-button').hide()
+const ctb = new customTitlebar.Titlebar({
+  backgroundColor: customTitlebar.Color.fromHex('#34495e'),
+  icon: './res/moby1_icon_19.png'
+})
+
+// let winMax = false
+
+// // Remove title bar buttons for MacOS
+// if (process.platform === 'darwin') {
+//   $('.title-bar-btns').hide()
+// } else {
+//   $('#restore-button').hide()
+// }
+
+// // Title bar/IPC event: minimize
+// $('#min-button').click(() => {
+//   ipcRenderer.send('win-min')
+// })
+
+// // Title bar double click event to maximize/restore window
+// $('.title-bar').dblclick(() => {
+//   maxRestoreWindow()
+// })
+
+// // Title bar events: max, restore
+// $('#max-button, #restore-button').click(() => {
+//   maxRestoreWindow()
+// })
+
+// // IPC event to maximize/restore window
+// function maxRestoreWindow () {
+//   if (!winMax) {
+//     ipcRenderer.send('win-max')
+//     winMax = true
+//     if (process.platform !== 'darwin') {
+//       $('#restore-button').show()
+//       $('#max-button').hide()
+//     }
+//   } else {
+//     ipcRenderer.send('win-restore')
+//     winMax = false
+//     if (process.platform !== 'darwin') {
+//       $('#max-button').show()
+//       $('#restore-button').hide()
+//     }
+//   }
+// }
+
+// Remove menubar space for non MacOS
+if (process.platform !== 'darwin') {
+  $('.wrapper').css('grid-template-rows', '0px 1fr')
 }
 
 // Load tasks at startup; Evaluate for scheduled task; Archive off tasks in 'Done' for more than a week; Update task age in UI
@@ -26,9 +73,7 @@ if (tasks.taskList.length && document.getElementById('main-window')) {
 
 // IPC events/channels to act on screen state
 ipcRenderer.on('efs', () => {
-  if (process.platform === 'darwin') {
-    $('.wrapper').css('grid-template-rows', '0px 1fr')
-  }
+  $('.wrapper').css('grid-template-rows', '0px 1fr')
 })
 
 ipcRenderer.on('lfs', () => {
@@ -41,40 +86,6 @@ ipcRenderer.on('quick-data', (e, data) => {
   tasks.saveTasks()
   tasks.addTask(data)
 })
-
-// Title bar/IPC event: minimize
-$('#min-button').click(() => {
-  ipcRenderer.send('win-min')
-})
-
-// Title bar double click event to maximize/restore window
-$('.title-bar').dblclick(() => {
-  maxRestoreWindow()
-})
-
-// Title bar events: max, restore
-$('#max-button, #restore-button').click(() => {
-  maxRestoreWindow()
-})
-
-// IPC event to maximize/restore window
-function maxRestoreWindow () {
-  if (!winMax) {
-    ipcRenderer.send('win-max')
-    winMax = true
-    if (process.platform !== 'darwin') {
-      $('#restore-button').show()
-      $('#max-button').hide()
-    }
-  } else {
-    ipcRenderer.send('win-restore')
-    winMax = false
-    if (process.platform !== 'darwin') {
-      $('#max-button').show()
-      $('#restore-button').hide()
-    }
-  }
-}
 
 // Scheduled tasks method
 function addScheduledTasks () {

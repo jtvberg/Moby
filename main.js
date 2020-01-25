@@ -2,7 +2,6 @@
 const { app } = require('electron')
 const { BrowserWindow, Tray, ipcMain } = require('electron')
 const path = require('path')
-
 // Enable Electron-Reload (dev only)
 require('electron-reload')(__dirname)
 

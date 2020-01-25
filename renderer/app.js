@@ -6,27 +6,13 @@ require('bootstrap/js/dist/modal')
 require('./menu.js')
 const customTitlebar = require('custom-electron-titlebar')
 let taskType = 'new'
+let winMax = false
 
+// Custom titlebar instantiation
 const ctb = new customTitlebar.Titlebar({
   backgroundColor: customTitlebar.Color.fromHex('#34495e'),
   icon: './res/moby1_icon_19.png'
 })
-
-let winMax = false
-
-// Remove title bar buttons for MacOS
-// if (process.platform === 'darwin') {
-  // $('.title-bar-btns').hide()
-// } else {
-  // $('#restore-button').hide()
-  // $('.wrapper').css('grid-template-rows', '0px 1fr')
-  // $('#title-bar-btns').remove()
-// }
-
-// // Title bar/IPC event: minimize
-// $('#min-button').click(() => {
-//   ipcRenderer.send('win-min')
-// })
 
 // Title bar double click event to maximize/restore window
 $('.titlebar-drag-region').dblclick(() => {
@@ -34,35 +20,16 @@ $('.titlebar-drag-region').dblclick(() => {
   console.log('title click')
 })
 
-// // Title bar events: max, restore
-// $('#max-button, #restore-button').click(() => {
-//   maxRestoreWindow()
-// })
-
 // IPC event to maximize/restore window
 function maxRestoreWindow () {
   if (!winMax) {
     ipcRenderer.send('win-max')
     winMax = true
-    // if (process.platform !== 'darwin') {
-    //   $('#restore-button').show()
-    //   $('#max-button').hide()
-    // }
   } else {
     ipcRenderer.send('win-restore')
     winMax = false
-    // if (process.platform !== 'darwin') {
-    //   $('#max-button').show()
-    //   $('#restore-button').hide()
-    // }
   }
 }
-
-// // Remove menubar space for non MacOS
-// if (process.platform !== 'darwin') {
-//   $('.wrapper').css('grid-template-rows', '0px 1fr')
-//   $('#title-bar-btns').remove()
-// }
 
 // Load tasks at startup; Evaluate for scheduled task; Archive off tasks in 'Done' for more than a week; Update task age in UI
 if (tasks.taskList.length && document.getElementById('main-window')) {
@@ -74,15 +41,6 @@ if (tasks.taskList.length && document.getElementById('main-window')) {
   window.setInterval(archiveDoneTasks, 3600000)
   window.setInterval(updateTaskAge, 3600000)
 }
-
-// // IPC events/channels to act on screen state
-// ipcRenderer.on('efs', () => {
-//   $('.wrapper').css('grid-template-rows', '0px 1fr')
-// })
-
-// ipcRenderer.on('lfs', () => {
-//   $('.wrapper').css('grid-template-rows', '17px 1fr')
-// })
 
 // IPC event to get task data from tray window
 ipcRenderer.on('quick-data', (e, data) => {

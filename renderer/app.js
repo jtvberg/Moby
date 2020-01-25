@@ -12,53 +12,56 @@ const ctb = new customTitlebar.Titlebar({
   icon: './res/moby1_icon_19.png'
 })
 
-// let winMax = false
+let winMax = false
 
-// // Remove title bar buttons for MacOS
-// if (process.platform === 'darwin') {
-//   $('.title-bar-btns').hide()
-// } else {
-//   $('#restore-button').hide()
-// }
-
-// // Title bar/IPC event: minimize
-// $('#min-button').click(() => {
-//   ipcRenderer.send('win-min')
-// })
-
-// // Title bar double click event to maximize/restore window
-// $('.title-bar').dblclick(() => {
-//   maxRestoreWindow()
-// })
-
-// // Title bar events: max, restore
-// $('#max-button, #restore-button').click(() => {
-//   maxRestoreWindow()
-// })
-
-// // IPC event to maximize/restore window
-// function maxRestoreWindow () {
-//   if (!winMax) {
-//     ipcRenderer.send('win-max')
-//     winMax = true
-//     if (process.platform !== 'darwin') {
-//       $('#restore-button').show()
-//       $('#max-button').hide()
-//     }
-//   } else {
-//     ipcRenderer.send('win-restore')
-//     winMax = false
-//     if (process.platform !== 'darwin') {
-//       $('#max-button').show()
-//       $('#restore-button').hide()
-//     }
-//   }
-// }
-
-// Remove menubar space for non MacOS
-if (process.platform !== 'darwin') {
+// Remove title bar buttons for MacOS
+if (process.platform === 'darwin') {
+  $('.title-bar-btns').hide()
+} else {
+  $('#restore-button').hide()
   $('.wrapper').css('grid-template-rows', '0px 1fr')
+  $('#title-bar-btns').remove()
 }
+
+// Title bar/IPC event: minimize
+$('#min-button').click(() => {
+  ipcRenderer.send('win-min')
+})
+
+// Title bar double click event to maximize/restore window
+$('.title-bar').dblclick(() => {
+  maxRestoreWindow()
+})
+
+// Title bar events: max, restore
+$('#max-button, #restore-button').click(() => {
+  maxRestoreWindow()
+})
+
+// IPC event to maximize/restore window
+function maxRestoreWindow () {
+  if (!winMax) {
+    ipcRenderer.send('win-max')
+    winMax = true
+    if (process.platform !== 'darwin') {
+      $('#restore-button').show()
+      $('#max-button').hide()
+    }
+  } else {
+    ipcRenderer.send('win-restore')
+    winMax = false
+    if (process.platform !== 'darwin') {
+      $('#max-button').show()
+      $('#restore-button').hide()
+    }
+  }
+}
+
+// // Remove menubar space for non MacOS
+// if (process.platform !== 'darwin') {
+//   $('.wrapper').css('grid-template-rows', '0px 1fr')
+//   $('#title-bar-btns').remove()
+// }
 
 // Load tasks at startup; Evaluate for scheduled task; Archive off tasks in 'Done' for more than a week; Update task age in UI
 if (tasks.taskList.length && document.getElementById('main-window')) {

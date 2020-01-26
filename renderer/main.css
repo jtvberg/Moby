@@ -30,7 +30,7 @@ body {
   align-items: start;
   grid-gap: 5px;
   height: 100vh;
-  background-image: linear-gradient(to bottom right, var(--background1), var(--background2));
+  background-image: linear-gradient(to bottom, var(--background1), var(--background2));
 }
 
 .click-area {

@@ -110,6 +110,11 @@ window.archiveTaskMenu = () => {
   tasks.archiveTask(activeTask)
 }
 
+// Task menu commands; Restore selected task
+window.restoreTaskMenu = () => {
+  tasks.restoreTask(activeTask)
+}
+
 // Task menu commands; Expand all tasks
 window.expandAllMenu = () => {
   expandAll()

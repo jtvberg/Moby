@@ -27,6 +27,11 @@ const template = [
         click () { window.archiveTaskMenu() }
       },
       {
+        label: 'Restore Task',
+        accelerator: 'CmdOrCtrl+R',
+        click () { window.restoreTaskMenu() }
+      },
+      {
         type: 'separator'
       },
       {
@@ -90,7 +95,7 @@ const template = [
 if (process.platform === 'darwin') {
   // Add first menu item
   template.unshift({
-    label: remote.app.getName(),
+    label: remote.app.name,
     submenu: [
       {
         role: 'about'

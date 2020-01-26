@@ -233,7 +233,7 @@ $('#import-button').click(() => {
 })
 
 // Deselect task
-$('.titlebar, .click-area').click(() => {
+$('.click-area').click(() => {
   $('.window-title').text('Moby')
   $('.card').removeClass('card-selected')
   window.activeTask = null

@@ -101,6 +101,10 @@ body {
   z-index: 1300;
 }
 
+.tooltip {
+  z-index: 2200;
+}
+
 .theme-toggle {
   display: flex;
   flex-direction: column;
@@ -118,16 +122,24 @@ body {
   opacity: 0.02;
 }
 
-.modal-header {
-  border-bottom: 1px solid var(--background1);
-}
-
 .close {
   color: var(--gray);
 }
 
 .close:hover {
   color: var(--light);
+}
+
+.modal {
+  z-index: 2000;
+}
+
+.modal-backdrop {
+  z-index: 1900;
+}
+
+.modal-header {
+  border-bottom: 1px solid var(--background1);
 }
 
 .modal-content {

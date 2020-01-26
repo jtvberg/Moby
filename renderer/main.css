@@ -29,7 +29,7 @@ body {
   grid-template-rows: 0px 1fr;
   align-items: start;
   grid-gap: 5px;
-  height: 100vh;
+  height: 100%;
   background-image: linear-gradient(to bottom, var(--background1), var(--background2));
 }
 

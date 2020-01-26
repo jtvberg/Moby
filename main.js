@@ -12,7 +12,7 @@ const createWindow = () => {
     width: 1200,
     height: 800,
     minWidth: 320,
-    minHeight: 390,
+    minHeight: 400,
     titleBarStyle: 'hidden',
     frame: false,
     webPreferences: {

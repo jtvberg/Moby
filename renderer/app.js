@@ -232,6 +232,13 @@ $('#import-button').click(() => {
   tasks.importTasks()
 })
 
+// Deselect task
+$('.titlebar, .click-area').click(() => {
+  $('.window-title').text('Moby')
+  $('.card').removeClass('card-selected')
+  window.activeTask = null
+})
+
 // Theme toggle task show
 function toggleTheme (themeId) {
   if ($(`#theme${themeId}-button`).hasClass(`color-${themeId}`)) {

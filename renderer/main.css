@@ -131,6 +131,10 @@ body {
   color: var(--light);
 }
 
+.modal-host {
+  max-height: 43vh;
+}
+
 .modal-footer {
   border-top: 1px solid var(--background1);
 }

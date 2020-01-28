@@ -132,7 +132,7 @@ body {
 }
 
 .modal-host {
-  max-height: 43vh;
+  max-height: calc(100vh - 230px);
 }
 
 .modal-footer {

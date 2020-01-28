@@ -1,0 +1,16 @@
+:root {
+    --red: #e74c3c;
+    --blue: #2980b9;
+    --orange: #e67e22;
+    --purple: #9b59b6;
+    --green: #27ae60;
+    --dark: #000;
+    --light: #fff;
+    --gray: #b9b9b9;
+    --trans: #00000000;
+    --opaque: #ffffff2c;
+    --highlight: #32b3d3;
+    --focused: #fff;
+    --background1: #34495e;
+    --background2: #2c3e50;
+  }

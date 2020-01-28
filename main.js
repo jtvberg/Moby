@@ -50,17 +50,17 @@ const createTray = () => {
   }
 
   const toggleQuickMenu = () => {
-    quickMenu.isVisible() ? quickMenu.hide() : showQuickMenu()
+    quick.isVisible() ? quick.hide() : showQuickMenu()
   }
 
   const showQuickMenu = () => {
     const position = getWindowPosition()
-    quickMenu.setPosition(position.x, position.y, false)
-    quickMenu.show()
+    quick.setPosition(position.x, position.y, false)
+    quick.show()
   }
 
   const getWindowPosition = () => {
-    const windowBounds = quickMenu.getBounds()
+    const windowBounds = quick.getBounds()
     const trayBounds = tray.getBounds()
     // Center window horizontally below the tray icon
     const x = Math.round(trayBounds.x + (trayBounds.width / 2) - (windowBounds.width / 2))
@@ -71,9 +71,9 @@ const createTray = () => {
 }
 
 // Create window attached to tray icon press
-let quickMenu
+let quick
 const createQuickMenu = () => {
-  quickMenu = new BrowserWindow({
+  quick = new BrowserWindow({
     width: 360,
     height: 'auto',
     maxHeight: 400,
@@ -88,18 +88,18 @@ const createQuickMenu = () => {
     }
   })
   // open DevTools remove for dist
-  // quickMenu.openDevTools()
+  // quick.openDevTools()
   // HTML to open
-  quickMenu.loadURL(`file://${__dirname}/renderer/quickMenu.html`)
+  quick.loadURL(`file://${__dirname}/renderer/quick.html`)
   // Hide the window when it loses focus
-  quickMenu.on('blur', () => {
-    if (!quickMenu.webContents.isDevToolsOpened()) {
-      quickMenu.hide()
+  quick.on('blur', () => {
+    if (!quick.webContents.isDevToolsOpened()) {
+      quick.hide()
     }
   })
   // IPC event/channel to communicate showing of window (used to reset fields)
-  quickMenu.on('show', () => {
-    quickMenu.webContents.send('quick-reset')
+  quick.on('show', () => {
+    quick.webContents.send('quick-reset')
   })
 }
 

@@ -9,15 +9,16 @@ let taskType = 'new'
 let winMax = false
 
 // Custom titlebar instantiation
-const ctb = new customTitlebar.Titlebar({
-  backgroundColor: customTitlebar.Color.fromHex('#34495e'),
+const bg = getComputedStyle(document.documentElement).getPropertyValue('--background1').trim()
+// eslint-disable-next-line no-new
+new customTitlebar.Titlebar({
+  backgroundColor: customTitlebar.Color.fromHex(bg),
   icon: './res/moby1_icon_19.png'
 })
 
 // Title bar double click event to maximize/restore window
 $('.titlebar-drag-region').dblclick(() => {
   maxRestoreWindow()
-  console.log('title click')
 })
 
 // IPC event to maximize/restore window

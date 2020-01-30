@@ -59,14 +59,6 @@ const template = [
       {
         label: 'Import Tasks',
         click () { window.importTasksMenu() }
-      },
-      {
-        type: 'separator'
-      },
-      {
-        label: 'Search Tasks',
-        accelerator: 'CmdOrCtrl+S',
-        click () { alert('Would\'nt that be cool?') }
       }
     ]
   },

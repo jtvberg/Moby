@@ -154,6 +154,7 @@ function loadTaskModal (type, status) {
   $('#schedule-modal').modal('hide')
   $('#restore-modal').modal('hide')
   $('#collapse-sched').collapse('hide')
+  $('#task-detail').height('46px')
   if (type === 'new') {
     $('#task-modal-title').html('New Task')
     $('form').get(0).reset()
@@ -187,6 +188,20 @@ function loadTaskModal (type, status) {
 // Focus title field on modal 'shown'
 $('#task-modal').on('shown.bs.modal', function (e) {
   $('#task-title').focus()
+})
+
+// Size task detail
+$('#task-detail').on('input keydown', function () {
+  if (this.scrollHeight > $('#task-detail').height() + 12) {
+    $('#task-detail').height(this.scrollHeight + 'px')
+  }
+})
+
+// Size task detail
+$('#task-detail').on('focus mouseenter', function () {
+  if (this.scrollHeight > $('#task-detail').height() + 12) {
+    $(this).animate({ height: this.scrollHeight + 'px' }, 'fast')
+  }
 })
 
 // Recurrence elements enable logic

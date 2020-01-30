@@ -42,7 +42,7 @@ body {
   color: var(--light);
   font-size: 120%;
   justify-self: center;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .box {
@@ -171,6 +171,7 @@ body {
 
 .collapse-content {
   font-size: 75%;
+  font-weight: normal;
 }
 
 .panel {
@@ -262,7 +263,7 @@ body {
 .theme-4,
 .theme-5 {
   color: var(--light);
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .theme-1 {

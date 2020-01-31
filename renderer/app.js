@@ -190,14 +190,14 @@ $('#task-modal').on('shown.bs.modal', function (e) {
   $('#task-title').focus()
 })
 
-// Size task detail
+// Size task detail on input
 $('#task-detail').on('input keydown', function () {
   if (this.scrollHeight > $('#task-detail').height() + 12) {
     $('#task-detail').height(this.scrollHeight + 'px')
   }
 })
 
-// Size task detail
+// Size task detail on focus
 $('#task-detail').on('focus mouseenter', function () {
   if (this.scrollHeight > $('#task-detail').height() + 12) {
     $(this).animate({ height: this.scrollHeight + 'px' }, 'fast')

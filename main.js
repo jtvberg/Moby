@@ -28,15 +28,6 @@ const createWindow = () => {
   win.on('closed', () => {
     win = null
   })
-
-  // // IPC events/channels to communicate screen state
-  // win.on('enter-full-screen', () => {
-  //   win.webContents.send('efs')
-  // })
-
-  // win.on('leave-full-screen', () => {
-  //   win.webContents.send('lfs')
-  // })
 }
 
 // Create tray icon and calculate positions

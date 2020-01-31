@@ -12,6 +12,7 @@ body {
   background-image: linear-gradient(to bottom right, var(--background1), var(--background2));
   padding: 5px;
   color: var(--light);
+  font-weight: 500;
 }
 
 .form-group {
@@ -38,42 +39,4 @@ body {
 
 .btn {
   margin: 0px 1px 0px 4px;
-}
-
-.theme-1.active,
-.theme-2.active,
-.theme-3.active,
-.theme-4.active,
-.theme-5.active {
-  border-color: var(--highlight) !important;
-  border-width: 2px 1px !important;
-}
-
-.theme-1,
-.theme-2,
-.theme-3,
-.theme-4,
-.theme-5 {
-  color: var(--light);
-  font-weight: bold;
-}
-
-.theme-1 {
-  background-color: var(--blue);
-}
-
-.theme-2 {
-  background-color: var(--red);
-}
-
-.theme-3 {
-  background-color: var(--purple);
-}
-
-.theme-4 {
-  background-color: var(--orange);
-}
-
-.theme-5 {
-  background-color: var(--green);
 }

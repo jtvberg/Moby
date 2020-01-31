@@ -38,5 +38,13 @@ $('#doing-button').click(() => {
 // IPC event/channel to act on reset of form
 ipcRenderer.on('quick-reset', (e) => {
   $('#quick-task-form').trigger('reset')
+  $('#quick-task-detail').height('48px')
   $('#quick-task-title').focus()
+})
+
+// Size task detail on input
+$('#quick-task-detail').on('input keydown', function () {
+  if (this.scrollHeight > $('#quick-task-detail').height() + 12) {
+    $('#quick-task-detail').height(this.scrollHeight + 'px')
+  }
 })

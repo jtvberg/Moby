@@ -248,64 +248,6 @@ body {
   background: var(--trans);
 }
 
-.theme-1.active,
-.theme-2.active,
-.theme-3.active,
-.theme-4.active,
-.theme-5.active {
-  border-color: var(--highlight) !important;
-  border-width: 2px 1px !important;
-}
-
-.theme-1,
-.theme-2,
-.theme-3,
-.theme-4,
-.theme-5 {
-  color: var(--light);
-  font-weight: 500;
-}
-
-.theme-1 {
-  background-color: var(--blue);
-}
-
-.theme-2 {
-  background-color: var(--red);
-}
-
-.theme-3 {
-  background-color: var(--purple);
-}
-
-.theme-4 {
-  background-color: var(--orange);
-}
-
-.theme-5 {
-  background-color: var(--green);
-}
-
-.theme-select-1 {
-  background-color: var(--blue);
-}
-
-.theme-select-2 {
-  background-color: var(--red);
-}
-
-.theme-select-3 {
-  background-color: var(--purple);
-}
-
-.theme-select-4 {
-  background-color: var(--orange);
-}
-
-.theme-select-5 {
-  background-color: var(--green);
-}
-
 .color-1 {
   color: var(--blue);
 }

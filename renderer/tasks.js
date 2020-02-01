@@ -3,6 +3,7 @@
 const { ipcRenderer } = require('electron')
 const fs = require('fs')
 let desktopPath = ''
+let updTaskId = null
 
 // IPC event to get system desktop path
 ipcRenderer.on('desktopPath', (e, data) => {
@@ -22,6 +23,13 @@ exports.updateTaskStatus = (taskId, taskStatus) => {
   this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).TaskStatus = taskStatus
   this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).StatusDate = Date.now()
   $(`#a${taskId}`).text('0')
+  this.saveTasks()
+}
+
+// Update task detail helper function
+exports.updateTaskDetail = (taskId, taskDetail) => {
+  console.log(taskId + ' ' + taskDetail)
+  this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).TaskDetail = taskDetail
   this.saveTasks()
 }
 
@@ -130,7 +138,7 @@ exports.addTask = task => {
                         <span class="aging" id="a${task.TaskId}" ${showAge}>${taskDays}</span>
                       </div>
                       <div class="collapse collapse-content" id="c${task.TaskId}">
-                        <p style="white-space: pre-wrap;">${task.TaskDetail}</p>
+                        <p id="d${task.TaskId}" contenteditable="true" style="white-space: pre-wrap;">${task.TaskDetail}</p>
                         <div class="tag-box" id="t${task.TaskId}">${tagHTML}</div>
                         <div class="card-menu">
                           <div class="card-menu-item-del fas fa-minus-square" id="del-button-${task.TaskId}" data-toggle="tooltip" title="Archive Task" ></div>
@@ -149,6 +157,18 @@ exports.addTask = task => {
     $('.card').removeClass('card-selected')
     $(`#${task.TaskId}`).addClass('card-selected')
     $('.window-title').text(`Moby - ${task.TaskTitle}`)
+  })
+  // In-line detail update event
+  $(`#d${task.TaskId}`).on('input', function () {
+    updTaskId = task.TaskId
+  })
+  // In-line detail update commit event
+  $(`#d${task.TaskId}`).on('blur', () => {
+    window.getSelection().removeAllRanges()
+    if (updTaskId) {
+      this.updateTaskDetail(updTaskId, $(`#d${task.TaskId}`).text())
+      updTaskId = null
+    }
   })
   // Delete active task (send to archive)
   $(`#del-button-${task.TaskId}`).click(() => {
@@ -219,28 +239,28 @@ exports.importTasks = () => {
     }
     try {
       var JSONimport = JSON.parse(data)
+      if (JSONimport.length) {
+        var i = 0
+        JSONimport.forEach(task => {
+          if (!this.taskList.some(e => e.TaskId === task.TaskId)) {
+            this.taskList.push(task)
+            this.addTask(task)
+            i++
+          }
+        })
+        this.saveTasks()
+        if (i > 1) {
+          alert(`${i} tasks imported succesfully`)
+        } else if (i === 1) {
+          alert('1 task imported succesfully')
+        } else {
+          alert('No new tasks found')
+        }
+      } else {
+        alert('No tasks found')
+      }
     } catch (err) {
       alert(err)
-    }
-    if (JSONimport.length) {
-      var i = 0
-      JSONimport.forEach(task => {
-        if (!this.taskList.some(e => e.TaskId === task.TaskId)) {
-          this.taskList.push(task)
-          this.addTask(task)
-          i++
-        }
-      })
-      this.saveTasks()
-      if (i > 1) {
-        alert(`${i} tasks imported succesfully`)
-      } else if (i === 1) {
-        alert('1 task imported succesfully')
-      } else {
-        alert('No new tasks found')
-      }
-    } else {
-      alert('No tasks found')
     }
   })
 }

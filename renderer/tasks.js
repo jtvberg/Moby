@@ -152,14 +152,14 @@ exports.addTask = task => {
   // Add task HTML to host
   $(`#col-${task.TaskStatus}`).append(taskHTML)
   // Active task setting event
-  $(`#${task.TaskId}`).on('click', function () {
+  $(`#${task.TaskId}`).on('click', () => {
     window.activeTask = task.TaskId
     $('.card').removeClass('card-selected')
     $(`#${task.TaskId}`).addClass('card-selected')
     $('.window-title').text(`Moby - ${task.TaskTitle}`)
   })
   // In-line detail update event
-  $(`#d${task.TaskId}`).on('input', function () {
+  $(`#d${task.TaskId}`).on('input', () => {
     updTaskId = task.TaskId
   })
   // In-line detail update commit event

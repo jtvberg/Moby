@@ -7,6 +7,7 @@ require('./menu.js')
 const customTitlebar = require('custom-electron-titlebar')
 let taskType = 'new'
 let winMax = false
+let updHeader = false
 
 // Custom titlebar instantiation
 const bg = getComputedStyle(document.documentElement).getPropertyValue('--background1').trim()
@@ -31,6 +32,44 @@ function maxRestoreWindow () {
     winMax = false
   }
 }
+
+// Load headers if found
+function getHeaders () {
+  var headers = JSON.parse(localStorage.getItem('headers')) || []
+  if (headers.length === $('.th').length) {
+    var i = 0
+    $('.th').each(function () {
+      ($(this).text(headers[i]))
+      i++
+    })
+  }
+}
+
+// Set custom headers on load
+getHeaders()
+
+// Save headers to localstorage
+function saveHeaders () {
+  var headers = []
+  $('.th').each(function () {
+    headers.push($(this).text())
+  })
+  localStorage.setItem('headers', JSON.stringify(headers))
+}
+
+// In-line header update event
+$('.th').on('input', () => {
+  updHeader = true
+})
+
+// In-line header update commit event
+$('.th').on('blur', () => {
+  window.getSelection().removeAllRanges()
+  if (updHeader) {
+    saveHeaders()
+    updHeader = false
+  }
+})
 
 // Load tasks at startup; Evaluate for scheduled task; Archive off tasks in 'Done' for more than a week; Update task age in UI
 if (tasks.taskList.length && document.getElementById('main-window')) {
@@ -142,7 +181,7 @@ window.importTasksMenu = () => {
 }
 
 // Task modal load event
-$('#task-modal').on('show.bs.modal', function (e) {
+$('#task-modal').on('show.bs.modal', (e) => {
   var type = $(e.relatedTarget).data('type-id') ? $(e.relatedTarget).data('type-id') : taskType
   var status = $(e.relatedTarget).data('status-id') ? $(e.relatedTarget).data('status-id') : 'Do'
   loadTaskModal(type, status)
@@ -186,14 +225,14 @@ function loadTaskModal (type, status) {
 }
 
 // Focus title field on modal 'shown'
-$('#task-modal').on('shown.bs.modal', function (e) {
+$('#task-modal').on('shown.bs.modal', () => {
   $('#task-title').focus()
 })
 
 // Size task detail on input
 $('#task-detail').on('input keydown', function () {
   if (this.scrollHeight > $('#task-detail').height() + 12) {
-    $('#task-detail').height(this.scrollHeight + 'px')
+    $(this).height(this.scrollHeight + 'px')
   }
 })
 
@@ -231,7 +270,7 @@ $('#submit-button').click(() => {
 })
 
 // Execute task modal submit on enter except when in detail field
-$('#task-modal').keypress(function (e) {
+$('#task-modal').keypress((e) => {
   if (e.which === 13 && !$('#task-detail').is(':focus')) {
     $('#submit-button').click()
   }

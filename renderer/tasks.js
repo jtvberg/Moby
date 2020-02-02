@@ -78,7 +78,9 @@ exports.submitTask = (taskType) => {
   } else {
     var getTask = this.taskList.find(task => parseInt(task.TaskId) === parseInt(activeTask))
     if (getTask.TaskStatus === taskStatus) {
-      statusDate = getTask.StatusDate
+      newTaskData.StatusDate = getTask.StatusDate
+    } else {
+      getTask.StatusDate = statusDate
     }
     newTaskData.TaskId = activeTask
     getTask.TaskTitle = taskTitle
@@ -90,11 +92,11 @@ exports.submitTask = (taskType) => {
     getTask.WeekDay = weekDay
     getTask.MonthDay = monthDay
     getTask.Tags = tags
-    getTask.StatusDate = statusDate
     document.getElementById(getTask.TaskId).remove()
   }
   this.saveTasks()
   this.addTask(newTaskData)
+  console.log(newTaskData)
 }
 
 // Clone task to 'do'
@@ -130,8 +132,11 @@ exports.addTask = task => {
       tagHTML += `<div class="card tags">${item}</div>`
     })
   }
+  // Calculate age
   const taskDays = Math.floor((Date.now() - task.StatusDate) / 86400000)
+  // Check if age is toggled
   const showAge = $('.aging').is(':visible') ? 'style' : 'style="display: none;"'
+  // Generate task card html
   const taskHTML = `<div class="card theme-${task.TaskTheme}" id="${task.TaskId}" draggable="true" ondragstart="drag(event)">
                       <div style="clear: both" id="b${task.TaskId}" data-toggle="collapse" data-target="#c${task.TaskId}">
                         <span class="title">${task.TaskTitle}</span>
@@ -149,7 +154,7 @@ exports.addTask = task => {
                         <div>
                       </div>
                     </div>`
-  // Add task HTML to host
+  // Add task html to host
   $(`#col-${task.TaskStatus}`).append(taskHTML)
   // Active task setting event
   $(`#${task.TaskId}`).on('click', () => {

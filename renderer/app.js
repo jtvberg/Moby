@@ -63,15 +63,33 @@ $('.th').on('input', () => {
 })
 
 // In-line header update commit event
-$('.th').on('blur', () => {
+$('.th').on('blur', function () {
   window.getSelection().removeAllRanges()
   if (updHeader) {
+    if ($(this).text().trim() === '') {
+      $(this).text($(this).parent().prop('id').substring(5, 10).trim().replace(/^\w/, c => c.toUpperCase()))
+    }
     saveHeaders()
     updHeader = false
   }
 })
 
-// Load tasks at startup; Evaluate for scheduled task; Archive off tasks in 'Done' for more than a week; Update task age in UI
+// No enter for you!
+$('.th').keypress(function (e) {
+  if (e.which === 13) {
+    this.blur()
+  }
+})
+
+// No paste for you either!
+$('.th').on('paste', (e) => {
+  e.preventDefault()
+})
+
+// Load tasks at startup;
+// Evaluate for scheduled task;
+// Archive off tasks in 'Done' for more than a week;
+// Update task age in UI
 if (tasks.taskList.length && document.getElementById('main-window')) {
   tasks.taskList.forEach(tasks.addTask)
   addScheduledTasks()

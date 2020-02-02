@@ -20,15 +20,15 @@ exports.saveTasks = () => {
 
 // Update task status helper function
 exports.updateTaskStatus = (taskId, taskStatus) => {
-  this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).TaskStatus = taskStatus
-  this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).StatusDate = Date.now()
+  var task = this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId) && task.TaskStatus !== taskStatus)
+  task.StatusDate = Date.now()
+  task.TaskStatus = taskStatus
   $(`#a${taskId}`).text('0')
   this.saveTasks()
 }
 
 // Update task detail helper function
 exports.updateTaskDetail = (taskId, taskDetail) => {
-  console.log(taskId + ' ' + taskDetail)
   this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).TaskDetail = taskDetail
   this.saveTasks()
 }
@@ -166,7 +166,7 @@ exports.addTask = task => {
   $(`#d${task.TaskId}`).on('blur', () => {
     window.getSelection().removeAllRanges()
     if (updTaskId) {
-      this.updateTaskDetail(updTaskId, $(`#d${task.TaskId}`).text())
+      this.updateTaskDetail(updTaskId, $(`#d${task.TaskId}`)[0].innerText)
       updTaskId = null
     }
   })

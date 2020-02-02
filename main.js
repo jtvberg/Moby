@@ -34,12 +34,10 @@ const createWindow = () => {
 // Create tray icon and calculate positions
 let tray
 const createTray = () => {
-  if (process.platform === 'darwin') {
-    tray = new Tray(path.join(__dirname, 'renderer/res/moby1_icon_19.png'))
-    tray.on('click', function (e) {
-      toggleQuickMenu()
-    })
-  }
+  tray = new Tray(path.join(__dirname, 'renderer/res/moby1_icon_19.png'))
+  tray.on('click', function (e) {
+    toggleQuickMenu()
+  })
 
   const toggleQuickMenu = () => {
     quick.isVisible() ? quick.hide() : showQuickMenu()
@@ -98,17 +96,19 @@ const createQuickMenu = () => {
 // Create windows, tray, post electron init
 app.on('ready', () => {
   createWindow()
-  createTray()
-  createQuickMenu()
+  // Tray icon only on Mac
+  if (process.platform === 'darwin') {
+    createTray()
+    createQuickMenu()
+  }
   win.webContents.on('dom-ready', () => {
     // IPC event to send system desktop path
     win.webContents.send('desktopPath', app.getPath('desktop'))
   })
 })
 
-// Close app on window close; uncomment option for mac behavior
+// Close app on window close (does not work with tray icon)
 app.on('window-all-closed', () => {
-  // if (process.platform !== 'darwin')
   app.quit()
 })
 

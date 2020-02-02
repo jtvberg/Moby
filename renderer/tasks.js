@@ -96,7 +96,6 @@ exports.submitTask = (taskType) => {
   }
   this.saveTasks()
   this.addTask(newTaskData)
-  console.log(newTaskData)
 }
 
 // Clone task to 'do'

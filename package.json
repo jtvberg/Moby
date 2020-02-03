@@ -6,9 +6,11 @@
   "scripts": {
     "start": "electron .",
     "debug": "electron --inspect=6969 .",
-    "break": "electron --inspect-brk=6969 ."
+    "break": "electron --inspect-brk=6969 .",
+    "build": "electron-builder --help"
   },
   "repository": "https://github.com/jtvberg/Moby",
+  "homepage": "https://github.com/jtvberg/Moby",
   "keywords": [
     "Electron",
     "task",
@@ -17,6 +19,7 @@
   "author": "Vandenberg",
   "license": "CC0-1.0",
   "devDependencies": {
+    "electron-builder": "^22.3.2",
     "electron-reload": "^1.5.0",
     "eslint": "^6.8.0",
     "eslint-config-standard": "^14.1.0",

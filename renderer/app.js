@@ -14,7 +14,7 @@ const bg = getComputedStyle(document.documentElement).getPropertyValue('--backgr
 // eslint-disable-next-line no-new
 new customTitlebar.Titlebar({
   backgroundColor: customTitlebar.Color.fromHex(bg),
-  icon: './res/moby1_icon_19.png'
+  icon: './res/moby_icon.png'
 })
 
 // Title bar double click event to maximize/restore window

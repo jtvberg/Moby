@@ -7,7 +7,7 @@
     "start": "electron .",
     "debug": "electron --inspect=6969 .",
     "break": "electron --inspect-brk=6969 .",
-    "build": "electron-builder --help"
+    "build": "electron-builder"
   },
   "repository": "https://github.com/jtvberg/Moby",
   "homepage": "https://github.com/jtvberg/Moby",
@@ -35,5 +35,12 @@
     "custom-electron-titlebar": "^3.2.2",
     "jquery": "^3.4.1",
     "popper.js": "^1.16.1"
+  },
+  "build": {
+    "appId": "com.insomniaclabs.moby",
+    "mac": {
+      "category": "public.app-category.productivity",
+      "icon": "build/moby_icon.icns"
+    }
   }
 }

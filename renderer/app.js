@@ -74,14 +74,14 @@ $('.th').on('blur', function () {
   }
 })
 
-// No enter for you!
+// In-line header update: No enter for you!
 $('.th').keypress(function (e) {
   if (e.which === 13) {
     this.blur()
   }
 })
 
-// No paste for you either!
+// In-line header update: No paste for you either!
 $('.th').on('paste', (e) => {
   e.preventDefault()
 })

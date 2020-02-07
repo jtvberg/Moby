@@ -41,6 +41,20 @@
     "mac": {
       "category": "public.app-category.productivity",
       "icon": "build/moby_icon.icns"
+    },
+    "win": {
+      "icon": "build/moby_icon.ico",
+      "target": [
+        {
+          "target": "zip",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "linux": {
+      "category": "Utility"
     }
   }
 }

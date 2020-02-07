@@ -39,11 +39,9 @@
   "build": {
     "appId": "com.insomniaclabs.moby",
     "mac": {
-      "category": "public.app-category.productivity",
-      "icon": "build/moby_icon.icns"
+      "category": "public.app-category.productivity"
     },
     "win": {
-      "icon": "build/moby_icon.ico",
       "target": [
         {
           "target": "zip",
@@ -54,7 +52,6 @@
       ]
     },
     "linux": {
-      "icon": "build/moby_icon.png",
       "category": "Utility"
     }
   }

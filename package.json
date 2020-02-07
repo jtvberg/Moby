@@ -54,6 +54,7 @@
       ]
     },
     "linux": {
+      "icon": "build/moby_icon.png",
       "category": "Utility"
     }
   }

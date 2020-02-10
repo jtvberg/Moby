@@ -39,8 +39,13 @@ function getHeaders () {
   if (headers.length === $('.th').length) {
     var i = 0
     $('.th').each(function () {
-      ($(this).text(headers[i]))
+      ($(this).text(headers[i].headerTitle))
+      $(new Option(headers[i].headerTitle)).appendTo('#task-status')
       i++
+    })
+  } else {
+    $('.th').each(function () {
+      $(new Option($(this).text())).appendTo('#task-status')
     })
   }
 }
@@ -52,7 +57,11 @@ getHeaders()
 function saveHeaders () {
   var headers = []
   $('.th').each(function () {
-    headers.push($(this).text())
+    var headerData = {
+      headerId: $(this).parent().prop('id'),
+      headerTitle: $(this).text()
+    }
+    headers.push(headerData)
   })
   localStorage.setItem('headers', JSON.stringify(headers))
 }
@@ -222,7 +231,9 @@ function loadTaskModal (type, status) {
     const getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(activeTask))
     $('#task-title').val(getTask.TaskTitle)
     $('#task-detail').val(getTask.TaskDetail)
+    console.log(getTask.TaskStatus.replace(/^\w/, c => c.toUpperCase()))
     $('#task-status').val(getTask.TaskStatus.replace(/^\w/, c => c.toUpperCase()))
+    // $('#task-status').val(getTask.TaskStatus.replace(/^\w/, c => c.toUpperCase()))
     $(`#option-${getTask.TaskTheme}`)
       .closest('.btn')
       .button('toggle')

@@ -36,6 +36,7 @@ function maxRestoreWindow () {
 // Load headers if found
 function getHeaders () {
   var headers = JSON.parse(localStorage.getItem('headers')) || []
+  $('#task-status').empty()
   if (headers.length === $('.th').length) {
     var i = 0
     $('.th').each(function () {
@@ -64,6 +65,9 @@ function saveHeaders () {
     headers.push(headerData)
   })
   localStorage.setItem('headers', JSON.stringify(headers))
+
+  // TODO: just update the task modal select...
+  getHeaders()
 }
 
 // In-line header update event
@@ -231,9 +235,7 @@ function loadTaskModal (type, status) {
     const getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(activeTask))
     $('#task-title').val(getTask.TaskTitle)
     $('#task-detail').val(getTask.TaskDetail)
-    console.log(getTask.TaskStatus.replace(/^\w/, c => c.toUpperCase()))
     $('#task-status').val(getTask.TaskStatus.replace(/^\w/, c => c.toUpperCase()))
-    // $('#task-status').val(getTask.TaskStatus.replace(/^\w/, c => c.toUpperCase()))
     $(`#option-${getTask.TaskTheme}`)
       .closest('.btn')
       .button('toggle')

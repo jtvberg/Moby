@@ -27,26 +27,6 @@
           <div class="color-item fas fa-square fa-2x color-4" id="theme4-button" data-theme-id="4" onclick="toggleThemeClick(event)"></div>
           <div class="color-item fas fa-square fa-2x color-5" id="theme5-button" data-theme-id="5" onclick="toggleThemeClick(event)"></div>
         </div>
-      </div> 
-      <div class="host" id="host-do" ondrop="drop(event)" ondragover="allowDrop(event)">
-        <div class="header th" contenteditable="true">Do</div>
-        <div class="box" id="col-do"></div>
-        <div class="footer fas fa-plus fa-2x" href="#task-modal" data-toggle="modal" data-status-id="Do" data-type-id="new"></div>
-      </div>
-      <div class="host" id="host-today" ondrop="drop(event)" ondragover="allowDrop(event)">
-        <div class="header th" contenteditable="true">Today</div>
-        <div class="box" id="col-today"></div>
-        <div class="footer fas fa-plus fa-2x" href="#task-modal" data-toggle="modal" data-status-id="Today" data-type-id="new"></div>
-      </div>
-      <div class="host" id="host-doing" ondrop="drop(event)" ondragover="allowDrop(event)">
-        <div class="header th" contenteditable="true">Doing</div>
-        <div class="box" id="col-doing" ></div>
-        <div class="footer fas fa-plus fa-2x" href="#task-modal" data-toggle="modal" data-status-id="Doing" data-type-id="new"></div>
-      </div>
-      <div class="host" id="host-done" ondrop="drop(event)" ondragover="allowDrop(event)">
-        <div class="header th">Done</div>
-        <div class="box" id="col-done"></div>
-        <div class="footer fas fa-plus fa-2x" href="#task-modal" data-toggle="modal" data-status-id="Done" data-type-id="new"></div>
       </div>
     </div>
 
@@ -204,9 +184,9 @@
             </button>
           </div>
           <div class="modal-body">
-            <div class="host modal-host" id="host-archive">
+            <div class="stack modal-stack" id="stack-archive">
               <div class="header">Archive</div>
-              <div class="box" id="col-archive"></div>
+              <div class="box"></div>
             </div>
           </div>
           <div class="modal-footer">
@@ -227,9 +207,9 @@
             </button>
           </div>
           <div class="modal-body">
-            <div class="host modal-host" id="host-schedule">
+            <div class="stack modal-stack" id="stack-schedule">
               <div class="header">Upcoming</div>
-              <div class="box" id="col-schedule"></div>
+              <div class="box"></div>
             </div>
           </div>
           <div class="modal-footer">

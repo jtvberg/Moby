@@ -7,7 +7,7 @@ require('./menu.js')
 const customTitlebar = require('custom-electron-titlebar')
 let taskType = 'new'
 let winMax = false
-let updHeader = false
+let updStack = false
 
 // Custom titlebar instantiation
 const bg = getComputedStyle(document.documentElement).getPropertyValue('--background1').trim()
@@ -17,101 +17,100 @@ new customTitlebar.Titlebar({
   icon: './res/moby_icon.png'
 })
 
-// Title bar double click event to maximize/restore window
-$('.titlebar-drag-region').dblclick(() => {
-  maxRestoreWindow()
-})
+// Load stacks
+getStacks()
 
-// IPC event to maximize/restore window
-function maxRestoreWindow () {
-  if (!winMax) {
-    ipcRenderer.send('win-max')
-    winMax = true
-  } else {
-    ipcRenderer.send('win-restore')
-    winMax = false
-  }
-}
+// Evaluate for scheduled task
+addScheduledTasks()
 
-// Load headers if found
-function getHeaders () {
-  var headers = JSON.parse(localStorage.getItem('headers')) || []
+// Archive off tasks in 'Done' for more than a week
+archiveDoneTasks()
+
+// Update task age in UI
+updateTaskAge()
+
+// Set intervals for scheduled tasks, update ageing, archive ageing
+window.setInterval(addScheduledTasks, 3600000)
+window.setInterval(updateTaskAge, 3600000)
+window.setInterval(archiveDoneTasks, 3600000)
+
+// Stack load; if non defined use default
+function getStacks () {
+  var stacks = JSON.parse(localStorage.getItem('stackList')) || []
   $('#task-status').empty()
-  if (headers.length === $('.th').length) {
-    var i = 0
-    $('.th').each(function () {
-      ($(this).text(headers[i].headerTitle))
-      $(new Option(headers[i].headerTitle)).appendTo('#task-status')
-      i++
+  $('.wrapper').children('.stack').remove()
+  if (stacks.length > 0) {
+    stacks.forEach(stack => {
+      buildStack(stack.stackId, stack.stackTitle)
+      $(new Option(stack.stackTitle)).appendTo('#task-status')
     })
   } else {
-    $('.th').each(function () {
-      $(new Option($(this).text())).appendTo('#task-status')
-    })
+    buildStack('do', 'Do')
+    buildStack('today', 'Today')
+    buildStack('doing', 'Doing')
+    buildStack('done', 'Done')
+    $(new Option('Do')).appendTo('#task-status')
+    $(new Option('Today')).appendTo('#task-status')
+    $(new Option('Doing')).appendTo('#task-status')
+    $(new Option('Done')).appendTo('#task-status')
   }
+  // Add tasks to the stacks
+  tasks.taskList.forEach(tasks.addTask)
 }
 
-// Set custom headers on load
-getHeaders()
-
-// Save headers to localstorage
-function saveHeaders () {
-  var headers = []
+// Save stacks to localstorage
+function saveStacks () {
+  var stacks = []
   $('.th').each(function () {
-    var headerData = {
-      headerId: $(this).parent().prop('id'),
-      headerTitle: $(this).text()
+    var stackData = {
+      stackId: $(this).parent().prop('id').substring(6),
+      stackTitle: $(this).text()
     }
-    headers.push(headerData)
+    stacks.push(stackData)
   })
-  localStorage.setItem('headers', JSON.stringify(headers))
+  localStorage.setItem('stackList', JSON.stringify(stacks))
 
   // TODO: just update the task modal select...
-  getHeaders()
+  getStacks()
 }
 
-// In-line header update event
+function buildStack (id, title) {
+  const stackHtml = `<div class="stack" id="stack-${id}" ondrop="drop(event)" ondragover="allowDrop(event)">
+                      <div class="header th" contenteditable="true">${title}</div>
+                      <div class="box"></div>
+                      <div class="footer fas fa-plus fa-2x" href="#task-modal" data-toggle="modal" data-status-id="${title}" data-type-id="new"></div>
+                    </div>`
+  $('.wrapper').append(stackHtml)
+}
+
+// In-line stack title update event
 $('.th').on('input', () => {
-  updHeader = true
+  updStack = true
 })
 
-// In-line header update commit event
+// In-line stack title update commit event
 $('.th').on('blur', function () {
   window.getSelection().removeAllRanges()
-  if (updHeader) {
+  if (updStack) {
     if ($(this).text().trim() === '') {
-      $(this).text($(this).parent().prop('id').substring(5, 10).trim().replace(/^\w/, c => c.toUpperCase()))
+      $(this).text($(this).parent().prop('id').substring(6).trim().replace(/^\w/, c => c.toUpperCase()))
     }
-    saveHeaders()
-    updHeader = false
+    saveStacks()
+    updStack = false
   }
 })
 
-// In-line header update: No enter for you!
+// In-line stack title update: No enter for you!
 $('.th').keypress(function (e) {
   if (e.which === 13) {
     this.blur()
   }
 })
 
-// In-line header update: No paste for you either!
+// In-line stack title update: No paste for you either!
 $('.th').on('paste', (e) => {
   e.preventDefault()
 })
-
-// Load tasks at startup;
-// Evaluate for scheduled task;
-// Archive off tasks in 'Done' for more than a week;
-// Update task age in UI
-if (tasks.taskList.length && document.getElementById('main-window')) {
-  tasks.taskList.forEach(tasks.addTask)
-  addScheduledTasks()
-  archiveDoneTasks()
-  updateTaskAge()
-  window.setInterval(addScheduledTasks, 3600000)
-  window.setInterval(archiveDoneTasks, 3600000)
-  window.setInterval(updateTaskAge, 3600000)
-}
 
 // IPC event to get task data from tray window
 ipcRenderer.on('quick-data', (e, data) => {
@@ -162,6 +161,22 @@ function updateTaskAge () {
     tasks.taskList.forEach((item) => {
       $(`#a${item.TaskId}`).text(Math.floor((Date.now() - item.StatusDate) / 86400000))
     })
+  }
+}
+
+// Title bar double click event to maximize/restore window
+$('.titlebar-drag-region').dblclick(() => {
+  maxRestoreWindow()
+})
+
+// IPC event to maximize/restore window
+function maxRestoreWindow () {
+  if (!winMax) {
+    ipcRenderer.send('win-max')
+    winMax = true
+  } else {
+    ipcRenderer.send('win-restore')
+    winMax = false
   }
 }
 
@@ -388,22 +403,13 @@ const drag = (e) => {
 const drop = (e) => {
   e.preventDefault()
   var data = e.dataTransfer.getData('text')
-  let col
-  if (e.target.id.substring(0, 3) === 'col') {
-    e.target.appendChild(document.getElementById(data))
-    col = e.target.getAttribute('id').substring(4)
-  } else if (e.target.parentElement.parentElement.id.substring(0, 3) === 'col') {
-    col = e.target.parentElement.parentElement.getAttribute('id').substring(4)
-    e.target.parentElement.parentElement.appendChild(
-      document.getElementById(data)
-    )
-  } else if (e.target.id.substring(0, 4) === 'host') {
-    col = e.target.id.substring(5, e.target.id.length)
-    document
-      .getElementById('col-' + col)
-      .appendChild(document.getElementById(data))
+  if ($(e.target).hasClass('box')) {
+    $(e.target).append(document.getElementById(data))
+  } else if ($(e.target).hasClass('stack')) {
+    $(e.target).find('.box').append(document.getElementById(data))
   } else {
     return
   }
-  tasks.updateTaskStatus(data, col)
+  console.log($(e.target).closest('.stack').prop('id').substring(6))
+  tasks.updateTaskStatus(data, $(e.target).closest('.stack').prop('id').substring(6))
 }

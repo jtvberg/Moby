@@ -21,10 +21,12 @@ exports.saveTasks = () => {
 // Update task status helper function
 exports.updateTaskStatus = (taskId, taskStatus) => {
   var task = this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId) && task.TaskStatus !== taskStatus)
-  task.StatusDate = Date.now()
-  task.TaskStatus = taskStatus
-  $(`#a${taskId}`).text('0')
-  this.saveTasks()
+  if (task) {
+    task.StatusDate = Date.now()
+    task.TaskStatus = taskStatus
+    $(`#a${taskId}`).text('0')
+    this.saveTasks()
+  }
 }
 
 // Update task detail helper function
@@ -138,7 +140,7 @@ exports.addTask = task => {
   // Check if archived and update archive tooltip to delete
   const archDelete = task.TaskStatus === 'archive' ? 'Delete' : 'Archive'
   // Generate task card html
-  const taskHTML = `<div class="card theme-${task.TaskTheme}" id="${task.TaskId}" draggable="true" ondragstart="drag(event)">
+  const taskHtml = `<div class="card theme-${task.TaskTheme}" id="${task.TaskId}" draggable="true" ondragstart="drag(event)">
                       <div style="clear: both" id="b${task.TaskId}" data-toggle="collapse" data-target="#c${task.TaskId}">
                         <span class="title">${task.TaskTitle}</span>
                         <span class="aging" id="a${task.TaskId}" ${showAge}>${taskDays}</span>
@@ -156,7 +158,7 @@ exports.addTask = task => {
                       </div>
                     </div>`
   // Add task html to host
-  $(`#col-${task.TaskStatus}`).append(taskHTML)
+  $(`#stack-${task.TaskStatus}`).find('.box').append(taskHtml)
   // Active task setting event
   $(`#${task.TaskId}`).on('click', () => {
     window.activeTask = task.TaskId

@@ -199,7 +199,7 @@ exports.addTask = task => {
 // Archive a specific task
 exports.archiveTask = (taskId) => {
   if (taskId) {
-    document.getElementById('col-archive').appendChild(document.getElementById(taskId))
+    document.getElementById('stack-archive').find('.box').appendChild(document.getElementById(taskId))
     this.updateTaskStatus(taskId, 'archive')
     this.saveTasks()
   }
@@ -208,6 +208,7 @@ exports.archiveTask = (taskId) => {
 // Delete a specific task
 exports.deleteTask = (taskId) => {
   if (taskId) {
+    $(`#del-button-${taskId}`).tooltip('hide')
     $(`#${taskId}`).remove()
     this.taskList = this.taskList.filter(task => task.TaskId !== taskId)
     this.saveTasks()
@@ -217,7 +218,7 @@ exports.deleteTask = (taskId) => {
 // Archive a specific task
 exports.restoreTask = (taskId) => {
   if (taskId) {
-    document.getElementById('col-do').appendChild(document.getElementById(activeTask))
+    document.getElementById('stack-do').find('.box').appendChild(document.getElementById(activeTask))
     this.updateTaskStatus(taskId, 'do')
     this.saveTasks()
   }

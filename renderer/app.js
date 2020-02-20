@@ -5,6 +5,7 @@ const tasks = require('./tasks')
 require('bootstrap/js/dist/modal')
 require('./menu.js')
 const customTitlebar = require('custom-electron-titlebar')
+const stackPrefix = 'stack-'
 let taskType = 'new'
 let winMax = false
 let updStack = false
@@ -39,16 +40,16 @@ function getStacks () {
   var stacks = JSON.parse(localStorage.getItem('stackList')) || []
   $('#task-status').empty()
   $('.wrapper').children('.stack').remove()
-  if (stacks.length > 0) {
+  if (stacks.length < 0) {
     stacks.forEach(stack => {
       buildStack(stack.stackId, stack.stackTitle)
       $(new Option(stack.stackTitle)).appendTo('#task-status')
     })
   } else {
-    buildStack('do', 'Do')
-    buildStack('today', 'Today')
-    buildStack('doing', 'Doing')
-    buildStack('done', 'Done')
+    buildStack(`${stackPrefix}do`, 'Do')
+    buildStack(`${stackPrefix}today`, 'Today')
+    buildStack(`${stackPrefix}doing`, 'Doing')
+    buildStack(`${stackPrefix}done`, 'Done')
     $(new Option('Do')).appendTo('#task-status')
     $(new Option('Today')).appendTo('#task-status')
     $(new Option('Doing')).appendTo('#task-status')
@@ -63,7 +64,7 @@ function saveStacks () {
   var stacks = []
   $('.th').each(function () {
     var stackData = {
-      stackId: $(this).parent().prop('id').substring(6),
+      stackId: $(this).parent().prop('id'),
       stackTitle: $(this).text()
     }
     stacks.push(stackData)
@@ -75,7 +76,7 @@ function saveStacks () {
 }
 
 function buildStack (id, title) {
-  const stackHtml = `<div class="stack" id="stack-${id}" ondrop="drop(event)" ondragover="allowDrop(event)">
+  const stackHtml = `<div class="stack" id="${id}" ondrop="drop(event)" ondragover="allowDrop(event)">
                       <div class="header th" contenteditable="true">${title}</div>
                       <div class="box"></div>
                       <div class="footer fas fa-plus fa-2x" href="#task-modal" data-toggle="modal" data-status-id="${title}" data-type-id="new"></div>
@@ -84,16 +85,18 @@ function buildStack (id, title) {
 }
 
 // In-line stack title update event
-$('.th').on('input', () => {
+$(document).on('input', '.th', () => {
+// $('.th').on('input', () => {
   updStack = true
 })
 
 // In-line stack title update commit event
-$('.th').on('blur', function () {
+$(document).on('blur', '.th', function () {
+// $('.th').on('blur', function () {
   window.getSelection().removeAllRanges()
   if (updStack) {
     if ($(this).text().trim() === '') {
-      $(this).text($(this).parent().prop('id').substring(6).trim().replace(/^\w/, c => c.toUpperCase()))
+      $(this).text($(this).parent().prop('id').replace(stackPrefix, '').trim().replace(/^\w/, c => c.toUpperCase()))
     }
     saveStacks()
     updStack = false
@@ -120,12 +123,11 @@ ipcRenderer.on('quick-data', (e, data) => {
 })
 
 // Scheduled tasks method
+// Schedule logic:
+// if in 'schedule' status && date < now:
+// if count > 0 or -1 clone task to today, reduce count (except forever -1) and update start date
+// if count of scheduled item is 0, archive it
 function addScheduledTasks () {
-  /* Schedule logic
-  if in 'schedule' status && date < now:
-  if count > 0 or -1 clone task to today, reduce count (except forever -1) and update start date
-  if count of scheduled item is 0, archive it
-  */
   if (tasks.taskList.length) {
     tasks.taskList.forEach((item) => {
       if (item.TaskStatus === 'schedule' && item.StartDate < Date.now()) {
@@ -150,6 +152,7 @@ function archiveDoneTasks () {
     tasks.taskList.forEach((item) => {
       if (item.TaskStatus === 'done' && item.StatusDate < Date.now() - (86400000 * 7)) {
         tasks.archiveTask(item.TaskId)
+        // TODO: add flag for delete on archive
       }
     })
   }
@@ -410,6 +413,5 @@ const drop = (e) => {
   } else {
     return
   }
-  console.log($(e.target).closest('.stack').prop('id').substring(6))
   tasks.updateTaskStatus(data, $(e.target).closest('.stack').prop('id').substring(6))
 }

@@ -40,7 +40,7 @@ function getStacks () {
   var stacks = JSON.parse(localStorage.getItem('stackList')) || []
   $('#task-status').empty()
   $('.wrapper').children('.stack').remove()
-  if (stacks.length < 0) {
+  if (stacks.length === 4) {
     stacks.forEach(stack => {
       buildStack(stack.stackId, stack.stackTitle)
       $(new Option(stack.stackTitle)).appendTo('#task-status')
@@ -86,13 +86,11 @@ function buildStack (id, title) {
 
 // In-line stack title update event
 $(document).on('input', '.th', () => {
-// $('.th').on('input', () => {
   updStack = true
 })
 
 // In-line stack title update commit event
 $(document).on('blur', '.th', function () {
-// $('.th').on('blur', function () {
   window.getSelection().removeAllRanges()
   if (updStack) {
     if ($(this).text().trim() === '') {

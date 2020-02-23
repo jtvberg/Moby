@@ -40,7 +40,7 @@ exports.submitTask = (taskType) => {
   var taskTitle = $('#task-title').val() || 'No Title'
   var taskDetail = $('#task-detail').val()
   var taskTheme = $('#choose-theme input:radio:checked').val() || 1
-  var taskStatus = $('#task-status').val().toLowerCase()
+  var taskStatus = $('#task-status').val()
   var taskId = Date.now()
   var count = $('#count-select').val() || 1
   var startDate = new Date(Date.parse($('#start-date').val()) || Date.now()).getTime()
@@ -60,7 +60,7 @@ exports.submitTask = (taskType) => {
   }
   count *= weekDay.length > 0 ? weekDay.length : 1
   if (startDate > Date.now()) {
-    taskStatus = 'schedule'
+    taskStatus = 'stack-schedule'
   }
   var newTaskData = {
     TaskStatus: taskStatus,
@@ -94,7 +94,7 @@ exports.submitTask = (taskType) => {
     getTask.WeekDay = weekDay
     getTask.MonthDay = monthDay
     getTask.Tags = tags
-    document.getElementById(getTask.TaskId).remove()
+    $(`#${getTask.TaskId}`).remove()
   }
   this.saveTasks()
   this.addTask(newTaskData)
@@ -105,7 +105,7 @@ exports.cloneTask = (taskId, taskStatus) => {
   if (taskId) {
     var getTask = this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId))
     // var newTaskStatus = taskStatus ? getTask.StartDate > Date.now() ? 'schedule' : 'do' : taskStatus
-    var newTaskStatus = taskStatus !== undefined ? taskStatus : getTask.StartDate > Date.now() ? 'schedule' : 'do'
+    var newTaskStatus = taskStatus !== undefined ? taskStatus : getTask.StartDate > Date.now() ? 'stack-schedule' : 'stack-do'
     var newTaskData = {
       TaskStatus: newTaskStatus,
       TaskId: Date.now(),
@@ -133,8 +133,6 @@ exports.addTask = task => {
       tagHTML += `<div class="card tags">${item}</div>`
     })
   }
-  // Calculate age
-  const taskDays = Math.floor((Date.now() - task.StatusDate) / 86400000)
   // Check if age is toggled
   const showAge = $('.aging').is(':visible') ? 'style' : 'style="display: none;"'
   // Check if archived and update archive tooltip to delete
@@ -143,7 +141,7 @@ exports.addTask = task => {
   const taskHtml = `<div class="card theme-${task.TaskTheme}" id="${task.TaskId}" draggable="true" ondragstart="drag(event)">
                       <div style="clear: both" id="b${task.TaskId}" data-toggle="collapse" data-target="#c${task.TaskId}">
                         <span class="title">${task.TaskTitle}</span>
-                        <span class="aging" id="a${task.TaskId}" ${showAge}>${taskDays}</span>
+                        <span class="aging" id="a${task.TaskId}" ${showAge}></span>
                       </div>
                       <div class="collapse collapse-content" id="c${task.TaskId}">
                         <p id="d${task.TaskId}" contenteditable="true" style="white-space: pre-wrap;">${task.TaskDetail}</p>
@@ -158,7 +156,7 @@ exports.addTask = task => {
                       </div>
                     </div>`
   // Add task html to host
-  $(`#stack-${task.TaskStatus}`).find('.box').append(taskHtml)
+  $(`#${task.TaskStatus}`).find('.box').append(taskHtml)
   // Active task setting event
   $(`#${task.TaskId}`).on('click', () => {
     window.activeTask = task.TaskId
@@ -180,7 +178,7 @@ exports.addTask = task => {
   })
   // Delete active task (send to archive; delete if in archive)
   $(`#del-button-${task.TaskId}`).click(() => {
-    if (task.TaskStatus === 'archive') {
+    if (task.TaskStatus === 'stack-archive') {
       this.deleteTask(task.TaskId)
     } else {
       this.archiveTask(task.TaskId)
@@ -199,8 +197,8 @@ exports.addTask = task => {
 // Archive a specific task
 exports.archiveTask = (taskId) => {
   if (taskId) {
-    document.getElementById('stack-archive').find('.box').appendChild(document.getElementById(taskId))
-    this.updateTaskStatus(taskId, 'archive')
+    $('#stack-archive').find('.box').append($(`#${taskId}`))
+    this.updateTaskStatus(taskId, 'stack-archive')
     this.saveTasks()
   }
 }
@@ -218,8 +216,8 @@ exports.deleteTask = (taskId) => {
 // Archive a specific task
 exports.restoreTask = (taskId) => {
   if (taskId) {
-    document.getElementById('stack-do').find('.box').appendChild(document.getElementById(activeTask))
-    this.updateTaskStatus(taskId, 'do')
+    $('#stack-do').find('.box').append($(`#${taskId}`))
+    this.updateTaskStatus(taskId, 'stack-do')
     this.saveTasks()
   }
 }

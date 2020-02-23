@@ -39,21 +39,21 @@ window.setInterval(archiveDoneTasks, 3600000)
 function getStacks () {
   var stacks = JSON.parse(localStorage.getItem('stackList')) || []
   $('#task-status').empty()
-  $('.wrapper').children('.stack').remove()
-  if (stacks.length === 4) {
+  $('.stack-host').children('.stack').remove()
+  if (stacks.length > 1) {
     stacks.forEach(stack => {
       buildStack(stack.stackId, stack.stackTitle)
-      $(new Option(stack.stackTitle)).appendTo('#task-status')
+      $(new Option(stack.stackTitle, stack.stackId)).appendTo('#task-status')
     })
   } else {
     buildStack(`${stackPrefix}do`, 'Do')
     buildStack(`${stackPrefix}today`, 'Today')
     buildStack(`${stackPrefix}doing`, 'Doing')
     buildStack(`${stackPrefix}done`, 'Done')
-    $(new Option('Do')).appendTo('#task-status')
-    $(new Option('Today')).appendTo('#task-status')
-    $(new Option('Doing')).appendTo('#task-status')
-    $(new Option('Done')).appendTo('#task-status')
+    $(new Option('Do', `${stackPrefix}do`)).appendTo('#task-status')
+    $(new Option('Today', `${stackPrefix}today`)).appendTo('#task-status')
+    $(new Option('Doing', `${stackPrefix}doing`)).appendTo('#task-status')
+    $(new Option('Done', `${stackPrefix}done`)).appendTo('#task-status')
   }
   // Add tasks to the stacks
   tasks.taskList.forEach(tasks.addTask)
@@ -70,18 +70,19 @@ function saveStacks () {
     stacks.push(stackData)
   })
   localStorage.setItem('stackList', JSON.stringify(stacks))
-
-  // TODO: just update the task modal select...
-  getStacks()
+  $('#task-status').empty()
+  stacks.forEach(stack => {
+    $(new Option(stack.stackTitle, stack.stackId)).appendTo('#task-status')
+  })
 }
 
 function buildStack (id, title) {
   const stackHtml = `<div class="stack" id="${id}" ondrop="drop(event)" ondragover="allowDrop(event)">
                       <div class="header th" contenteditable="true">${title}</div>
                       <div class="box"></div>
-                      <div class="footer fas fa-plus fa-2x" href="#task-modal" data-toggle="modal" data-status-id="${title}" data-type-id="new"></div>
+                      <div class="footer fas fa-plus fa-2x" href="#task-modal" data-toggle="modal" data-status-id="${id}" data-type-id="new"></div>
                     </div>`
-  $('.wrapper').append(stackHtml)
+  $('.stack-host').append(stackHtml)
 }
 
 // In-line stack title update event
@@ -160,7 +161,9 @@ function archiveDoneTasks () {
 function updateTaskAge () {
   if (tasks.taskList.length) {
     tasks.taskList.forEach((item) => {
-      $(`#a${item.TaskId}`).text(Math.floor((Date.now() - item.StatusDate) / 86400000))
+      $(`#a${item.TaskId}`).text(Math.floor((Date.now() - item.StatusDate) / 86400000) +
+      '/' + Math.floor((Date.now() - item.TaskId) / 86400000)
+      )
     })
   }
 }
@@ -230,7 +233,7 @@ window.importTasksMenu = () => {
 // Task modal load event
 $('#task-modal').on('show.bs.modal', (e) => {
   var type = $(e.relatedTarget).data('type-id') ? $(e.relatedTarget).data('type-id') : taskType
-  var status = $(e.relatedTarget).data('status-id') ? $(e.relatedTarget).data('status-id') : 'Do'
+  var status = $(e.relatedTarget).data('status-id') ? $(e.relatedTarget).data('status-id') : 'stack-do'
   loadTaskModal(type, status)
 })
 
@@ -251,7 +254,8 @@ function loadTaskModal (type, status) {
     const getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(activeTask))
     $('#task-title').val(getTask.TaskTitle)
     $('#task-detail').val(getTask.TaskDetail)
-    $('#task-status').val(getTask.TaskStatus.replace(/^\w/, c => c.toUpperCase()))
+    $('#task-status').val(getTask.TaskStatus)
+    // $('#task-status').val(getTask.TaskStatus.replace(/^\w/, c => c.toUpperCase()))
     $(`#option-${getTask.TaskTheme}`)
       .closest('.btn')
       .button('toggle')
@@ -405,11 +409,11 @@ const drop = (e) => {
   e.preventDefault()
   var data = e.dataTransfer.getData('text')
   if ($(e.target).hasClass('box')) {
-    $(e.target).append(document.getElementById(data))
+    $(e.target).append($(`#${data}`))
   } else if ($(e.target).hasClass('stack')) {
-    $(e.target).find('.box').append(document.getElementById(data))
+    $(e.target).find('.box').append($(`#${data}`))
   } else {
     return
   }
-  tasks.updateTaskStatus(data, $(e.target).closest('.stack').prop('id').substring(6))
+  tasks.updateTaskStatus(data, $(e.target).closest('.stack').prop('id'))
 }

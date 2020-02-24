@@ -28,11 +28,11 @@ addScheduledTasks()
 archiveDoneTasks()
 
 // Update task age in UI
-updateTaskAge()
+tasks.updateTaskAge()
 
 // Set intervals for scheduled tasks, update ageing, archive ageing
 window.setInterval(addScheduledTasks, 3600000)
-window.setInterval(updateTaskAge, 3600000)
+window.setInterval(tasks.updateTaskAge, 3600000)
 window.setInterval(archiveDoneTasks, 3600000)
 
 // Stack load; if non defined use default
@@ -153,17 +153,6 @@ function archiveDoneTasks () {
         tasks.archiveTask(item.TaskId)
         // TODO: add flag for delete on archive
       }
-    })
-  }
-}
-
-// Update task age field
-function updateTaskAge () {
-  if (tasks.taskList.length) {
-    tasks.taskList.forEach((item) => {
-      $(`#a${item.TaskId}`).text(Math.floor((Date.now() - item.StatusDate) / 86400000) +
-      '/' + Math.floor((Date.now() - item.TaskId) / 86400000)
-      )
     })
   }
 }
@@ -416,4 +405,5 @@ const drop = (e) => {
     return
   }
   tasks.updateTaskStatus(data, $(e.target).closest('.stack').prop('id'))
+  tasks.updateTaskAge(data)
 }

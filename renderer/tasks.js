@@ -24,8 +24,18 @@ exports.updateTaskStatus = (taskId, taskStatus) => {
   if (task) {
     task.StatusDate = Date.now()
     task.TaskStatus = taskStatus
-    $(`#a${taskId}`).text('0')
     this.saveTasks()
+  }
+}
+
+exports.updateTaskAge = (taskId) => {
+  if (taskId) {
+    $(`#a${taskId}`).text('0/' + Math.floor((Date.now() - taskId) / 86400000))
+  } else if (this.taskList.length) {
+    this.taskList.forEach((item) => {
+      $(`#a${item.TaskId}`).text(Math.floor((Date.now() - item.StatusDate) / 86400000) +
+      '/' + Math.floor((Date.now() - item.TaskId) / 86400000))
+    })
   }
 }
 
@@ -157,6 +167,8 @@ exports.addTask = task => {
                     </div>`
   // Add task html to host
   $(`#${task.TaskStatus}`).find('.box').append(taskHtml)
+  // Add Ageing
+  this.updateTaskAge(task.taskId)
   // Active task setting event
   $(`#${task.TaskId}`).on('click', () => {
     window.activeTask = task.TaskId

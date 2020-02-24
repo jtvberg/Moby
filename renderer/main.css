@@ -1,6 +1,4 @@
 body {
-  overflow-x: hidden;
-  overflow-y: hidden;
   background-color: var(--dark);
   -webkit-user-select: none;
   -webkit-app-region: drag;
@@ -10,7 +8,6 @@ body {
   display: grid;
   grid-template-columns: 40px 1fr 1px;
   grid-template-rows: 0px 1fr;
-  align-items: start;
   grid-gap: 5px;
   height: 100%;
   background-image: linear-gradient(to bottom, var(--background1), var(--background2));
@@ -22,6 +19,7 @@ body {
   grid-column: 2;
   grid-template-rows: 1fr;
   grid-auto-columns: 1fr;
+  overflow: hidden;
   align-items: start;
   grid-gap: 5px;
   height: 100%;

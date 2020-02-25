@@ -78,12 +78,9 @@ function saveStacks () {
 
 // Build out and insert stacks
 function buildStack (id, title) {
-  const addStackBtn = id === `${stackPrefix}done` ? '' : '<span class="stack-add fas fa-plus" onclick="addNewStackClick(event)"></span>'
+  const addStackBtn = id === `${stackPrefix}done` ? '' : '<div class="stack-add fas fa-plus" data-toggle="tooltip" title="Insert Stack" onclick="addNewStackClick(event)"></div>'
   const stackHtml = `<div class="stack" id="${id}" ondrop="drop(event)" ondragover="allowDrop(event)">
-                      <div style="text-align:center">
-                        <span class="header th" contenteditable="true">${title}</span>
-                        ${addStackBtn}
-                      </div>
+                      <div class="header th" contenteditable="true">${title}${addStackBtn}</div>
                       <div class="box"></div>
                       <div class="footer fas fa-plus fa-2x" href="#task-modal" data-toggle="modal" data-status-id="${id}" data-type-id="new"></div>
                     </div>`
@@ -94,9 +91,11 @@ function buildStack (id, title) {
 // TODO: Use calling element to set order of stack
 // TODO: Get integer to append to user stack ID
 function addNewStack () {
-  buildStack(`${stackPrefix}user2`, 'User2')
-  updStack = true
-  $(`#${stackPrefix}user2`).find('.th').focus()
+  console.log('addStack')
+  // const newStack = `${stackPrefix}${Date.now()}`
+  // buildStack(newStack, 'New Stack')
+  // updStack = true
+  // $(`#${newStack}`).find('.th').focus()
 }
 
 // In-line stack title update event

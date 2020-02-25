@@ -51,11 +51,17 @@ body {
   color: var(--light);
   font-size: 120%;
   font-weight: 500;
+  width: auto;
+  text-align: center;
 }
 
 .stack-add {
   color: var(--trans);
-  float: right;
+  z-index: 1200 !important;
+  display: table;
+  top: -25px;
+  left: -11px;
+  position: relative;
 }
 
 .stack-add:hover {

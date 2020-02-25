@@ -50,8 +50,16 @@ body {
 .header {
   color: var(--light);
   font-size: 120%;
-  justify-self: center;
   font-weight: 500;
+}
+
+.stack-add {
+  color: var(--trans);
+  float: right;
+}
+
+.stack-add:hover {
+  color: var(--light);
 }
 
 .box {

@@ -64,7 +64,7 @@ function saveStacks () {
   var stacks = []
   $('.th').each(function () {
     var stackData = {
-      stackId: $(this).parent().prop('id'),
+      stackId: $(this).closest('.stack').prop('id'),
       stackTitle: $(this).text()
     }
     stacks.push(stackData)
@@ -76,13 +76,27 @@ function saveStacks () {
   })
 }
 
+// Build out and insert stacks
 function buildStack (id, title) {
+  const addStackBtn = id === `${stackPrefix}done` ? '' : '<span class="stack-add fas fa-plus" onclick="addNewStackClick(event)"></span>'
   const stackHtml = `<div class="stack" id="${id}" ondrop="drop(event)" ondragover="allowDrop(event)">
-                      <div class="header th" contenteditable="true">${title}</div>
+                      <div style="text-align:center">
+                        <span class="header th" contenteditable="true">${title}</span>
+                        ${addStackBtn}
+                      </div>
                       <div class="box"></div>
                       <div class="footer fas fa-plus fa-2x" href="#task-modal" data-toggle="modal" data-status-id="${id}" data-type-id="new"></div>
                     </div>`
   $('.stack-host').append(stackHtml)
+}
+
+// Add new user defined stack
+// TODO: Use calling element to set order of stack
+// TODO: Get integer to append to user stack ID
+function addNewStack () {
+  buildStack(`${stackPrefix}user2`, 'User2')
+  updStack = true
+  $(`#${stackPrefix}user2`).find('.th').focus()
 }
 
 // In-line stack title update event
@@ -95,7 +109,7 @@ $(document).on('blur', '.th', function () {
   window.getSelection().removeAllRanges()
   if (updStack) {
     if ($(this).text().trim() === '') {
-      $(this).text($(this).parent().prop('id').replace(stackPrefix, '').trim().replace(/^\w/, c => c.toUpperCase()))
+      $(this).text($(this).closest('.stack').prop('id').replace(stackPrefix, '').trim().replace(/^\w/, c => c.toUpperCase()))
     }
     saveStacks()
     updStack = false
@@ -367,6 +381,12 @@ const toggleAge = (e) => {
   } else {
     $('.aging').show()
   }
+}
+
+// Add new stack event
+// eslint-disable-next-line no-unused-vars
+const addNewStackClick = (e) => {
+  addNewStack()
 }
 
 // Theme toggle event

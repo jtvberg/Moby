@@ -94,10 +94,7 @@ function buildStack (id, title, index) {
 // TODO: Use calling element to set order of stack
 // TODO: Get integer to append to user stack ID
 function addNewStack (index) {
-  // const newStack = `${stackPrefix}${Date.now()}`
-  // buildStack(newStack, 'New Stack')
-  // updStack = true
-  // $(`#${newStack}`).find('.th').focus()
+  saveStacks()
   var stacks = JSON.parse(localStorage.getItem('stackList')) || []
   var stackData = {
     stackId: `${stackPrefix}${Date.now()}`,
@@ -106,6 +103,7 @@ function addNewStack (index) {
   stacks.splice(index, 0, stackData)
   localStorage.setItem('stackList', JSON.stringify(stacks))
   getStacks()
+  $(`#${stackData.stackId}`).find('.th').focus()
 }
 
 // In-line stack title update event
@@ -118,7 +116,11 @@ $(document).on('blur', '.th', function () {
   window.getSelection().removeAllRanges()
   if (updStack) {
     if ($(this).text().trim() === '') {
-      $(this).text($(this).closest('.stack').prop('id').replace(stackPrefix, '').trim().replace(/^\w/, c => c.toUpperCase()))
+      let sub = $(this).closest('.stack').prop('id').replace(stackPrefix, '').trim().replace(/^\w/, c => c.toUpperCase())
+      if (!Number.isNaN(parseInt(sub))) {
+        sub = 'User Stack'
+      }
+      $(this).text(sub)
     }
     saveStacks()
     updStack = false

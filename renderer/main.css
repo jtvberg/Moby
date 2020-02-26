@@ -44,6 +44,7 @@ body {
   padding: 5px 0px;
   z-index: 1100;
   overflow: auto;
+  position: relative;
   -webkit-app-region: no-drag;
 }
 
@@ -51,17 +52,16 @@ body {
   color: var(--light);
   font-size: 120%;
   font-weight: 500;
-  width: auto;
-  text-align: center;
+  justify-self: center;
 }
 
 .stack-add {
   color: var(--trans);
   z-index: 1200 !important;
   display: table;
-  top: -25px;
-  left: -11px;
-  position: relative;
+  top: 5px;
+  right: 5px;
+  position: absolute;
 }
 
 .stack-add:hover {

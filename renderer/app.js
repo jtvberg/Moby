@@ -40,16 +40,18 @@ function getStacks () {
   var stacks = JSON.parse(localStorage.getItem('stackList')) || []
   $('#task-status').empty()
   $('.stack-host').children('.stack').remove()
+  let index = 1
   if (stacks.length > 1) {
     stacks.forEach(stack => {
-      buildStack(stack.stackId, stack.stackTitle)
+      buildStack(stack.stackId, stack.stackTitle, index)
       $(new Option(stack.stackTitle, stack.stackId)).appendTo('#task-status')
+      index++
     })
   } else {
-    buildStack(`${stackPrefix}do`, 'Do')
-    buildStack(`${stackPrefix}today`, 'Today')
-    buildStack(`${stackPrefix}doing`, 'Doing')
-    buildStack(`${stackPrefix}done`, 'Done')
+    buildStack(`${stackPrefix}do`, 'Do', 1)
+    buildStack(`${stackPrefix}today`, 'Today', 2)
+    buildStack(`${stackPrefix}doing`, 'Doing', 3)
+    buildStack(`${stackPrefix}done`, 'Done', 4)
     $(new Option('Do', `${stackPrefix}do`)).appendTo('#task-status')
     $(new Option('Today', `${stackPrefix}today`)).appendTo('#task-status')
     $(new Option('Doing', `${stackPrefix}doing`)).appendTo('#task-status')
@@ -77,10 +79,11 @@ function saveStacks () {
 }
 
 // Build out and insert stacks
-function buildStack (id, title) {
-  const addStackBtn = id === `${stackPrefix}done` ? '' : '<div class="stack-add fas fa-plus" data-toggle="tooltip" title="Insert Stack" onclick="addNewStackClick(event)"></div>'
+function buildStack (id, title, index) {
+  const addStackBtn = id === `${stackPrefix}done` ? '' : `<div class="stack-add fas fa-plus-square" data-toggle="tooltip" data-stack-index="${index}" title="Insert Stack" onclick="addNewStackClick(event)"></div>`
   const stackHtml = `<div class="stack" id="${id}" ondrop="drop(event)" ondragover="allowDrop(event)">
-                      <div class="header th" contenteditable="true">${title}${addStackBtn}</div>
+                      <div class="header th" contenteditable="true">${title}</div>
+                      ${addStackBtn}
                       <div class="box"></div>
                       <div class="footer fas fa-plus fa-2x" href="#task-modal" data-toggle="modal" data-status-id="${id}" data-type-id="new"></div>
                     </div>`
@@ -90,12 +93,19 @@ function buildStack (id, title) {
 // Add new user defined stack
 // TODO: Use calling element to set order of stack
 // TODO: Get integer to append to user stack ID
-function addNewStack () {
-  console.log('addStack')
+function addNewStack (index) {
   // const newStack = `${stackPrefix}${Date.now()}`
   // buildStack(newStack, 'New Stack')
   // updStack = true
   // $(`#${newStack}`).find('.th').focus()
+  var stacks = JSON.parse(localStorage.getItem('stackList')) || []
+  var stackData = {
+    stackId: `${stackPrefix}${Date.now()}`,
+    stackTitle: 'New Stack'
+  }
+  stacks.splice(index, 0, stackData)
+  localStorage.setItem('stackList', JSON.stringify(stacks))
+  getStacks()
 }
 
 // In-line stack title update event
@@ -385,7 +395,8 @@ const toggleAge = (e) => {
 // Add new stack event
 // eslint-disable-next-line no-unused-vars
 const addNewStackClick = (e) => {
-  addNewStack()
+  $(e.currentTarget).tooltip('hide')
+  addNewStack($(e.currentTarget).data('stack-index'))
 }
 
 // Theme toggle event

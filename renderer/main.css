@@ -57,10 +57,10 @@ body {
 
 .stack-add {
   color: var(--trans);
-  z-index: 1200 !important;
   display: table;
   top: 5px;
   right: 5px;
+  font-size: 150%;
   position: absolute;
 }
 

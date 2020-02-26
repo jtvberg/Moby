@@ -80,7 +80,7 @@ function saveStacks () {
 
 // Build out and insert stacks
 function buildStack (id, title, index) {
-  const addStackBtn = id === `${stackPrefix}done` ? '' : `<div class="stack-add fas fa-plus-square" data-toggle="tooltip" data-stack-index="${index}" title="Insert Stack" onclick="addNewStackClick(event)"></div>`
+  const addStackBtn = id === `${stackPrefix}done` ? '' : `<div class="stack-add fas fa-caret-square-right" data-toggle="tooltip" data-stack-index="${index}" title="Insert Stack" onclick="addNewStackClick(event)"></div>`
   const stackHtml = `<div class="stack" id="${id}" ondrop="drop(event)" ondragover="allowDrop(event)">
                       <div class="header th" contenteditable="true">${title}</div>
                       ${addStackBtn}
@@ -91,11 +91,11 @@ function buildStack (id, title, index) {
 }
 
 // Add new user defined stack
-// TODO: Use calling element to set order of stack
-// TODO: Get integer to append to user stack ID
 function addNewStack (index) {
-  saveStacks()
-  var stacks = JSON.parse(localStorage.getItem('stackList')) || []
+  if (!localStorage.getItem('stackList')) {
+    saveStacks()
+  }
+  var stacks = JSON.parse(localStorage.getItem('stackList'))
   var stackData = {
     stackId: `${stackPrefix}${Date.now()}`,
     stackTitle: 'New Stack'
@@ -104,6 +104,17 @@ function addNewStack (index) {
   localStorage.setItem('stackList', JSON.stringify(stacks))
   getStacks()
   $(`#${stackData.stackId}`).find('.th').focus()
+}
+
+// Remove existing stack
+function removeStack (index) {
+  if (!localStorage.getItem('stackList')) {
+    saveStacks()
+  }
+  var stacks = JSON.parse(localStorage.getItem('stackList'))
+  stacks.splice(index - 1, 1)
+  localStorage.setItem('stackList', JSON.stringify(stacks))
+  getStacks()
 }
 
 // In-line stack title update event
@@ -399,6 +410,14 @@ const toggleAge = (e) => {
 const addNewStackClick = (e) => {
   $(e.currentTarget).tooltip('hide')
   addNewStack($(e.currentTarget).data('stack-index'))
+}
+
+// Remove stack event
+// eslint-disable-next-line no-unused-vars
+const removeStackClick = (e) => {
+  //$(e.currentTarget).tooltip('hide')
+  //removeStack($(e.currentTarget).data('stack-index'))
+  removeStack(3)
 }
 
 // Theme toggle event

@@ -185,7 +185,7 @@ function addScheduledTasks () {
 function archiveDoneTasks () {
   if (tasks.taskList.length) {
     tasks.taskList.forEach((item) => {
-      if (item.TaskStatus === 'done' && item.StatusDate < Date.now() - (86400000 * 7)) {
+      if (item.TaskStatus === 'stack-done' && item.StatusDate < Date.now() - (86400000 * 7)) {
         tasks.archiveTask(item.TaskId)
         // TODO: add flag for delete on archive
       }

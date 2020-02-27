@@ -146,7 +146,7 @@ exports.addTask = task => {
   // Check if age is toggled
   const showAge = $('.aging').is(':visible') ? 'style' : 'style="display: none;"'
   // Check if archived and update archive tooltip to delete
-  const archDelete = task.TaskStatus === 'archive' ? 'Delete' : 'Archive'
+  const archDelete = task.TaskStatus === 'stack-archive' ? 'Delete' : 'Archive'
   // Generate task card html
   const taskHtml = `<div class="card theme-${task.TaskTheme}" id="${task.TaskId}" draggable="true" ondragstart="drag(event)">
                       <div style="clear: both" id="b${task.TaskId}" data-toggle="collapse" data-target="#c${task.TaskId}">

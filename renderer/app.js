@@ -104,6 +104,9 @@ function buildStack (id, title, index) {
   $(`#context-menu-${id} a`).on('mouseleave', function () {
     $(this).parent().removeClass('show').hide()
   })
+  $('.stack-host').on('mouseleave', () => {
+    $(`#context-menu-${id}`).removeClass('show').hide()
+  })
 }
 
 // Add new user defined stack

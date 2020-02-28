@@ -153,6 +153,36 @@ body {
   color: var(--light);
 }
 
+.ddcm {
+  height: 22px;
+  min-width: fit-content;
+  padding: 2px;
+  line-height: 1;
+  background-color: var(--light);
+  border: none;
+  border-radius: 2px;
+}
+
+.ddcm>a {
+  color: var(--background1);
+  min-width: fit-content;
+  font-size: 85%;
+  font-weight: 600;
+  height: 0px;
+  width: 0px;
+  padding: 3px 2px 2px 2px;
+  vertical-align: middle;
+}
+
+.ddcm>a:hover {
+  color: var(--highlight);
+}
+
+.ddcm>a:active {
+  color: var(--highlight);
+  background-color: var(--trans);
+}
+
 .modal-stack {
   max-height: calc(100vh - 230px);
 }

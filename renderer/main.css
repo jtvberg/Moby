@@ -155,8 +155,7 @@ body {
 
 .ddcm {
   height: 22px;
-  min-width: 100px;
-  max-width: 100px;
+  min-width: fit-content;
   padding: 2px;
   line-height: 1;
   background-color: var(--light);
@@ -166,6 +165,7 @@ body {
 
 .ddcm>a {
   color: var(--background1);
+  min-width: fit-content;
   font-size: 85%;
   font-weight: 600;
   height: 0px;
@@ -176,6 +176,11 @@ body {
 
 .ddcm>a:hover {
   color: var(--highlight);
+}
+
+.ddcm>a:active {
+  color: var(--highlight);
+  background-color: var(--trans);
 }
 
 .modal-stack {

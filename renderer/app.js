@@ -83,7 +83,7 @@ function buildStack (id, title, index) {
   const addStackBtn = id === `${stackPrefix}done` ? '' : '<div class="stack-add fas fa-caret-square-right" data-toggle="tooltip" title="Insert Stack" onclick="addNewStackClick(event)"></div>'
   const stackHtml = `<div class="stack" id="${id}" data-stack-index="${index}" ondrop="drop(event)" ondragover="allowDrop(event)">
                       <div class="dropdown-menu dropdown-menu-sm ddcm" id="context-menu-${id}">
-                        <a class="dropdown-item" href="#" onclick="removeStackClick(event)">Remove Stack</a>
+                        <a class="dropdown-item" href="#remove-modal" data-toggle="modal">Remove Stack</a>
                       </div>
                       <div class="header th" contenteditable="true">${title}</div>
                       ${addStackBtn}
@@ -110,7 +110,7 @@ function buildStack (id, title, index) {
 }
 
 // Add new user defined stack
-function addNewStack (index) {
+function addNewStack (addIndex) {
   if (!localStorage.getItem('stackList')) {
     saveStacks()
   }
@@ -119,23 +119,57 @@ function addNewStack (index) {
     stackId: `${stackPrefix}${Date.now()}`,
     stackTitle: 'New Stack'
   }
-  stacks.splice(index, 0, stackData)
+  stacks.splice(addIndex, 0, stackData)
   localStorage.setItem('stackList', JSON.stringify(stacks))
   getStacks()
   $(`#${stackData.stackId}`).find('.th').focus()
 }
 
 // Remove existing stack
-function removeStack (index) {
+function loadRemoveModal (removeIndex) {
   if (!localStorage.getItem('stackList')) {
     saveStacks()
   }
+  $('#stack-task-status').empty()
+  var stacks = JSON.parse(localStorage.getItem('stackList'))
+  var i = 1
+  if (stacks.length > 1) {
+    stacks.forEach(stack => {
+      if (i !== removeIndex) {
+        $(new Option(stack.stackTitle, stack.stackId)).appendTo('#stack-task-status')
+      }
+      i++
+    })
+  }
+  $(new Option('Archive', `${stackPrefix}archive`)).appendTo('#stack-task-status')
   $('#remove-modal').modal()
-  // var stacks = JSON.parse(localStorage.getItem('stackList'))
-  // stacks.splice(index - 1, 1)
-  // localStorage.setItem('stackList', JSON.stringify(stacks))
-  // getStacks()
 }
+
+// Remove stack logic
+function removeStack (removeIndex, newStackId) {
+  var stacks = JSON.parse(localStorage.getItem('stackList'))
+  tasks.taskList.forEach(task => {
+    if (task.TaskStatus === stacks[removeIndex - 1].stackId) {
+      task.TaskStatus = newStackId
+    }
+  })
+  tasks.saveTasks()
+  stacks.splice(removeIndex - 1, 1)
+  localStorage.setItem('stackList', JSON.stringify(stacks))
+  getStacks()
+}
+
+// Remove stack modal load event
+$('#remove-modal').on('show.bs.modal', (e) => {
+  loadRemoveModal($(e.relatedTarget).closest('.stack').data('stack-index'))
+  $('#remove-stack-button').data('stack-index', $(e.relatedTarget).closest('.stack').data('stack-index'))
+})
+
+// Remove stack event
+$('#remove-stack-button').click((e) => {
+  $('#remove-modal').modal('hide')
+  removeStack($(e.currentTarget).data('stack-index'), $('#stack-task-status').val())
+})
 
 // In-line stack title update event
 $(document).on('input', '.th', () => {
@@ -430,12 +464,6 @@ const toggleAge = (e) => {
 const addNewStackClick = (e) => {
   $(e.currentTarget).tooltip('hide')
   addNewStack($(e.currentTarget).closest('.stack').data('stack-index'))
-}
-
-// Remove stack event
-// eslint-disable-next-line no-unused-vars
-const removeStackClick = (e) => {
-  removeStack($(e.currentTarget).closest('.stack').data('stack-index'))
 }
 
 // Theme toggle event

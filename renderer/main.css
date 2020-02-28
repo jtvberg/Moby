@@ -147,10 +147,22 @@ body {
   border-bottom: 1px solid var(--background1);
 }
 
-.modal-content {
+.modal-content, .ddcm, .ddcm>a {
   border-color: var(--background1);
   background-color: var(--background2);
   color: var(--light);
+}
+
+.ddcm {
+  font-size: 100%;
+  height: 40px;
+  padding: 2px;
+}
+
+.ddcm, .ddcm>a:hover {
+  font-size: 100%;
+  color: var(--highlight);
+  background-color: var(--background2);
 }
 
 .modal-stack {

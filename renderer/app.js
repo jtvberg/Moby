@@ -80,14 +80,30 @@ function saveStacks () {
 
 // Build out and insert stacks
 function buildStack (id, title, index) {
-  const addStackBtn = id === `${stackPrefix}done` ? '' : `<div class="stack-add fas fa-caret-square-right" data-toggle="tooltip" data-stack-index="${index}" title="Insert Stack" onclick="addNewStackClick(event)"></div>`
-  const stackHtml = `<div class="stack" id="${id}" ondrop="drop(event)" ondragover="allowDrop(event)">
+  const addStackBtn = id === `${stackPrefix}done` ? '' : '<div class="stack-add fas fa-caret-square-right" data-toggle="tooltip" title="Insert Stack" onclick="addNewStackClick(event)"></div>'
+  const stackHtml = `<div class="stack" id="${id}" data-stack-index="${index}" ondrop="drop(event)" ondragover="allowDrop(event)">
+                      <div class="dropdown-menu dropdown-menu-sm ddcm" id="context-menu-${id}">
+                        <a class="dropdown-item" href="#" onclick="removeStackClick(event)">Remove Stack</a>
+                      </div>
                       <div class="header th" contenteditable="true">${title}</div>
                       ${addStackBtn}
                       <div class="box"></div>
                       <div class="footer fas fa-plus fa-2x" href="#task-modal" data-toggle="modal" data-status-id="${id}" data-type-id="new"></div>
                     </div>`
   $('.stack-host').append(stackHtml)
+  $(`#${id}`).on('contextmenu', function (e) {
+    $(`#context-menu-${id}`).css({
+      display: 'block',
+      position: 'absolute',
+      left: '5px',
+      top: '5px'
+    }).addClass('show')
+  }).click(() => {
+    $(`#context-menu-${id}`).removeClass('show').hide()
+  })
+  $(`#context-menu-${id} a`).on('mouseleave', function () {
+    $(this).parent().removeClass('show').hide()
+  })
 }
 
 // Add new user defined stack
@@ -409,15 +425,13 @@ const toggleAge = (e) => {
 // eslint-disable-next-line no-unused-vars
 const addNewStackClick = (e) => {
   $(e.currentTarget).tooltip('hide')
-  addNewStack($(e.currentTarget).data('stack-index'))
+  addNewStack($(e.currentTarget).closest('.stack').data('stack-index'))
 }
 
 // Remove stack event
 // eslint-disable-next-line no-unused-vars
 const removeStackClick = (e) => {
-  //$(e.currentTarget).tooltip('hide')
-  //removeStack($(e.currentTarget).data('stack-index'))
-  removeStack(3)
+  removeStack($(e.currentTarget).closest('.stack').data('stack-index'))
 }
 
 // Theme toggle event

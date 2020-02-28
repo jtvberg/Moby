@@ -127,10 +127,11 @@ function removeStack (index) {
   if (!localStorage.getItem('stackList')) {
     saveStacks()
   }
-  var stacks = JSON.parse(localStorage.getItem('stackList'))
-  stacks.splice(index - 1, 1)
-  localStorage.setItem('stackList', JSON.stringify(stacks))
-  getStacks()
+  $('#remove-modal').modal()
+  // var stacks = JSON.parse(localStorage.getItem('stackList'))
+  // stacks.splice(index - 1, 1)
+  // localStorage.setItem('stackList', JSON.stringify(stacks))
+  // getStacks()
 }
 
 // In-line stack title update event

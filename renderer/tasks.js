@@ -28,6 +28,7 @@ exports.updateTaskStatus = (taskId, taskStatus) => {
   }
 }
 
+// Update task age; id supplied set status age to 0; otherwise update all tasks
 exports.updateTaskAge = (taskId) => {
   if (taskId) {
     $(`#a${taskId}`).text('0/' + Math.floor((Date.now() - taskId) / 86400000))

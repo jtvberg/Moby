@@ -37,7 +37,7 @@ window.setInterval(archiveDoneTasks, 3600000)
 
 // Stack load; if non defined use default
 function getStacks () {
-  var stacks = JSON.parse(localStorage.getItem('stackList')) || []
+  const stacks = JSON.parse(localStorage.getItem('stackList')) || []
   $('#task-status').empty()
   $('.stack-host').children('.stack').remove()
   let index = 1
@@ -48,17 +48,22 @@ function getStacks () {
       index++
     })
   } else {
-    buildStack(`${stackPrefix}do`, 'Do', 1)
-    buildStack(`${stackPrefix}today`, 'Today', 2)
-    buildStack(`${stackPrefix}doing`, 'Doing', 3)
-    buildStack(`${stackPrefix}done`, 'Done', 4)
-    $(new Option('Do', `${stackPrefix}do`)).appendTo('#task-status')
-    $(new Option('Today', `${stackPrefix}today`)).appendTo('#task-status')
-    $(new Option('Doing', `${stackPrefix}doing`)).appendTo('#task-status')
-    $(new Option('Done', `${stackPrefix}done`)).appendTo('#task-status')
+    getDefaultStacks()
   }
   // Add tasks to the stacks
   tasks.taskList.forEach(tasks.addTask)
+}
+
+// Default stack setup
+function getDefaultStacks () {
+  buildStack(`${stackPrefix}do`, 'Do', 1)
+  buildStack(`${stackPrefix}today`, 'Today', 2)
+  buildStack(`${stackPrefix}doing`, 'Doing', 3)
+  buildStack(`${stackPrefix}done`, 'Done', 4)
+  $(new Option('Do', `${stackPrefix}do`)).appendTo('#task-status')
+  $(new Option('Today', `${stackPrefix}today`)).appendTo('#task-status')
+  $(new Option('Doing', `${stackPrefix}doing`)).appendTo('#task-status')
+  $(new Option('Done', `${stackPrefix}done`)).appendTo('#task-status')
 }
 
 // Save stacks to localstorage
@@ -80,6 +85,7 @@ function saveStacks () {
 
 // Build out and insert stacks
 function buildStack (id, title, index) {
+  // TODO: Check if ID exists
   const addStackBtn = id === `${stackPrefix}done` ? '' : '<div class="stack-add fas fa-caret-square-right" data-toggle="tooltip" title="Insert Stack" onclick="addNewStackClick(event)"></div>'
   const stackHtml = `<div class="stack" id="${id}" data-stack-index="${index}" ondrop="drop(event)" ondragover="allowDrop(event)">
                       <div class="dropdown-menu dropdown-menu-sm ddcm" id="context-menu-${id}">
@@ -91,21 +97,21 @@ function buildStack (id, title, index) {
                       <div class="footer fas fa-plus fa-2x" href="#task-modal" data-toggle="modal" data-status-id="${id}" data-type-id="new"></div>
                     </div>`
   $('.stack-host').append(stackHtml)
-  $(`#${id}`).on('contextmenu', function (e) {
+  $(`#${id}`).on('contextmenu', () => {
     $(`#context-menu-${id}`).css({
       display: 'block',
       position: 'absolute',
       left: '5px',
       top: '5px'
-    }).addClass('show')
+    }).addClass('show').animate({ width: '98px' }, 'fast', 'swing')
   }).click(() => {
-    $(`#context-menu-${id}`).removeClass('show').hide()
+    $(`#context-menu-${id}`).removeClass('show').hide().css({ width: '0px' })
   })
-  $(`#context-menu-${id} a`).on('mouseleave', function () {
-    $(this).parent().removeClass('show').hide()
+  $(`#context-menu-${id} a`).on('mouseleave', () => {
+    $(`#context-menu-${id}`).removeClass('show').hide().css({ width: '0px' })
   })
   $('.stack-host').on('mouseleave', () => {
-    $(`#context-menu-${id}`).removeClass('show').hide()
+    $(`#context-menu-${id}`).removeClass('show').hide().css({ width: '0px' })
   })
 }
 
@@ -131,7 +137,7 @@ function loadRemoveModal (removeIndex) {
     saveStacks()
   }
   $('#stack-task-status').empty()
-  var stacks = JSON.parse(localStorage.getItem('stackList'))
+  const stacks = JSON.parse(localStorage.getItem('stackList'))
   var i = 1
   if (stacks.length > 1) {
     stacks.forEach(stack => {
@@ -219,8 +225,8 @@ ipcRenderer.on('quick-data', (e, data) => {
 function addScheduledTasks () {
   if (tasks.taskList.length) {
     tasks.taskList.forEach((item) => {
-      if (item.TaskStatus === 'schedule' && item.StartDate < Date.now()) {
-        tasks.cloneTask(item.TaskId, 'today')
+      if (item.TaskStatus === 'stack-schedule' && item.StartDate < Date.now()) {
+        tasks.cloneTask(item.TaskId, 'stack-today')
         var i = item.Count > 0 ? item.Count - 1 : item.Count
         if (i === 0) {
           this.archiveTask(item.TaskId)

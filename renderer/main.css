@@ -155,8 +155,8 @@ body {
 
 .ddcm {
   height: 22px;
-  min-width: fit-content;
   padding: 2px;
+  min-width: 0px;
   line-height: 1;
   background-color: var(--light);
   border: none;
@@ -165,11 +165,9 @@ body {
 
 .ddcm>a {
   color: var(--background1);
-  min-width: fit-content;
+  width: 0px;
   font-size: 85%;
   font-weight: 600;
-  height: 0px;
-  width: 0px;
   padding: 3px 2px 2px 2px;
   vertical-align: middle;
 }

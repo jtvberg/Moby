@@ -24,15 +24,15 @@ function quickTask (type) {
 
 // Submit task from tray window events
 $('#do-button').click(() => {
-  quickTask('do')
+  quickTask('stack-do')
 })
 
 $('#today-button').click(() => {
-  quickTask('today')
+  quickTask('stack-today')
 })
 
 $('#doing-button').click(() => {
-  quickTask('doing')
+  quickTask('stack-doing')
 })
 
 // IPC event/channel to act on reset of form

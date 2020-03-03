@@ -93,6 +93,23 @@ if (process.platform === 'darwin') {
         role: 'about'
       },
       {
+        label: 'Theme',
+        submenu: [
+          {
+            label: 'Defaut',
+            click () { window.setThemeMenu('default') }
+          },
+          {
+            label: 'Dark',
+            click () { window.setThemeMenu('dark') }
+          },
+          {
+            label: 'Light',
+            click () { window.setThemeMenu('light') }
+          }
+        ]
+      },
+      {
         type: 'separator'
       },
       {

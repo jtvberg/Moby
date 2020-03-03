@@ -13,7 +13,7 @@ let updStack = false
 // Custom titlebar instantiation
 const bg = getComputedStyle(document.documentElement).getPropertyValue('--background1').trim()
 // eslint-disable-next-line no-new
-new customTitlebar.Titlebar({
+const ctb = new customTitlebar.Titlebar({
   backgroundColor: customTitlebar.Color.fromHex(bg),
   icon: './res/moby_icon.png'
 })
@@ -313,6 +313,24 @@ window.exportTasksMenu = () => {
 // Task menu commands; Import all tasks
 window.importTasksMenu = () => {
   tasks.importTasks()
+}
+
+// Theme menu commands
+window.setThemeMenu = (themeId) => {
+  setTheme(themeId)
+}
+
+function setTheme (themeId) {
+  $('#default').prop('disabled', true)
+  $('#dark').prop('disabled', true)
+  $('#light').prop('disabled', true)
+  $(`#${themeId}`).prop('disabled', false)
+  updateTitileBar()
+}
+
+function updateTitileBar () {
+  const nbg = getComputedStyle(document.documentElement).getPropertyValue('--background1').trim()
+  ctb.updateBackground(customTitlebar.Color.fromHex(nbg))
 }
 
 // Task modal load event

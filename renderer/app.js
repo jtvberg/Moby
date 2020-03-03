@@ -518,12 +518,13 @@ const drag = (e) => {
 const drop = (e) => {
   e.preventDefault()
   var data = e.dataTransfer.getData('text')
+  console.log($(e.target))
   if ($(e.target).hasClass('box')) {
     $(e.target).append($(`#${data}`))
   } else if ($(e.target).hasClass('stack')) {
     $(e.target).find('.box').append($(`#${data}`))
   } else {
-    return
+    $(e.target).closest('.box').append($(`#${data}`))
   }
   tasks.updateTaskStatus(data, $(e.target).closest('.stack').prop('id'))
   tasks.updateTaskAge(data)

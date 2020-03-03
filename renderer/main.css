@@ -124,7 +124,7 @@ body {
   position: fixed;
   bottom: -20px;
   right: -90px;
-  opacity: 0.02;
+  opacity: var(--imgOpacity);
 }
 
 .close {
@@ -194,6 +194,7 @@ body {
   border-radius: 3px;
   margin: 5px;
   padding: 2px;
+  color: var(--cardText);
   -webkit-app-region: no-drag;
 }
 

@@ -6,11 +6,13 @@
   --green: #27ae60;
   --dark: #fff;
   --light: #000;
+  --cardText: #fff;
   --gray: #7a7a7a;
   --trans: #00000000;
   --opaque: #2727271a;
   --highlight: #32b3d3;
   --focused: #fff;
+  --imgOpacity: .2;
   --background1: #fcfcfc;
   --background2: #e0e0e0;
 }

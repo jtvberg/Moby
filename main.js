@@ -122,6 +122,11 @@ ipcMain.on('quick-task', (e, data) => {
   win.webContents.send('quick-data', data)
 })
 
+// IPC channel to pass theme to quick task
+ipcMain.on('theme-change', (e, data) => {
+  quick.webContents.send('quick-theme', data)
+})
+
 // IPC channel to maximize window
 ipcMain.on('win-max', () => {
   win.maximize()

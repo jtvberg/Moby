@@ -38,10 +38,10 @@ window.setInterval(archiveDoneTasks, 3600000)
 // Stack load; if non defined use default
 function getStacks () {
   const stacks = JSON.parse(localStorage.getItem('stackList')) || []
-  $('#task-status').empty()
   $('.stack-host').children('.stack').remove()
   let index = 1
   if (stacks.length > 1) {
+    $('#task-status').empty()
     stacks.forEach(stack => {
       buildStack(stack.stackId, stack.stackTitle, index)
       $(new Option(stack.stackTitle, stack.stackId)).appendTo('#task-status')
@@ -60,6 +60,7 @@ function getDefaultStacks () {
   buildStack(`${stackPrefix}today`, 'Today', 2)
   buildStack(`${stackPrefix}doing`, 'Doing', 3)
   buildStack(`${stackPrefix}done`, 'Done', 4)
+  $('#task-status').empty()
   $(new Option('Do', `${stackPrefix}do`)).appendTo('#task-status')
   $(new Option('Today', `${stackPrefix}today`)).appendTo('#task-status')
   $(new Option('Doing', `${stackPrefix}doing`)).appendTo('#task-status')
@@ -320,14 +321,17 @@ window.setThemeMenu = (themeId) => {
   setTheme(themeId)
 }
 
+// Set theme
 function setTheme (themeId) {
   $('#default').prop('disabled', true)
   $('#dark').prop('disabled', true)
   $('#light').prop('disabled', true)
   $(`#${themeId}`).prop('disabled', false)
   updateTitileBar()
+  ipcRenderer.send('theme-change', themeId)
 }
 
+// Update TitleBar bakground color on theme change
 function updateTitileBar () {
   const nbg = getComputedStyle(document.documentElement).getPropertyValue('--background1').trim()
   ctb.updateBackground(customTitlebar.Color.fromHex(nbg))

@@ -48,3 +48,16 @@ $('#quick-task-detail').on('input keydown', function () {
     $('#quick-task-detail').height(this.scrollHeight + 'px')
   }
 })
+
+// IPC call to set quick menu theme
+ipcRenderer.on('quick-theme', (e, data) => {
+  setTheme(data)
+})
+
+// Set theme
+function setTheme (themeId) {
+  $('#default').prop('disabled', true)
+  $('#dark').prop('disabled', true)
+  $('#light').prop('disabled', true)
+  $(`#${themeId}`).prop('disabled', false)
+}

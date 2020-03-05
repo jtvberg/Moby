@@ -50,7 +50,7 @@ body {
 
 .header {
   color: var(--light);
-  font-size: 120%;
+  font-size: calc(var(--font-base-size) + 20%);
   font-weight: 500;
   justify-self: center;
 }
@@ -60,7 +60,7 @@ body {
   display: table;
   top: 5px;
   right: 5px;
-  font-size: 150%;
+  font-size: calc(var(--font-base-size) + 50%);
   position: absolute;
 }
 
@@ -74,7 +74,7 @@ body {
 }
 
 .footer {
-  font-size: 150%;
+  font-size: calc(var(--font-base-size) + 50%);
   justify-self: right;
   padding: 0px 5px;
 }
@@ -166,7 +166,7 @@ body {
 .ddcm>a {
   color: var(--background1);
   width: 0px;
-  font-size: 85%;
+  font-size: calc(var(--font-base-size) - 15%);
   font-weight: 600;
   padding: 3px 2px 2px 2px;
   vertical-align: middle;
@@ -195,6 +195,7 @@ body {
   margin: 5px;
   padding: 2px;
   color: var(--cardText);
+  font-size: var(--font-base-size);
   -webkit-app-region: no-drag;
 }
 
@@ -212,7 +213,7 @@ body {
 
 .aging {
   float: right;
-  font-size: 75%;
+  font-size: calc(var(--font-base-size) - 25%);
 }
 
 .collapsible {
@@ -222,7 +223,7 @@ body {
 }
 
 .collapse-content {
-  font-size: 75%;
+  font-size: calc(var(--font-base-size) - 25%);
   font-weight: normal;
 }
 
@@ -264,7 +265,7 @@ body {
 
 .card-menu {
   align-content: flex-end;
-  font-size: 100%;
+  font-size: var(--font-base-size);
   text-align: right;
   width: 100%;
   padding: 1px;

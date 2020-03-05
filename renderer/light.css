@@ -15,6 +15,7 @@
   --imgOpacity: .2;
   --background1: #fcfcfc;
   --background2: #e0e0e0;
+  --font-base-size: 100%;
 }
 
 .theme-1.active,

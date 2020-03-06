@@ -59,5 +59,6 @@ function setTheme (themeId) {
   $('#default').prop('disabled', true)
   $('#dark').prop('disabled', true)
   $('#light').prop('disabled', true)
+  $('#steve').prop('disabled', true)
   $(`#${themeId}`).prop('disabled', false)
 }

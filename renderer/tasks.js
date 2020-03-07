@@ -6,7 +6,7 @@ let desktopPath = ''
 let updTaskId = null
 
 // IPC event to get system desktop path
-ipcRenderer.on('desktopPath', (e, data) => {
+ipcRenderer.on('desktop-path', (e, data) => {
   desktopPath = data
 })
 
@@ -18,23 +18,26 @@ exports.saveTasks = () => {
   localStorage.setItem('taskList', JSON.stringify(this.taskList))
 }
 
-// Update task status helper function
-exports.updateTaskStatus = (taskId, taskStatus) => {
-  var task = this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId) && task.TaskStatus !== taskStatus)
+// Update task stack helper function
+exports.updateTaskStack = (taskId, taskStack) => {
+  var task = this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId) && task.TaskStack !== taskStack)
   if (task) {
-    task.StatusDate = Date.now()
-    task.TaskStatus = taskStatus
+    task.StackDate = Date.now()
+    task.TaskStack = taskStack
+    const archDelete = task.TaskStack === 'stack-archive' ? 'Delete' : 'Archive'
+    $(`#del-button-${task.TaskId}`).prop('title', `${archDelete} Task`)
+    console.log(`#del-button-${task.TaskId}` + archDelete)
     this.saveTasks()
   }
 }
 
-// Update task age; id supplied set status age to 0; otherwise update all tasks
+// Update task age; id supplied set stack age to 0; otherwise update all tasks
 exports.updateTaskAge = (taskId) => {
   if (taskId) {
     $(`#a${taskId}`).text('0/' + Math.floor((Date.now() - taskId) / 86400000))
   } else if (this.taskList.length) {
     this.taskList.forEach((item) => {
-      $(`#a${item.TaskId}`).text(Math.floor((Date.now() - item.StatusDate) / 86400000) +
+      $(`#a${item.TaskId}`).text(Math.floor((Date.now() - item.StackDate) / 86400000) +
       '/' + Math.floor((Date.now() - item.TaskId) / 86400000))
     })
   }
@@ -50,14 +53,14 @@ exports.updateTaskDetail = (taskId, taskDetail) => {
 exports.submitTask = (taskType) => {
   var taskTitle = $('#task-title').val() || 'No Title'
   var taskDetail = $('#task-detail').val()
-  var taskTheme = $('#choose-theme input:radio:checked').val() || 1
-  var taskStatus = $('#task-status').val()
+  var taskColor = $('#choose-color input:radio:checked').val() || 1
+  var taskStack = $('#task-stack').val()
   var taskId = Date.now()
   var count = $('#count-select').val() || 1
   var startDate = new Date(Date.parse($('#start-date').val()) || Date.now()).getTime()
   var monthDay = $('#choose-recur input:radio:checked').val() || 0
   var weekDay = []
-  var statusDate = Date.now()
+  var stackDate = Date.now()
   var tags = []
   $('#check-sun').prop('checked') && weekDay.push(0)
   $('#check-mon').prop('checked') && weekDay.push(1)
@@ -71,35 +74,35 @@ exports.submitTask = (taskType) => {
   }
   count *= weekDay.length > 0 ? weekDay.length : 1
   if (startDate > Date.now()) {
-    taskStatus = 'stack-schedule'
+    taskStack = 'stack-schedule'
   }
   var newTaskData = {
-    TaskStatus: taskStatus,
+    TaskStack: taskStack,
     TaskId: taskId,
     TaskTitle: taskTitle,
     TaskDetail: taskDetail,
-    TaskTheme: taskTheme,
+    TaskColor: taskColor,
     Count: count,
     StartDate: startDate,
     WeekDay: weekDay,
     MonthDay: monthDay,
-    StatusDate: statusDate,
+    StackDate: stackDate,
     Tags: tags
   }
   if (taskType === 'new') {
     this.taskList.push(newTaskData)
   } else {
     var getTask = this.taskList.find(task => parseInt(task.TaskId) === parseInt(activeTask))
-    if (getTask.TaskStatus === taskStatus) {
-      newTaskData.StatusDate = getTask.StatusDate
+    if (getTask.TaskStack === taskStack) {
+      newTaskData.StackDate = getTask.StackDate
     } else {
-      getTask.StatusDate = statusDate
+      getTask.StackDate = stackDate
     }
     newTaskData.TaskId = activeTask
     getTask.TaskTitle = taskTitle
     getTask.TaskDetail = taskDetail
-    getTask.TaskTheme = taskTheme
-    getTask.TaskStatus = taskStatus
+    getTask.TaskColor = taskColor
+    getTask.TaskStack = taskStack
     getTask.Count = count
     getTask.StartDate = startDate
     getTask.WeekDay = weekDay
@@ -112,23 +115,23 @@ exports.submitTask = (taskType) => {
 }
 
 // Clone task to 'do'
-exports.cloneTask = (taskId, taskStatus) => {
+exports.cloneTask = (taskId, taskStack) => {
   if (taskId) {
     var getTask = this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId))
-    // var newTaskStatus = taskStatus ? getTask.StartDate > Date.now() ? 'schedule' : 'do' : taskStatus
-    var newTaskStatus = taskStatus !== undefined ? taskStatus : getTask.StartDate > Date.now() ? 'stack-schedule' : 'stack-do'
+    // var newTaskStack = taskStack ? getTask.StartDate > Date.now() ? 'schedule' : 'do' : taskStack
+    var newTaskStack = taskStack !== undefined ? taskStack : getTask.StartDate > Date.now() ? 'stack-schedule' : 'stack-do'
     var newTaskData = {
-      TaskStatus: newTaskStatus,
+      TaskStack: newTaskStack,
       TaskId: Date.now(),
       TaskTitle: getTask.TaskTitle,
       TaskDetail: getTask.TaskDetail,
-      TaskTheme: getTask.TaskTheme,
+      TaskColor: getTask.TaskColor,
       Count: getTask.Count,
       StartDate: getTask.StartDate,
       WeekDay: getTask.WeekDay,
       MonthDay: getTask.MonthDay,
       Tags: getTask.Tags,
-      StatusDate: Date.now()
+      StackDate: Date.now()
     }
     this.taskList.push(newTaskData)
     this.saveTasks()
@@ -147,9 +150,9 @@ exports.addTask = task => {
   // Check if age is toggled
   const showAge = $('.aging').is(':visible') ? 'style' : 'style="display: none;"'
   // Check if archived and update archive tooltip to delete
-  const archDelete = task.TaskStatus === 'stack-archive' ? 'Delete' : 'Archive'
+  const archDelete = task.TaskStack === 'stack-archive' ? 'Delete' : 'Archive'
   // Generate task card html
-  const taskHtml = `<div class="card theme-${task.TaskTheme}" id="${task.TaskId}" draggable="true" ondragstart="drag(event)">
+  const taskHtml = `<div class="card color-${task.TaskColor}" id="${task.TaskId}" draggable="true" ondragstart="drag(event)">
                       <div style="clear: both" id="b${task.TaskId}" data-toggle="collapse" data-target="#c${task.TaskId}">
                         <span class="title">${task.TaskTitle}</span>
                         <span class="aging" id="a${task.TaskId}" ${showAge}></span>
@@ -167,7 +170,7 @@ exports.addTask = task => {
                       </div>
                     </div>`
   // Add task html to host
-  $(`#${task.TaskStatus}`).find('.box').append(taskHtml)
+  $(`#${task.TaskStack}`).find('.box').append(taskHtml)
   // Add Ageing
   this.updateTaskAge(task.taskId)
   // Active task setting event
@@ -191,7 +194,7 @@ exports.addTask = task => {
   })
   // Delete active task (send to archive; delete if in archive)
   $(`#del-button-${task.TaskId}`).click(() => {
-    if (task.TaskStatus === 'stack-archive') {
+    if (task.TaskStack === 'stack-archive') {
       this.deleteTask(task.TaskId)
     } else {
       this.archiveTask(task.TaskId)
@@ -211,7 +214,7 @@ exports.addTask = task => {
 exports.archiveTask = (taskId) => {
   if (taskId) {
     $('#stack-archive').find('.box').append($(`#${taskId}`))
-    this.updateTaskStatus(taskId, 'stack-archive')
+    this.updateTaskStack(taskId, 'stack-archive')
     this.saveTasks()
   }
 }
@@ -230,7 +233,7 @@ exports.deleteTask = (taskId) => {
 exports.restoreTask = (taskId) => {
   if (taskId) {
     $('#stack-do').find('.box').append($(`#${taskId}`))
-    this.updateTaskStatus(taskId, 'stack-do')
+    this.updateTaskStack(taskId, 'stack-do')
     this.saveTasks()
   }
 }

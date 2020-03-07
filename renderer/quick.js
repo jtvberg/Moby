@@ -5,16 +5,16 @@ const { ipcRenderer, remote } = require('electron')
 function quickTask (type) {
   var taskId = Date.now()
   var newTaskData = {
-    TaskStatus: type,
+    TaskStack: type,
     TaskId: taskId,
     TaskTitle: $('#quick-task-title').val() || 'No Title',
     TaskDetail: $('#quick-task-detail').val(),
-    TaskTheme: $('#quick-choose-theme input:radio:checked').val() || 1,
+    TaskColor: $('#quick-choose-color input:radio:checked').val() || 1,
     Count: 1,
     StartDate: taskId,
     WeekDay: [],
     MonthDay: 0,
-    StatusDate: taskId,
+    StackDate: taskId,
     Tags: []
   }
   // IPC event/channel to send new task data to app via main

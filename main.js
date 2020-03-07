@@ -103,7 +103,7 @@ app.on('ready', () => {
   }
   win.webContents.on('dom-ready', () => {
     // IPC event to send system desktop path
-    win.webContents.send('desktopPath', app.getPath('desktop'))
+    win.webContents.send('desktop-path', app.getPath('desktop'))
   })
 })
 

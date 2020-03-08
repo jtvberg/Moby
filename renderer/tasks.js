@@ -17,7 +17,7 @@ exports.taskList = updateTaskListModel() // JSON.parse(localStorage.getItem('tas
 function updateTaskListModel () {
   const rl = localStorage.getItem('taskList') || null
   if (rl) {
-    const tl = JSON.parse(rl.replace(/TaskStatus/g, 'TaskStack').replace(/TaskTheme/g, 'TaskColor')) || []
+    const tl = JSON.parse(rl.replace(/TaskStatus/g, 'TaskStack').replace(/TaskTheme/g, 'TaskColor').replace(/StatusDate/g, 'StackDate')) || []
     localStorage.setItem('taskList', JSON.stringify(tl))
     return tl
   }
@@ -281,7 +281,7 @@ exports.importTasks = () => {
     }
     try {
       // Convert old import file to new model nonsense
-      var tl = data.toString().replace(/TaskStatus/g, 'TaskStack').replace(/TaskTheme/g, 'TaskColor')
+      var tl = data.toString().replace(/TaskStatus/g, 'TaskStack').replace(/TaskTheme/g, 'TaskColor').replace(/StatusDate/g, 'StackDate')
       var JSONimport = JSON.parse(tl)
       if (JSONimport.length) {
         var i = 0

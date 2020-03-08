@@ -11,7 +11,18 @@ ipcRenderer.on('desktop-path', (e, data) => {
 })
 
 // Track taskList with array
-exports.taskList = JSON.parse(localStorage.getItem('taskList')) || []
+exports.taskList = updateTaskListModel() // JSON.parse(localStorage.getItem('taskList')) || []
+
+// Went and changed the model and need to fix it function
+function updateTaskListModel () {
+  const rl = localStorage.getItem('taskList') || null
+  if (rl) {
+    const tl = JSON.parse(rl.replace(/TaskStatus/g, 'TaskStack').replace(/TaskTheme/g, 'TaskColor')) || []
+    localStorage.setItem('taskList', JSON.stringify(tl))
+    return tl
+  }
+  return []
+}
 
 // Save taskList to localstorage
 exports.saveTasks = () => {
@@ -25,8 +36,7 @@ exports.updateTaskStack = (taskId, taskStack) => {
     task.StackDate = Date.now()
     task.TaskStack = taskStack
     const archDelete = task.TaskStack === 'stack-archive' ? 'Delete' : 'Archive'
-    $(`#del-button-${task.TaskId}`).prop('title', `${archDelete} Task`)
-    console.log(`#del-button-${task.TaskId}` + archDelete)
+    $(`#del-button-${task.TaskId}`).attr('data-original-title', `${archDelete} Task`)
     this.saveTasks()
   }
 }
@@ -270,7 +280,9 @@ exports.importTasks = () => {
       return
     }
     try {
-      var JSONimport = JSON.parse(data)
+      // Convert old import file to new model nonsense
+      var tl = data.toString().replace(/TaskStatus/g, 'TaskStack').replace(/TaskTheme/g, 'TaskColor')
+      var JSONimport = JSON.parse(tl)
       if (JSONimport.length) {
         var i = 0
         JSONimport.forEach(task => {

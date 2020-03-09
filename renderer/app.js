@@ -35,8 +35,20 @@ window.setInterval(addScheduledTasks, 3600000)
 window.setInterval(tasks.updateTaskAge, 3600000)
 window.setInterval(archiveDoneTasks, 3600000)
 
+// Went and changed the model and need to fix it function
+function updateStackkListModel () {
+  const rl = localStorage.getItem('stackList') || null
+  if (rl) {
+    const tl = JSON.parse(rl.replace(/stackId/g, 'StackId').replace(/stackTitle/g, 'StackTitle')) || []
+    localStorage.setItem('stackList', JSON.stringify(tl))
+    return tl
+  }
+  return []
+}
+
 // Stack load; if non defined use default
 function getStacks () {
+  updateStackkListModel()
   const stacks = JSON.parse(localStorage.getItem('stackList')) || []
   $('.stack-host').children('.stack').remove()
   let index = 1

@@ -190,6 +190,10 @@ exports.addTask = task => {
     $(`#${task.TaskId}`).addClass('card-selected')
     $('.window-title').text(`Moby - ${task.TaskTitle}`)
   })
+  // Stop right-click on card invoking remove stack
+  $(`#${task.TaskId}`).contextmenu((e) => {
+    e.stopPropagation()
+  })
   // In-line detail update event
   $(`#d${task.TaskId}`).on('input', () => {
     updTaskId = task.TaskId

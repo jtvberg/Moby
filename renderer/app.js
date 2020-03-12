@@ -364,6 +364,7 @@ function loadTaskModal (type, stack) {
   $('#restore-modal').modal('hide')
   $('#collapse-sched').collapse('hide')
   $('#task-detail').height('46px')
+  $('#option-1').closest('.btn').button('toggle')
   if (type === 'new') {
     $('#task-modal-title').html('New Task')
     $('form').get(0).reset()
@@ -375,9 +376,7 @@ function loadTaskModal (type, stack) {
     $('#task-title').val(getTask.TaskTitle)
     $('#task-detail').val(getTask.TaskDetail)
     $('#task-stack').val(getTask.TaskStack)
-    $(`#option-${getTask.TaskColor}`)
-      .closest('.btn')
-      .button('toggle')
+    $(`#option-${getTask.TaskColor}`).closest('.btn').button('toggle')
     $('#count-select').val(getTask.Count)
     var dt = new Date(getTask.StartDate)
     $('#start-date').val(dt.getMonth() + 1 + '/' + dt.getDate() + '/' + dt.getFullYear())

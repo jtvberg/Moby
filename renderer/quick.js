@@ -39,6 +39,7 @@ $('#doing-button').click(() => {
 ipcRenderer.on('quick-reset', (e) => {
   $('#quick-task-form').trigger('reset')
   $('#quick-task-detail').height('48px')
+  $('#option-1').closest('.btn').button('toggle')
   $('#quick-task-title').focus()
 })
 

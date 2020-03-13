@@ -144,12 +144,12 @@ exports.cloneTask = (taskId, taskStack) => {
     }
     this.taskList.push(newTaskData)
     this.saveTasks()
-    this.addTask(newTaskData)
+    this.addTask(newTaskData, true)
   }
 }
 
 // Add task(s) to UI
-exports.addTask = task => {
+exports.addTask = (task, highlight) => {
   let tagHTML = ''
   if (task.Tags && task.Tags.length > 0) {
     task.Tags.forEach((item) => {
@@ -160,8 +160,10 @@ exports.addTask = task => {
   const showAge = $('.aging').is(':visible') ? 'style' : 'style="display: none;"'
   // Check if archived and update archive tooltip to delete
   const archDelete = task.TaskStack === 'stack-archive' ? 'Delete' : 'Archive'
+  // Check if clone to highlight
+  const taskHighlight = highlight === true ? 'card-highlighted' : ''
   // Generate task card html
-  const taskHtml = `<div class="card color-${task.TaskColor}" id="${task.TaskId}" draggable="true" ondragstart="drag(event)">
+  const taskHtml = `<div class="card ${taskHighlight} color-${task.TaskColor}" id="${task.TaskId}" draggable="true" ondragstart="drag(event)">
                       <div style="clear: both" id="b${task.TaskId}" data-toggle="collapse" data-target="#c${task.TaskId}">
                         <span class="title">${task.TaskTitle}</span>
                         <span class="aging" id="a${task.TaskId}" ${showAge}></span>
@@ -186,6 +188,7 @@ exports.addTask = task => {
   $(`#${task.TaskId}`).on('click', () => {
     window.activeTask = task.TaskId
     $('.card').removeClass('card-selected')
+    $(`#${task.TaskId}`).removeClass('card-highlighted')
     $(`#${task.TaskId}`).addClass('card-selected')
     $('.window-title').text(`Moby - ${task.TaskTitle}`)
   })

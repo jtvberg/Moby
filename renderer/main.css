@@ -206,6 +206,10 @@ body {
   border-color: var(--focused);
 }
 
+.card-highlighted {
+  border-color: var(--highlight);
+}
+
 .title {
   float: left;
 }

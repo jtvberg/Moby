@@ -128,7 +128,6 @@ exports.submitTask = (taskType) => {
 exports.cloneTask = (taskId, taskStack) => {
   if (taskId) {
     var getTask = this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId))
-    // var newTaskStack = taskStack ? getTask.StartDate > Date.now() ? 'schedule' : 'do' : taskStack
     var newTaskStack = taskStack !== undefined ? taskStack : getTask.StartDate > Date.now() ? 'stack-schedule' : 'stack-do'
     var newTaskData = {
       TaskStack: newTaskStack,

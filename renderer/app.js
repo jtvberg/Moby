@@ -77,6 +77,7 @@ function getDefaultStacks () {
   $(new Option('Today', `${stackPrefix}today`)).appendTo('#task-stack')
   $(new Option('Doing', `${stackPrefix}doing`)).appendTo('#task-stack')
   $(new Option('Done', `${stackPrefix}done`)).appendTo('#task-stack')
+  saveStacks()
 }
 
 // Save stacks to localstorage
@@ -99,13 +100,14 @@ function saveStacks () {
 // Build out and insert stacks
 function buildStack (id, title, index) {
   // TODO: Check if ID exists
-  const addStackBtn = id === `${stackPrefix}do` ? '' : '<div class="stack-add fas fa-caret-square-left" data-toggle="tooltip" title="Insert Stack" onclick="addNewStackClick(event)"></div>'
+  const addStackBtn = id === 'stack-do' ? '' : '<div class="stack-add fas fa-caret-square-left" data-toggle="tooltip" title="Insert Stack" onclick="addNewStackClick(event)"></div>'
+  const removeStackBtn = id === 'stack-do' || id === 'stack-done' ? '' : `<div class="dropdown-menu dropdown-menu-sm ddcm" id="context-menu-${id}">
+                                                    <a class="dropdown-item" href="#remove-modal" data-toggle="modal">Remove Stack</a>
+                                                  </div>`
   const stackHtml = `<div class="stack" id="${id}" data-stack-index="${index}" ondrop="drop(event)" ondragover="allowDrop(event)">
                       ${addStackBtn}
                       <div class="header stack-header" contenteditable="true">${title}</div>
-                      <div class="dropdown-menu dropdown-menu-sm ddcm" id="context-menu-${id}">
-                        <a class="dropdown-item" href="#remove-modal" data-toggle="modal">Remove Stack</a>
-                      </div>
+                      ${removeStackBtn}
                       <div class="box"></div>
                       <div class="footer fas fa-plus fa-2x" href="#task-modal" data-toggle="modal" data-stack-id="${id}" data-type-id="new"></div>
                     </div>`
@@ -240,7 +242,7 @@ function addScheduledTasks () {
   if (tasks.taskList.length) {
     tasks.taskList.forEach((item) => {
       if (item.TaskStack === 'stack-schedule' && item.StartDate < Date.now()) {
-        tasks.cloneTask(item.TaskId, 'stack-today')
+        tasks.cloneTask(item.TaskId, 'stack-do')
         var i = item.Count > 0 ? item.Count - 1 : item.Count
         if (i === 0) {
           this.archiveTask(item.TaskId)

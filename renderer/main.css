@@ -59,7 +59,7 @@ body {
   color: var(--trans);
   display: table;
   top: 5px;
-  right: 5px;
+  left: 5px;
   font-size: calc(var(--font-base-size) + 50%);
   position: absolute;
 }

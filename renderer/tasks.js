@@ -13,6 +13,9 @@ ipcRenderer.on('desktop-path', (e, data) => {
 // Track taskList with array
 exports.taskList = updateTaskListModel() // JSON.parse(localStorage.getItem('taskList')) || []
 
+// Track tag list
+exports.tagList = []
+
 // Went and changed the model and need to fix it function
 function updateTaskListModel () {
   const rl = localStorage.getItem('taskList') || null
@@ -117,7 +120,7 @@ exports.submitTask = (taskType) => {
     getTask.StartDate = startDate
     getTask.WeekDay = weekDay
     getTask.MonthDay = monthDay
-    getTask.Tags = tags
+    newTaskData.Tags = getTask.Tags
     $(`#${getTask.TaskId}`).remove()
   }
   this.saveTasks()
@@ -152,8 +155,10 @@ exports.cloneTask = (taskId, taskStack) => {
 exports.addTask = (task, highlight) => {
   let tagHTML = ''
   if (task.Tags && task.Tags.length > 0) {
-    task.Tags.forEach((item) => {
-      tagHTML += `<div class="card tags">${item}</div>`
+    task.Tags.forEach((tag) => {
+      this.tagList.push(tag)
+      tagHTML += `<div class="tags">${tag}</div>`
+      console.log(tagHTML)
     })
   }
   // Check if age is toggled

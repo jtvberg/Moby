@@ -6,7 +6,7 @@ body {
 
 .wrapper {
   display: grid;
-  grid-template-columns: 40px 1fr 1px;
+  grid-template-columns: 40px 1fr 150px 1px;
   grid-template-rows: 0px 1fr;
   grid-gap: 5px;
   height: 100%;
@@ -53,6 +53,7 @@ body {
   font-size: calc(var(--font-base-size) + 20%);
   font-weight: 500;
   justify-self: center;
+  text-align: center;
 }
 
 .stack-add {
@@ -324,14 +325,42 @@ body {
   background: var(--trans);
 }
 
+
+.tag-cloud {
+  grid-row: 2;
+  grid-column: 3;
+  height: 1fr;
+  z-index: 2000;
+}
+
 .tag-box {
   display: flex;
+  flex-wrap: wrap;
 }
 
 .tags {
-  background-color: var(--gray);
-  color: var(--light);
+  border-radius: 3px;
+  margin: 5px;
+  padding: 2px 5px;
+  font-size: calc(var(--font-base-size));
+  -webkit-app-region: no-drag;
+  background-color: var(--tag-background);
+  color: var(--tag-color);
   width: fit-content;
-  height: 22px;
+  margin: 1px;
+}
+
+.tags:hover {
+  box-shadow: 0 4px 8px 0 rgba(82, 82, 82, 0.6);
+}
+
+.cloud-tags {
+  margin: 5px;
+  padding: 2px 5px;
+  font-size: calc(var(--font-base-size) - 10%);
+  -webkit-app-region: no-drag;
+  background-color: var(--trans);
+  color: var(--tag-color);
+  width: fit-content;
   margin: 1px;
 }

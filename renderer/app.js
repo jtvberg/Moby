@@ -64,6 +64,15 @@ function getStacks () {
   }
   // Add tasks to the stacks
   tasks.taskList.forEach(tasks.addTask)
+  loadTagCloud()
+}
+
+function loadTagCloud () {
+  if (tasks.tagList.length > 0) {
+    tasks.tagList.forEach((tag) => {
+      $('#tag-cloud-box').append(`<div class="cloud-tags" style="font-size:100%;">${tag}</div>`)
+    })
+  }
 }
 
 // Default stack setup

@@ -65,14 +65,12 @@ let quick
 const createQuickMenu = () => {
   quick = new BrowserWindow({
     width: 360,
-    height: 'auto',
-    maxHeight: 400,
+    height: 183,
     show: false,
     frame: false,
     hasShadow: false,
     fullscreenable: false,
     resizable: false,
-    transparent: true,
     webPreferences: {
       nodeIntegration: true
     }
@@ -103,7 +101,7 @@ app.on('ready', () => {
   }
   win.webContents.on('dom-ready', () => {
     // IPC event to send system desktop path
-    win.webContents.send('desktopPath', app.getPath('desktop'))
+    win.webContents.send('desktop-path', app.getPath('desktop'))
   })
 })
 

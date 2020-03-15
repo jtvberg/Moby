@@ -12,37 +12,34 @@
     <link rel="stylesheet" href="quick.css">
   </head>
   <body id="quick-window">
-    <div class="quick-arrow"></div>
+    <!-- <div class="quick-arrow"></div> -->
     <div class="quick-body">
       <form id="quick-task-form">
         <div class="form-group">
           <input class="form-control" id="quick-task-title" placeholder="Title">
         </div>
         <div class="form-group">
-          <textarea class="form-control" id="quick-task-detail" placeholder="Detail" style="max-height: 264px;"></textarea>
+          <textarea class="form-control quick-detail" id="quick-task-detail" placeholder="Detail"></textarea>
         </div>
-        <label for="choose-theme">Color</label>
-        <div class="btn-group btn-group-toggle btn-group-lg" id="quick-choose-theme" data-toggle="buttons">
-          <label class="btn theme-1" active>
-            <input type="radio" name="options" id="option-1" autocomplete="off" checked value="1"> 
+        <label for="choose-color">Color</label>
+        <div class="btn-group btn-group-toggle btn-group-lg" id="quick-choose-color" data-toggle="buttons">
+          <label class="btn color-1">
+            <input type="radio" name="color-options" id="color-option-1" autocomplete="off" value="1"> 
           </label>
-          <label class="btn theme-2">
-            <input type="radio" name="options" id="option-2" autocomplete="off" value="2"> 
+          <label class="btn color-2">
+            <input type="radio" name="color-options" id="color-option-2" autocomplete="off" value="2"> 
           </label>
-          <label class="btn theme-3">
-            <input type="radio" name="options" id="option-3" autocomplete="off" value="3">
+          <label class="btn color-3">
+            <input type="radio" name="color-options" id="color-option-3" autocomplete="off" value="3">
           </label>
-          <label class="btn theme-4">
-            <input type="radio" name="options" id="option-4" autocomplete="off" value="4"> 
+          <label class="btn color-4">
+            <input type="radio" name="color-options" id="color-option-4" autocomplete="off" value="4"> 
           </label>
-          <label class="btn theme-5">
-            <input type="radio" name="options" id="option-5" autocomplete="off" value="5"> 
+          <label class="btn color-5">
+            <input type="radio" name="color-options" id="color-option-5" autocomplete="off" value="5"> 
           </label>
         </div>
-        <div class="footer">
-          <button id="do-button" type="button" class="btn btn-primary btn-sm">Do</button>
-          <button id="today-button" type="button" class="btn btn-primary btn-sm">Today</button>
-          <button id="doing-button" type="button" class="btn btn-primary btn-sm">Doing</button>
+        <div class="footer" id="submit-button-group">
         </div>
       </form>
     </div>

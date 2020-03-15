@@ -6,52 +6,52 @@
   --green: #27ae60;
   --dark: #000;
   --light: #fff;
-  --cardText: #fff;
+  --card-text: #fff;
   --gray: #7a7a7a;
   --trans: #00000000;
   --opaque: #2727271a;
   --highlight: #32b3d3;
   --focused: #fff;
-  --imgOpacity: .1;
+  --img-opacity: .1;
   --background1: #ff91ff;
   --background2: #c787c7;
   --font-base-size: 100%;
 }
 
-.theme-1.active,
-.theme-2.active,
-.theme-3.active,
-.theme-4.active,
-.theme-5.active {
-border-color: var(--highlight) !important;
-border-width: 2px 1px !important;
+.color-1.active,
+.color-2.active,
+.color-3.active,
+.color-4.active,
+.color-5.active {
+  border-color: var(--highlight) !important;
+  border-width: 2px 1px !important;
 }
 
-.theme-1,
-.theme-2,
-.theme-3,
-.theme-4,
-.theme-5 {
-color: var(--light);
-font-weight: 500;
+.color-1,
+.color-2,
+.color-3,
+.color-4,
+.color-5 {
+  color: var(--card-text);
+  font-weight: 500;
 }
 
-.theme-1 {
-background-color: var(--blue);
+.color-1 {
+  background-color: var(--blue);
 }
 
-.theme-2 {
-background-color: var(--red);
+.color-2 {
+  background-color: var(--red);
 }
 
-.theme-3 {
-background-color: var(--purple);
+.color-3 {
+  background-color: var(--purple);
 }
 
-.theme-4 {
-background-color: var(--orange);
+.color-4 {
+  background-color: var(--orange);
 }
 
-.theme-5 {
-background-color: var(--green);
+.color-5 {
+  background-color: var(--green);
 }

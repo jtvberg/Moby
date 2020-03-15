@@ -5,8 +5,8 @@
     <title>Moby</title>
     <link rel="stylesheet" href="../node_modules/@fortawesome/fontawesome-free/css/all.min.css">
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="var.css" id="default"  title="Default">
-    <link rel="stylesheet" href="dark.css" id="dark"  title="Dark">
+    <link rel="stylesheet" href="var.css" id="default" title="Default">
+    <link rel="stylesheet" href="dark.css" id="dark" title="Dark">
     <link rel="stylesheet" href="light.css" id="light" title="Light">
     <link rel="stylesheet" href="steve.css" id="steve" title="Steve">
     <link rel="stylesheet" href="main.css">
@@ -23,12 +23,12 @@
         <div class="menu-item fas fa-expand-arrows-alt fa-2x" data-toggle="tooltip" title="Expand All" onclick="expandAll(event)"></div>
         <div class="menu-item fas fa-compress-arrows-alt fa-2x" data-toggle="tooltip" title="Collapse All" onclick="collapseAll(event)"></div>
         <div class="menu-item fas fa-sign-out-alt fa-2x" data-toggle="tooltip" title="Exit" onclick="exit(event)"></div>
-        <div class="theme-toggle" data-toggle="tooltip" title="Filter Tasks">
-          <div class="color-item fas fa-square fa-2x color-1" id="theme1-button" data-theme-id="1" onclick="toggleThemeClick(event)"></div>
-          <div class="color-item fas fa-square fa-2x color-2" id="theme2-button" data-theme-id="2" onclick="toggleThemeClick(event)"></div>
-          <div class="color-item fas fa-square fa-2x color-3" id="theme3-button" data-theme-id="3" onclick="toggleThemeClick(event)"></div>
-          <div class="color-item fas fa-square fa-2x color-4" id="theme4-button" data-theme-id="4" onclick="toggleThemeClick(event)"></div>
-          <div class="color-item fas fa-square fa-2x color-5" id="theme5-button" data-theme-id="5" onclick="toggleThemeClick(event)"></div>
+        <div class="color-toggle" data-toggle="tooltip" title="Filter Tasks">
+          <div class="color-item fas fa-square fa-2x color-pick-1" id="color-1-button" data-color-id="1" onclick="toggleColorClick(event)"></div>
+          <div class="color-item fas fa-square fa-2x color-pick-2" id="color-2-button" data-color-id="2" onclick="toggleColorClick(event)"></div>
+          <div class="color-item fas fa-square fa-2x color-pick-3" id="color-3-button" data-color-id="3" onclick="toggleColorClick(event)"></div>
+          <div class="color-item fas fa-square fa-2x color-pick-4" id="color-4-button" data-color-id="4" onclick="toggleColorClick(event)"></div>
+          <div class="color-item fas fa-square fa-2x color-pick-5" id="color-5-button" data-color-id="5" onclick="toggleColorClick(event)"></div>
         </div>
       </div>
       <div class="stack-host"></div>
@@ -55,25 +55,25 @@
                 <textarea class="form-control" id="task-detail" placeholder="Detail"></textarea>
               </div>
               <div class="form-group">
-                <select class="form-control form-control-sm" id="task-status">
+                <select class="form-control form-control-sm" id="task-stack">
                 </select>
               </div>
-              <label for="choose-theme">Color</label>
-              <div class="btn-group btn-group-toggle btn-group-lg" id="choose-theme" data-toggle="buttons">
-                <label class="btn theme-1" active>
-                  <input type="radio" name="options" id="option-1" autocomplete="off" checked value="1"> 
+              <label for="choose-color">Color</label>
+              <div class="btn-group btn-group-toggle btn-group-lg" id="choose-color" data-toggle="buttons">
+                <label class="btn color-1">
+                  <input type="radio" name="color-options" id="color-option-1" autocomplete="off" value="1"> 
                 </label>
-                <label class="btn theme-2">
-                  <input type="radio" name="options" id="option-2" autocomplete="off" value="2"> 
+                <label class="btn color-2">
+                  <input type="radio" name="color-options" id="color-option-2" autocomplete="off" value="2"> 
                 </label>
-                <label class="btn theme-3">
-                  <input type="radio" name="options" id="option-3" autocomplete="off" value="3">
+                <label class="btn color-3">
+                  <input type="radio" name="color-options" id="color-option-3" autocomplete="off" value="3">
                 </label>
-                <label class="btn theme-4">
-                  <input type="radio" name="options" id="option-4" autocomplete="off" value="4"> 
+                <label class="btn color-4">
+                  <input type="radio" name="color-options" id="color-option-4" autocomplete="off" value="4"> 
                 </label>
-                <label class="btn theme-5">
-                  <input type="radio" name="options" id="option-5" autocomplete="off" value="5"> 
+                <label class="btn color-5">
+                  <input type="radio" name="color-options" id="color-option-5" autocomplete="off" value="5"> 
                 </label>
               </div>
               <div class="panel-group" id="panel-recur">
@@ -235,7 +235,7 @@
           <div class="modal-body">
             <div class="form-group">
               <label>Push Tasks To</label>
-              <select class="form-control form-control-sm" id="stack-task-status">
+              <select class="form-control form-control-sm" id="task-stack-new">
               </select>
             </div>
           </div>

@@ -35,16 +35,28 @@ window.setInterval(addScheduledTasks, 3600000)
 window.setInterval(tasks.updateTaskAge, 3600000)
 window.setInterval(archiveDoneTasks, 3600000)
 
+// Went and changed the model and need to fix it function
+function updateStackkListModel () {
+  const rl = localStorage.getItem('stackList') || null
+  if (rl) {
+    const tl = JSON.parse(rl.replace(/stackId/g, 'StackId').replace(/stackTitle/g, 'StackTitle')) || []
+    localStorage.setItem('stackList', JSON.stringify(tl))
+    return tl
+  }
+  return []
+}
+
 // Stack load; if non defined use default
 function getStacks () {
+  updateStackkListModel()
   const stacks = JSON.parse(localStorage.getItem('stackList')) || []
   $('.stack-host').children('.stack').remove()
-  let index = 1
+  let index = 0
   if (stacks.length > 1) {
-    $('#task-status').empty()
+    $('#task-stack').empty()
     stacks.forEach(stack => {
-      buildStack(stack.stackId, stack.stackTitle, index)
-      $(new Option(stack.stackTitle, stack.stackId)).appendTo('#task-status')
+      buildStack(stack.StackId, stack.StackTitle, index)
+      $(new Option(stack.StackTitle, stack.StackId)).appendTo('#task-stack')
       index++
     })
   } else {
@@ -56,53 +68,56 @@ function getStacks () {
 
 // Default stack setup
 function getDefaultStacks () {
-  buildStack(`${stackPrefix}do`, 'Do', 1)
-  buildStack(`${stackPrefix}today`, 'Today', 2)
-  buildStack(`${stackPrefix}doing`, 'Doing', 3)
-  buildStack(`${stackPrefix}done`, 'Done', 4)
-  $('#task-status').empty()
-  $(new Option('Do', `${stackPrefix}do`)).appendTo('#task-status')
-  $(new Option('Today', `${stackPrefix}today`)).appendTo('#task-status')
-  $(new Option('Doing', `${stackPrefix}doing`)).appendTo('#task-status')
-  $(new Option('Done', `${stackPrefix}done`)).appendTo('#task-status')
+  buildStack(`${stackPrefix}do`, 'Do', 0)
+  buildStack(`${stackPrefix}today`, 'Today', 1)
+  buildStack(`${stackPrefix}doing`, 'Doing', 2)
+  buildStack(`${stackPrefix}done`, 'Done', 3)
+  $('#task-stack').empty()
+  $(new Option('Do', `${stackPrefix}do`)).appendTo('#task-stack')
+  $(new Option('Today', `${stackPrefix}today`)).appendTo('#task-stack')
+  $(new Option('Doing', `${stackPrefix}doing`)).appendTo('#task-stack')
+  $(new Option('Done', `${stackPrefix}done`)).appendTo('#task-stack')
+  saveStacks()
 }
 
 // Save stacks to localstorage
 function saveStacks () {
   var stacks = []
-  $('.th').each(function () {
+  $('.stack-header').each(function () {
     var stackData = {
-      stackId: $(this).closest('.stack').prop('id'),
-      stackTitle: $(this).text()
+      StackId: $(this).closest('.stack').prop('id'),
+      StackTitle: $(this).text()
     }
     stacks.push(stackData)
   })
   localStorage.setItem('stackList', JSON.stringify(stacks))
-  $('#task-status').empty()
+  $('#task-stack').empty()
   stacks.forEach(stack => {
-    $(new Option(stack.stackTitle, stack.stackId)).appendTo('#task-status')
+    $(new Option(stack.StackTitle, stack.StackId)).appendTo('#task-stack')
   })
 }
 
 // Build out and insert stacks
 function buildStack (id, title, index) {
   // TODO: Check if ID exists
-  const addStackBtn = id === `${stackPrefix}done` ? '' : '<div class="stack-add fas fa-caret-square-right" data-toggle="tooltip" title="Insert Stack" onclick="addNewStackClick(event)"></div>'
+  const addStackBtn = id === 'stack-do' ? '' : '<div class="stack-add fas fa-caret-square-left" data-toggle="tooltip" title="Insert Stack" onclick="addNewStackClick(event)"></div>'
+  const removeStackBtn = id === 'stack-do' || id === 'stack-done' ? '' : `<div class="dropdown-menu dropdown-menu-sm ddcm" id="context-menu-${id}">
+                                                    <a class="dropdown-item" href="#remove-modal" data-toggle="modal">Remove Stack</a>
+                                                  </div>`
   const stackHtml = `<div class="stack" id="${id}" data-stack-index="${index}" ondrop="drop(event)" ondragover="allowDrop(event)">
-                      <div class="dropdown-menu dropdown-menu-sm ddcm" id="context-menu-${id}">
-                        <a class="dropdown-item" href="#remove-modal" data-toggle="modal">Remove Stack</a>
-                      </div>
-                      <div class="header th" contenteditable="true">${title}</div>
                       ${addStackBtn}
+                      <div class="header stack-header" contenteditable="true">${title}</div>
+                      ${removeStackBtn}
                       <div class="box"></div>
-                      <div class="footer fas fa-plus fa-2x" href="#task-modal" data-toggle="modal" data-status-id="${id}" data-type-id="new"></div>
+                      <div class="footer fas fa-plus fa-2x" href="#task-modal" data-toggle="modal" data-stack-id="${id}" data-type-id="new"></div>
                     </div>`
   $('.stack-host').append(stackHtml)
   $(`#${id}`).on('contextmenu', () => {
     $(`#context-menu-${id}`).css({
       display: 'block',
       position: 'absolute',
-      left: '5px',
+      right: '5px',
+      left: 'auto',
       top: '5px'
     }).addClass('show').animate({ width: '98px' }, 'fast', 'swing')
   }).click(() => {
@@ -123,13 +138,13 @@ function addNewStack (addIndex) {
   }
   var stacks = JSON.parse(localStorage.getItem('stackList'))
   var stackData = {
-    stackId: `${stackPrefix}${Date.now()}`,
-    stackTitle: 'New Stack'
+    StackId: `${stackPrefix}${Date.now()}`,
+    StackTitle: 'New Stack'
   }
   stacks.splice(addIndex, 0, stackData)
   localStorage.setItem('stackList', JSON.stringify(stacks))
   getStacks()
-  $(`#${stackData.stackId}`).find('.th').focus()
+  $(`#${stackData.StackId}`).find('.stack-header').focus()
 }
 
 // Remove existing stack
@@ -137,18 +152,18 @@ function loadRemoveModal (removeIndex) {
   if (!localStorage.getItem('stackList')) {
     saveStacks()
   }
-  $('#stack-task-status').empty()
+  $('#task-stack-new').empty()
   const stacks = JSON.parse(localStorage.getItem('stackList'))
-  var i = 1
+  var i = 0
   if (stacks.length > 1) {
     stacks.forEach(stack => {
       if (i !== removeIndex) {
-        $(new Option(stack.stackTitle, stack.stackId)).appendTo('#stack-task-status')
+        $(new Option(stack.StackTitle, stack.StackId)).appendTo('#task-stack-new')
       }
       i++
     })
   }
-  $(new Option('Archive', `${stackPrefix}archive`)).appendTo('#stack-task-status')
+  $(new Option('Archive', `${stackPrefix}archive`)).appendTo('#task-stack-new')
   $('#remove-modal').modal()
 }
 
@@ -156,12 +171,12 @@ function loadRemoveModal (removeIndex) {
 function removeStack (removeIndex, newStackId) {
   var stacks = JSON.parse(localStorage.getItem('stackList'))
   tasks.taskList.forEach(task => {
-    if (task.TaskStatus === stacks[removeIndex - 1].stackId) {
-      task.TaskStatus = newStackId
+    if (task.TaskStack === stacks[removeIndex].StackId) {
+      task.TaskStack = newStackId
     }
   })
   tasks.saveTasks()
-  stacks.splice(removeIndex - 1, 1)
+  stacks.splice(removeIndex, 1)
   localStorage.setItem('stackList', JSON.stringify(stacks))
   getStacks()
 }
@@ -175,16 +190,16 @@ $('#remove-modal').on('show.bs.modal', (e) => {
 // Remove stack event
 $('#remove-stack-button').click((e) => {
   $('#remove-modal').modal('hide')
-  removeStack($(e.currentTarget).data('stack-index'), $('#stack-task-status').val())
+  removeStack($(e.currentTarget).data('stack-index'), $('#task-stack-new').val())
 })
 
 // In-line stack title update event
-$(document).on('input', '.th', () => {
+$(document).on('input', '.stack-header', () => {
   updStack = true
 })
 
 // In-line stack title update commit event
-$(document).on('blur', '.th', function () {
+$(document).on('blur', '.stack-header', function () {
   window.getSelection().removeAllRanges()
   if (updStack) {
     if ($(this).text().trim() === '') {
@@ -200,14 +215,14 @@ $(document).on('blur', '.th', function () {
 })
 
 // In-line stack title update: No enter for you!
-$('.th').keypress(function (e) {
+$('.stack-header').keypress(function (e) {
   if (e.which === 13) {
     this.blur()
   }
 })
 
 // In-line stack title update: No paste for you either!
-$('.th').on('paste', (e) => {
+$('.stack-header').on('paste', (e) => {
   e.preventDefault()
 })
 
@@ -220,14 +235,14 @@ ipcRenderer.on('quick-data', (e, data) => {
 
 // Scheduled tasks method
 // Schedule logic:
-// if in 'schedule' status && date < now:
+// if in 'schedule' stack && date < now:
 // if count > 0 or -1 clone task to today, reduce count (except forever -1) and update start date
 // if count of scheduled item is 0, archive it
 function addScheduledTasks () {
   if (tasks.taskList.length) {
     tasks.taskList.forEach((item) => {
-      if (item.TaskStatus === 'stack-schedule' && item.StartDate < Date.now()) {
-        tasks.cloneTask(item.TaskId, 'stack-today')
+      if (item.TaskStack === 'stack-schedule' && item.StartDate < Date.now()) {
+        tasks.cloneTask(item.TaskId, 'stack-do')
         var i = item.Count > 0 ? item.Count - 1 : item.Count
         if (i === 0) {
           this.archiveTask(item.TaskId)
@@ -246,7 +261,7 @@ function addScheduledTasks () {
 function archiveDoneTasks () {
   if (tasks.taskList.length) {
     tasks.taskList.forEach((item) => {
-      if (item.TaskStatus === 'stack-done' && item.StatusDate < Date.now() - (86400000 * 7)) {
+      if (item.TaskStack === 'stack-done' && item.StackDate < Date.now() - (86400000 * 7)) {
         tasks.archiveTask(item.TaskId)
         // TODO: add flag for delete on archive
       }
@@ -341,31 +356,30 @@ function updateTitileBar () {
 // Task modal load event
 $('#task-modal').on('show.bs.modal', (e) => {
   var type = $(e.relatedTarget).data('type-id') ? $(e.relatedTarget).data('type-id') : taskType
-  var status = $(e.relatedTarget).data('status-id') ? $(e.relatedTarget).data('status-id') : 'stack-do'
-  loadTaskModal(type, status)
+  var stack = $(e.relatedTarget).data('stack-id') ? $(e.relatedTarget).data('stack-id') : 'stack-do'
+  loadTaskModal(type, stack)
 })
 
 // Task modal load function; recieves new vs edit
-function loadTaskModal (type, status) {
+function loadTaskModal (type, stack) {
   taskType = type
   $('#schedule-modal').modal('hide')
   $('#restore-modal').modal('hide')
   $('#collapse-sched').collapse('hide')
   $('#task-detail').height('46px')
+  $('#color-option-1').closest('.btn').button('toggle')
   if (type === 'new') {
     $('#task-modal-title').html('New Task')
     $('form').get(0).reset()
-    $('#task-status').val(status)
+    $('#task-stack').val(stack)
     $('#choose-days').prop('disabled', true)
   } else {
     $('#task-modal-title').html('Edit Task')
     const getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(activeTask))
     $('#task-title').val(getTask.TaskTitle)
     $('#task-detail').val(getTask.TaskDetail)
-    $('#task-status').val(getTask.TaskStatus)
-    $(`#option-${getTask.TaskTheme}`)
-      .closest('.btn')
-      .button('toggle')
+    $('#task-stack').val(getTask.TaskStack)
+    $(`#color-option-${getTask.TaskColor}`).closest('.btn').button('toggle')
     $('#count-select').val(getTask.Count)
     var dt = new Date(getTask.StartDate)
     $('#start-date').val(dt.getMonth() + 1 + '/' + dt.getDate() + '/' + dt.getFullYear())
@@ -457,14 +471,14 @@ $('.click-area').click(() => {
   window.activeTask = null
 })
 
-// Theme toggle task show
-function toggleTheme (themeId) {
-  if ($(`#theme${themeId}-button`).hasClass(`color-${themeId}`)) {
-    $(`#theme${themeId}-button`).removeClass(`color-${themeId}`)
-    $(`.theme-${themeId}`).hide()
+// Task color toggle task show
+function toggleColor (colorId) {
+  if ($(`#color-${colorId}-button`).hasClass(`color-pick-${colorId}`)) {
+    $(`#color-${colorId}-button`).removeClass(`color-pick-${colorId}`)
+    $(`.color-${colorId}`).hide()
   } else {
-    $(`#theme${themeId}-button`).addClass(`color-${themeId}`)
-    $(`.theme-${themeId}`).show()
+    $(`#color-${colorId}-button`).addClass(`color-pick-${colorId}`)
+    $(`.color-${colorId}`).show()
   }
 }
 
@@ -494,10 +508,10 @@ const addNewStackClick = (e) => {
   addNewStack($(e.currentTarget).closest('.stack').data('stack-index'))
 }
 
-// Theme toggle event
+// Color toggle event
 // eslint-disable-next-line no-unused-vars
-const toggleThemeClick = (e) => {
-  toggleTheme($(e.currentTarget).data('theme-id'))
+const toggleColorClick = (e) => {
+  toggleColor($(e.currentTarget).data('color-id'))
 }
 
 // Completely close app
@@ -522,7 +536,6 @@ const drag = (e) => {
 const drop = (e) => {
   e.preventDefault()
   var data = e.dataTransfer.getData('text')
-  console.log($(e.target))
   if ($(e.target).hasClass('box')) {
     $(e.target).append($(`#${data}`))
   } else if ($(e.target).hasClass('stack')) {
@@ -530,6 +543,6 @@ const drop = (e) => {
   } else {
     $(e.target).closest('.box').append($(`#${data}`))
   }
-  tasks.updateTaskStatus(data, $(e.target).closest('.stack').prop('id'))
+  tasks.updateTaskStack(data, $(e.target).closest('.stack').prop('id'))
   tasks.updateTaskAge(data)
 }

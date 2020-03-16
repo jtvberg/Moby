@@ -20,6 +20,7 @@
         <span href="#schedule-modal" data-toggle="modal">
           <div class="menu-item fas fa-calendar fa-2x" data-toggle="tooltip" title="Scheduled Tasks"></div>
         </span>
+        <div class="menu-item fas fa-tags fa-2x" style="font-size: 150%;" data-toggle="tooltip" title="Toggle Tags" onclick="toggleTags(event)"></div>
         <div class="menu-item fas fa-expand-arrows-alt fa-2x" data-toggle="tooltip" title="Expand All" onclick="expandAll(event)"></div>
         <div class="menu-item fas fa-compress-arrows-alt fa-2x" data-toggle="tooltip" title="Collapse All" onclick="collapseAll(event)"></div>
         <div class="menu-item fas fa-sign-out-alt fa-2x" data-toggle="tooltip" title="Exit" onclick="exit(event)"></div>
@@ -32,14 +33,14 @@
         </div>
       </div>
       <div class="stack-host"></div>
-      <div class="tag-cloud">
-        <div class="header">Tag Cloud</div>
+      <div class="tag-cloud" style="display: none;">
+        <div class="header">Tags</div>
         <div class="tag-box" id="tag-cloud-box"></div>
       </div>
     </div>
 
     <div class='click-area'></div>
-    <div class="logo"><img src="res/moby_bg.png" draggable="false"></div>
+    <div class="logo"><img id="moby-bg-img" src="res/moby_bg.png" draggable="false"></div>
 
     <div id="task-modal" class="modal fade" tabindex="-1" role="dialog" style="-webkit-app-region: no-drag">
       <div class="modal-dialog" role="document">

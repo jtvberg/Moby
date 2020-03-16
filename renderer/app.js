@@ -67,13 +67,26 @@ function getStacks () {
   loadTagCloud()
 }
 
+// Load tag list UI
 function loadTagCloud () {
+  $('#tag-cloud-box').children('.cloud-tags').remove()
   if (tasks.tagList.length > 0) {
-    tasks.tagList.forEach((tag) => {
-      $('#tag-cloud-box').append(`<div class="cloud-tags" style="font-size:100%;">${tag}</div>`)
+    const ult = [...new Set(tasks.tagList)]
+    ult.forEach((tag) => {
+      $('#tag-cloud-box').append(`<div class="tags cloud-tags">${tag}</div>`)
     })
   }
 }
+
+// Show tasks with tag
+$('.cloud-tags').click((e) => {
+  tasks.taskList.forEach(task => {
+    if (task.Tags.includes($(e.currentTarget).text())) {
+      $(`#${task.TaskId}`).addClass('card-tagged')
+      $(`#${task.TaskId}`).find('.collapse').collapse('show')
+    }
+  })
+})
 
 // Default stack setup
 function getDefaultStacks () {
@@ -338,6 +351,7 @@ window.exportTasksMenu = () => {
 // Task menu commands; Import all tasks
 window.importTasksMenu = () => {
   tasks.importTasks()
+  loadTagCloud() // TODO: this doesn't work
 }
 
 // Theme menu commands
@@ -352,6 +366,11 @@ function setTheme (themeId) {
   $('#light').prop('disabled', true)
   $('#steve').prop('disabled', true)
   $(`#${themeId}`).prop('disabled', false)
+  if (themeId === 'steve') {
+    $('#moby-bg-img').prop('src', 'res/moby_bg_steve.png')
+  } else {
+    $('#moby-bg-img').prop('src', 'res/moby_bg.png')
+  }
   updateTitileBar()
   ipcRenderer.send('theme-change', themeId)
 }
@@ -463,16 +482,6 @@ $('#restore-button').click(() => {
   $('#restore-modal').modal('hide')
 })
 
-// Export task event
-$('#export-button').click(() => {
-  tasks.exportTasks()
-})
-
-// Import task event
-$('#import-button').click(() => {
-  tasks.importTasks()
-})
-
 // Deselect task
 $('.click-area').click(() => {
   $('.window-title').text('Moby')
@@ -507,6 +516,17 @@ const toggleAge = (e) => {
     $('.aging').hide()
   } else {
     $('.aging').show()
+  }
+}
+
+// Toggle tag cloud
+// eslint-disable-next-line no-unused-vars
+const toggleTags = (e) => {
+  if ($('.tag-cloud').is(':visible')) {
+    $('.tag-cloud').animate({ width: '0px' }, 'fast').hide(0)
+    $('.card').removeClass('card-tagged')
+  } else {
+    $('.tag-cloud').show().animate({ width: '105px' }, 'fast')
   }
 }
 

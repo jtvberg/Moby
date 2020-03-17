@@ -12,9 +12,11 @@
   --opaque: #2727271a;
   --highlight: #32b3d3;
   --focused: #fff;
-  --img-opacity: .2;
-  --background1: #fcfcfc;
-  --background2: #e0e0e0;
+  --img-opacity: .1;
+  --background1: #cccccc;
+  --background2: #a1a1a1;
+  --tag-background: #0000003d;
+  --tag-color: #e0e0e0;
   --font-base-size: 100%;
 }
 

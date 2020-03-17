@@ -64,7 +64,35 @@ function getStacks () {
   }
   // Add tasks to the stacks
   tasks.taskList.forEach(tasks.addTask)
+  loadTagCloud()
 }
+
+// Load tag list UI
+function loadTagCloud () {
+  $('#tag-cloud-box').children('.cloud-tags').remove()
+  if (tasks.tagList.length > 0) {
+    const ult = [...new Set(tasks.tagList)]
+    ult.forEach((tag) => {
+      $('#tag-cloud-box').append(`<div class="cloud-tags">${tag}</div>`)
+    })
+  }
+}
+
+// Show tasks with tag
+$(document).on('click', '.cloud-tags', (e) => {
+  tasks.taskList.forEach(task => {
+    if (task.Tags.includes($(e.currentTarget).text())) {
+      $(`#${task.TaskId}`).addClass('card-tagged')
+      $(`#${task.TaskId}`).find('.collapse').collapse('show')
+    }
+  })
+})
+
+// Show tasks with tag
+$(document).on('contextmenu', '.tags', (e) => {
+  $(e.currentTarget).remove()
+  tasks.tagList.splice(tasks.tagList.indexOf($(e.currentTarget).text()), 1)
+})
 
 // Default stack setup
 function getDefaultStacks () {
@@ -329,6 +357,7 @@ window.exportTasksMenu = () => {
 // Task menu commands; Import all tasks
 window.importTasksMenu = () => {
   tasks.importTasks()
+  loadTagCloud() // TODO: this doesn't work
 }
 
 // Theme menu commands
@@ -338,11 +367,13 @@ window.setThemeMenu = (themeId) => {
 
 // Set theme
 function setTheme (themeId) {
-  $('#default').prop('disabled', true)
-  $('#dark').prop('disabled', true)
-  $('#light').prop('disabled', true)
-  $('#steve').prop('disabled', true)
+  $('#default, #dark, #light, #steve').prop('disabled', true)
   $(`#${themeId}`).prop('disabled', false)
+  if (themeId === 'steve') {
+    $('#moby-bg-img').prop('src', 'res/moby_bg_steve.png')
+  } else {
+    $('#moby-bg-img').prop('src', 'res/moby_bg.png')
+  }
   updateTitileBar()
   ipcRenderer.send('theme-change', themeId)
 }
@@ -368,6 +399,7 @@ function loadTaskModal (type, stack) {
   $('#collapse-sched').collapse('hide')
   $('#task-detail').height('46px')
   $('#color-option-1').closest('.btn').button('toggle')
+  $('#tag-edit-box').children('.tags').remove()
   if (type === 'new') {
     $('#task-modal-title').html('New Task')
     $('form').get(0).reset()
@@ -380,6 +412,13 @@ function loadTaskModal (type, stack) {
     $('#task-detail').val(getTask.TaskDetail)
     $('#task-stack').val(getTask.TaskStack)
     $(`#color-option-${getTask.TaskColor}`).closest('.btn').button('toggle')
+    let tagHTML = ''
+    if (getTask.Tags && getTask.Tags.length > 0) {
+      getTask.Tags.forEach((tag) => {
+        tagHTML += `<div class="tags">${tag}</div>`
+      })
+    }
+    $('#tag-edit-box').append(tagHTML)
     $('#count-select').val(getTask.Count)
     var dt = new Date(getTask.StartDate)
     $('#start-date').val(dt.getMonth() + 1 + '/' + dt.getDate() + '/' + dt.getFullYear())
@@ -399,6 +438,11 @@ function loadTaskModal (type, stack) {
 // Focus title field on modal 'shown'
 $('#task-modal').on('shown.bs.modal', () => {
   $('#task-title').focus()
+})
+
+// Reload tag cloud on 'hide'
+$('#task-modal').on('hide.bs.modal', () => {
+  loadTagCloud()
 })
 
 // Size task detail on input
@@ -429,8 +473,7 @@ $('#radio-weekly, #radio-biWeekly, #radio-triWeekly, #radio-monthly').click(() =
 
 $('#radio-once').click(() => {
   $('#choose-days').prop('disabled', true)
-  $('#count-select').val(1)
-  $('#count-select').prop('disabled', true)
+  $('#count-select').val(1).prop('disabled', true)
   $(':checkbox').prop('checked', false)
   $('#recur-count').addClass('disabled-form-label')
 })
@@ -454,16 +497,6 @@ $('#restore-button').click(() => {
   $('#restore-modal').modal('hide')
 })
 
-// Export task event
-$('#export-button').click(() => {
-  tasks.exportTasks()
-})
-
-// Import task event
-$('#import-button').click(() => {
-  tasks.importTasks()
-})
-
 // Deselect task
 $('.click-area').click(() => {
   $('.window-title').text('Moby')
@@ -483,21 +516,38 @@ function toggleColor (colorId) {
 }
 
 // Expand all tasks event
-const expandAll = (e) => {
+const expandAll = () => {
   $('.collapse').collapse('show')
 }
 
 // Collapse all tasks event
-const collapseAll = (e) => {
+const collapseAll = () => {
   $('.collapse').collapse('hide')
 }
 
 // Toggle aging on tasks event
-const toggleAge = (e) => {
+const toggleAge = () => {
   if ($('.aging').is(':visible')) {
     $('.aging').hide()
   } else {
     $('.aging').show()
+  }
+}
+
+// Add new tag even from Task Modal
+// eslint-disable-next-line no-unused-vars
+const addNewTag = () => {
+  $('#tag-edit-box').append('<div class="tags" contenteditable="true">New Tag</div>')
+}
+
+// Toggle tag cloud
+// eslint-disable-next-line no-unused-vars
+const toggleTags = () => {
+  if ($('.tag-cloud').is(':visible')) {
+    $('.tag-cloud').animate({ width: '0px' }, 'fast').hide(0)
+    $('.card').removeClass('card-tagged')
+  } else {
+    $('.tag-cloud').show().animate({ width: '105px' }, 'fast')
   }
 }
 
@@ -516,7 +566,7 @@ const toggleColorClick = (e) => {
 
 // Completely close app
 // eslint-disable-next-line no-unused-vars
-const exit = (e) => {
+const exit = () => {
   const remote = require('electron').remote
   remote.app.exit()
 }

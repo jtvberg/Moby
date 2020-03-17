@@ -13,6 +13,9 @@ ipcRenderer.on('desktop-path', (e, data) => {
 // Track taskList with array
 exports.taskList = updateTaskListModel() // JSON.parse(localStorage.getItem('taskList')) || []
 
+// Track tag list
+exports.tagList = []
+
 // Went and changed the model and need to fix it function
 function updateTaskListModel () {
   const rl = localStorage.getItem('taskList') || null
@@ -72,6 +75,11 @@ exports.submitTask = (taskType) => {
   var weekDay = []
   var stackDate = Date.now()
   var tags = []
+  $('#tag-edit-box > .tags').each(function () {
+    if ($(this).text() !== 'New Tag' && $(this).text().trim() !== '') {
+      tags.push($(this).text())
+    }
+  })
   $('#check-sun').prop('checked') && weekDay.push(0)
   $('#check-mon').prop('checked') && weekDay.push(1)
   $('#check-tue').prop('checked') && weekDay.push(2)
@@ -152,8 +160,9 @@ exports.cloneTask = (taskId, taskStack) => {
 exports.addTask = (task, highlight) => {
   let tagHTML = ''
   if (task.Tags && task.Tags.length > 0) {
-    task.Tags.forEach((item) => {
-      tagHTML += `<div class="card tags">${item}</div>`
+    task.Tags.forEach((tag) => {
+      this.tagList.push(tag)
+      tagHTML += `<div class="tags">${tag}</div>`
     })
   }
   // Check if age is toggled
@@ -169,7 +178,7 @@ exports.addTask = (task, highlight) => {
                         <span class="aging" id="a${task.TaskId}" ${showAge}></span>
                       </div>
                       <div class="collapse collapse-content" id="c${task.TaskId}">
-                        <p id="d${task.TaskId}" contenteditable="true" style="white-space: pre-wrap;">${task.TaskDetail}</p>
+                        <p id="d${task.TaskId}" contenteditable="true" style="white-space: pre-wrap;" draggable="true" ondragstart="event.preventDefault(); event.stopPropagation();">${task.TaskDetail}</p>
                         <div class="tag-box" id="t${task.TaskId}">${tagHTML}</div>
                         <div class="card-menu">
                           <div class="card-menu-item-del fas fa-minus-square" id="del-button-${task.TaskId}" data-toggle="tooltip" title="${archDelete} Task" ></div>
@@ -177,7 +186,7 @@ exports.addTask = (task, highlight) => {
                           <span data-toggle="tooltip" title="Edit Task">
                             <div class="card-menu-item-edit fas fa-edit" id="edit-button" href="#task-modal" data-toggle="modal" data-type-id="edit"></div>
                           </span>
-                        <div>
+                        </div>
                       </div>
                     </div>`
   // Add task html to host

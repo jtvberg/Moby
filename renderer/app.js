@@ -135,7 +135,7 @@ function buildStack (id, title, index) {
                                                   </div>`
   const stackHtml = `<div class="stack" id="${id}" data-stack-index="${index}" ondrop="drop(event)" ondragover="allowDrop(event)">
                       ${addStackBtn}
-                      <div class="header stack-header" contenteditable="true">${title}</div>
+                      <div class="header stack-header" contenteditable="true" onclick="document.execCommand('selectAll',false,null)" oncontextmenu="event.preventDefault(); event.stopPropagation();">${title}</div>
                       ${removeStackBtn}
                       <div class="box"></div>
                       <div class="footer fas fa-plus fa-2x" href="#task-modal" data-toggle="modal" data-stack-id="${id}" data-type-id="new"></div>
@@ -401,6 +401,7 @@ function loadTaskModal (type, stack) {
   $('#task-detail').height('46px')
   $('#color-option-1').closest('.btn').button('toggle')
   $('#tag-edit-box').children('.tags').remove()
+  $('#task-stack option[value="stack-archive"]').remove()
   if (type === 'new') {
     $('#task-modal-title').html('New Task')
     $('form').get(0).reset()
@@ -411,6 +412,11 @@ function loadTaskModal (type, stack) {
     const getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(activeTask))
     $('#task-title').val(getTask.TaskTitle)
     $('#task-detail').val(getTask.TaskDetail)
+    if (getTask.TaskStack === 'stack-archive') {
+      $(new Option('Archive', 'stack-archive')).appendTo('#task-stack')
+    } else if (getTask.TaskStack === 'stack-schedule') {
+      getTask.TaskStack = 'stack-do'
+    }
     $('#task-stack').val(getTask.TaskStack)
     $(`#color-option-${getTask.TaskColor}`).closest('.btn').button('toggle')
     let tagHTML = ''
@@ -534,6 +540,22 @@ const toggleAge = () => {
     $('.aging').show()
   }
 }
+
+// Select the text when creating a new tag
+$(document).on('focus', '.tags', function () {
+  var range, selection
+  if (document.body.createTextRange) {
+    range = document.body.createTextRange()
+    range.moveToElementText(this)
+    range.select()
+  } else if (window.getSelection) {
+    selection = window.getSelection()
+    range = document.createRange()
+    range.selectNodeContents(this)
+    selection.removeAllRanges()
+    selection.addRange(range)
+  }
+})
 
 // Add new tag even from Task Modal
 // eslint-disable-next-line no-unused-vars

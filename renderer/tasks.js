@@ -77,7 +77,7 @@ exports.submitTask = (taskType) => {
   var tags = []
   $('#tag-edit-box > .tags').each(function () {
     if ($(this).text() !== 'New Tag' && $(this).text().trim() !== '') {
-      tags.push($(this).text())
+      tags.push($(this).text().trim())
     }
   })
   $('#check-sun').prop('checked') && weekDay.push(0)
@@ -231,7 +231,7 @@ exports.addTask = (task, highlight) => {
   })
   // Initialize tooltips
   $(function () {
-    $('[data-toggle="tooltip"]').tooltip({ delay: { show: 1000, hide: 100 } })
+    $('[data-toggle="tooltip"]').tooltip({ delay: { show: 1500, hide: 100 } })
   })
 }
 

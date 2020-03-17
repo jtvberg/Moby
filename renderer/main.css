@@ -370,6 +370,12 @@ body {
 }
 
 .cloud-tags {
+  border-radius: 3px;
+  margin: 1px;
+  padding: 2px 5px;
+  -webkit-app-region: no-drag;
+  background-color: var(--tag-background);
+  color: var(--tag-color);
   font-size: calc(var(--font-base-size) - 10%);
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -385,4 +391,17 @@ body {
 
 .cloud-tags:focus {
   background-color: var(--focused);
+}
+
+.color-btn-group {
+  height: 30px;
+  width: -webkit-fill-available;
+}
+
+.add-tag {
+  margin-left: 5px;
+}
+
+.add-tag:hover {
+  color: var(--highlight)
 }

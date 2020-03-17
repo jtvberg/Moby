@@ -80,6 +80,7 @@ function loadTagCloud () {
 
 // Show tasks with tag
 $(document).on('click', '.cloud-tags', (e) => {
+  $(e.currentTarget).addClass('cloud-tags-toggled')
   tasks.taskList.forEach(task => {
     if (task.Tags.includes($(e.currentTarget).text())) {
       $(`#${task.TaskId}`).addClass('card-tagged')
@@ -538,6 +539,7 @@ const toggleAge = () => {
 // eslint-disable-next-line no-unused-vars
 const addNewTag = () => {
   $('#tag-edit-box').append('<div class="tags" contenteditable="true">New Tag</div>')
+  $('#tag-edit-box').children().last().focus()
 }
 
 // Toggle tag cloud
@@ -546,6 +548,7 @@ const toggleTags = () => {
   if ($('.tag-cloud').is(':visible')) {
     $('.tag-cloud').animate({ width: '0px' }, 'fast').hide(0)
     $('.card').removeClass('card-tagged')
+    $('.cloud-tags').removeClass('cloud-tags-toggled')
   } else {
     $('.tag-cloud').show().animate({ width: '105px' }, 'fast')
   }

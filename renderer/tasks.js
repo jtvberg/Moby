@@ -231,7 +231,7 @@ exports.addTask = (task, highlight) => {
   })
   // Initialize tooltips
   $(function () {
-    $('[data-toggle="tooltip"]').tooltip({ delay: { show: 700, hide: 100 } })
+    $('[data-toggle="tooltip"]').tooltip({ delay: { show: 1000, hide: 100 } })
   })
 }
 

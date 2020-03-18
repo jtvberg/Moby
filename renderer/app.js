@@ -557,6 +557,29 @@ $(document).on('focus', '.tags', function () {
   }
 })
 
+// $(document).on('keyup', '.tags', function (e) {
+//   let caret = 0
+//   tasks.tagList.forEach(tag => {
+//     if ($(this).text() === tag.substring(0, $(this).text().length)) {
+//       caret = $(this).text().length
+//       $(this).text($(this).text() + tag.substring($(this).text().length, tag.length))
+//     }
+//     setCaret($(this), caret)
+//   })
+// })
+
+// function setCaret (tag, pos) {
+//   console.log(tag)
+//   var el = tag
+//   var range = document.createRange()
+//   var sel = window.getSelection()
+//   range.setStart(el.childNodes[0], pos)
+//   range.collapse(true)
+//   sel.removeAllRanges()
+//   sel.addRange(range)
+//   el.focus()
+// }
+
 // Add new tag even from Task Modal
 // eslint-disable-next-line no-unused-vars
 const addNewTag = () => {

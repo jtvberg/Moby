@@ -161,6 +161,7 @@ exports.cloneTask = (taskId, taskStack) => {
 
 // Add task(s) to UI
 exports.addTask = (task, highlight) => {
+  // Add task tags
   let tagHTML = ''
   if (task.Tags && task.Tags.length > 0) {
     task.Tags.forEach((tag) => {
@@ -168,6 +169,10 @@ exports.addTask = (task, highlight) => {
       tagHTML += `<div class="tags">${tag}</div>`
     })
   }
+  // Add subtasks
+  const testSubtask = 'Subtask'
+  let subtaskHTML = ''
+  //subtaskHTML = `<label class="customcheck">${testSubtask}<input type="checkbox"><span class="checkmark"></span></label>`
   // Check if age is toggled
   const showAge = $('.aging').is(':visible') ? 'style' : 'style="display: none;"'
   // Check if archived and update archive tooltip to delete
@@ -181,7 +186,8 @@ exports.addTask = (task, highlight) => {
                         <span class="aging" id="a${task.TaskId}" ${showAge}></span>
                       </div>
                       <div class="collapse collapse-content" id="c${task.TaskId}">
-                        <p id="d${task.TaskId}" contenteditable="true" style="white-space: pre-wrap;" draggable="true" ondragstart="event.preventDefault(); event.stopPropagation();">${task.TaskDetail}</p>
+                        <div class="detail" id="d${task.TaskId}" contenteditable="true" style="white-space: pre-wrap;" draggable="true" ondragstart="event.preventDefault(); event.stopPropagation();">${task.TaskDetail}</div>
+                        <div class="subtask-box">${subtaskHTML}</div>
                         <div class="tag-box" id="t${task.TaskId}">${tagHTML}</div>
                         <div class="card-menu">
                           <div class="card-menu-item-del fas fa-minus-square" id="del-button-${task.TaskId}" data-toggle="tooltip" title="${archDelete} Task" ></div>

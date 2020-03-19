@@ -226,6 +226,11 @@ body {
   font-size: calc(var(--font-base-size) - 25%);
 }
 
+.detail {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
 .collapsible {
   width: 100%;
   background-color: var(--trans);
@@ -419,4 +424,44 @@ body {
 
 .add-tag:hover {
   color: var(--highlight)
+}
+
+.subtask-box {
+  margin-bottom: 5px;
+}
+
+.customcheck {
+    display: block;
+    position: relative;
+    padding-left: 14px;
+    margin-bottom: 0px;
+    cursor: pointer;
+    font-size: calc(var(--font-base-size) + 10%);
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.customcheck input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkmark {
+    position: absolute;
+    margin-top: 3px;
+    top: 0;
+    left: 0;
+    height: 12px;
+    width: 12px;
+    background-color: var(--light);
+    border-radius: 2px;
+}
+
+.customcheck:hover input ~ .checkmark {
+    background-color: var(--gray);
+}
+
+.customcheck input:checked ~ .checkmark {
+    background-color: var(--checked);
 }

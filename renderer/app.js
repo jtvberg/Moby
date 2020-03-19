@@ -548,6 +548,9 @@ const toggleAge = () => {
 let match = ''
 // Autofill, autosize new tag
 $(document).on('keyup', '.new-tags', function (e) {
+  if (e.keyCode === 8) {
+    return
+  }
   const caret = this.selectionStart
   match = ''
   newTagList.forEach(tag => {

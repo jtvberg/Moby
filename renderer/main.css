@@ -356,6 +356,7 @@ body {
   flex-direction: column;
 }
 
+.new-tags,
 .tags {
   border-radius: 3px;
   margin: 1px;
@@ -367,6 +368,15 @@ body {
 
 .tags:hover {
   box-shadow: 0 4px 8px 0 rgba(82, 82, 82, 0.6);
+}
+
+.new-tags {
+  min-height: 28px;
+  max-height: 28px;
+  width: auto;
+  resize: none;
+  outline: none;
+  border-width: 0px;
 }
 
 .cloud-tags {

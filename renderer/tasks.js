@@ -75,9 +75,9 @@ exports.submitTask = (taskType) => {
   var weekDay = []
   var stackDate = Date.now()
   var tags = []
-  $('#tag-edit-box > .tags').each(function () {
-    if ($(this).text() !== 'New Tag' && $(this).text().trim() !== '') {
-      tags.push($(this).text().trim())
+  $('#tag-edit-box > .new-tags').each(function () {
+    if ($(this).val() !== 'New Tag' && $(this).val().trim() !== '') {
+      tags.push($(this).val().trim())
     }
   })
   $('#check-sun').prop('checked') && weekDay.push(0)
@@ -125,6 +125,9 @@ exports.submitTask = (taskType) => {
     getTask.StartDate = startDate
     getTask.WeekDay = weekDay
     getTask.MonthDay = monthDay
+    $('#tag-edit-box > .tags').each(function () {
+      tags.push($(this).text().trim())
+    })
     getTask.Tags = tags
     $(`#${getTask.TaskId}`).remove()
   }

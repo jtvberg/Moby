@@ -9,6 +9,7 @@ const stackPrefix = 'stack-'
 let taskType = 'new'
 let winMax = false
 let updStack = false
+let newTagList = []
 
 // Custom titlebar instantiation
 const bg = getComputedStyle(document.documentElement).getPropertyValue('--background1').trim()
@@ -71,8 +72,8 @@ function getStacks () {
 function loadTagCloud () {
   $('#tag-cloud-box').children('.cloud-tags').remove()
   if (tasks.tagList.length > 0) {
-    const ult = [...new Set(tasks.tagList)]
-    ult.forEach((tag) => {
+    const utl = [...new Set(tasks.tagList)]
+    utl.forEach((tag) => {
       $('#tag-cloud-box').append(`<div class="cloud-tags">${tag}</div>`)
     })
   }
@@ -93,6 +94,7 @@ $(document).on('click', '.cloud-tags', (e) => {
 $(document).on('contextmenu', '.tags', (e) => {
   $(e.currentTarget).remove()
   tasks.tagList.splice(tasks.tagList.indexOf($(e.currentTarget).text()), 1)
+  newTagList.push($(e.currentTarget).text())
 })
 
 // Default stack setup
@@ -274,7 +276,7 @@ function addScheduledTasks () {
         tasks.cloneTask(item.TaskId, 'stack-do')
         var i = item.Count > 0 ? item.Count - 1 : item.Count
         if (i === 0) {
-          this.archiveTask(item.TaskId)
+          tasks.archiveTask(item.TaskId)
         } else {
           var getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(item.TaskId))
           getTask.Count = i
@@ -395,12 +397,13 @@ $('#task-modal').on('show.bs.modal', (e) => {
 // Task modal load function; recieves new vs edit
 function loadTaskModal (type, stack) {
   taskType = type
+  newTagList = [...new Set(tasks.tagList)]
   $('#schedule-modal').modal('hide')
   $('#restore-modal').modal('hide')
   $('#collapse-sched').collapse('hide')
   $('#task-detail').height('46px')
   $('#color-option-1').closest('.btn').button('toggle')
-  $('#tag-edit-box').children('.tags').remove()
+  $('#tag-edit-box').children().remove()
   $('#task-stack option[value="stack-archive"]').remove()
   if (type === 'new') {
     $('#task-modal-title').html('New Task')
@@ -423,6 +426,7 @@ function loadTaskModal (type, stack) {
     if (getTask.Tags && getTask.Tags.length > 0) {
       getTask.Tags.forEach((tag) => {
         tagHTML += `<div class="tags">${tag}</div>`
+        newTagList = newTagList.filter(t => t !== tag)
       })
     }
     $('#tag-edit-box').append(tagHTML)
@@ -541,50 +545,34 @@ const toggleAge = () => {
   }
 }
 
-// Select the text when creating a new tag
-$(document).on('focus', '.tags', function () {
-  var range, selection
-  if (document.body.createTextRange) {
-    range = document.body.createTextRange()
-    range.moveToElementText(this)
-    range.select()
-  } else if (window.getSelection) {
-    selection = window.getSelection()
-    range = document.createRange()
-    range.selectNodeContents(this)
-    selection.removeAllRanges()
-    selection.addRange(range)
-  }
+let match = ''
+// Autofill, autosize new tag
+$(document).on('keyup', '.new-tags', function (e) {
+  const caret = this.selectionStart
+  match = ''
+  newTagList.forEach(tag => {
+    if ($(this).val().substring(0, caret).toLowerCase() === tag.substring(0, caret).toLowerCase()) {
+      $(this).val($(this).val().substring(0, caret) + tag.substring(caret, tag.length))
+      match = tag
+    }
+  })
+  this.setSelectionRange(caret, $(this).val().length)
+  this.cols = $(this).val().length + 1
 })
 
-// $(document).on('keyup', '.tags', function (e) {
-//   let caret = 0
-//   tasks.tagList.forEach(tag => {
-//     if ($(this).text() === tag.substring(0, $(this).text().length)) {
-//       caret = $(this).text().length
-//       $(this).text($(this).text() + tag.substring($(this).text().length, tag.length))
-//     }
-//     setCaret($(this), caret)
-//   })
-// })
-
-// function setCaret (tag, pos) {
-//   console.log(tag)
-//   var el = tag
-//   var range = document.createRange()
-//   var sel = window.getSelection()
-//   range.setStart(el.childNodes[0], pos)
-//   range.collapse(true)
-//   sel.removeAllRanges()
-//   sel.addRange(range)
-//   el.focus()
-// }
+// Fill tag on tab or enter with matched tag
+$('#tag-edit-box').keydown(function (e) {
+  if (e.keyCode === 9 || e.keyCode === 13) {
+    $('#tag-edit-box').children().last('.new-tags').val(match)
+    newTagList = newTagList.filter(t => t !== match)
+  }
+})
 
 // Add new tag even from Task Modal
 // eslint-disable-next-line no-unused-vars
 const addNewTag = () => {
-  $('#tag-edit-box').append('<div class="tags" contenteditable="true">New Tag</div>')
-  $('#tag-edit-box').children().last().focus()
+  $('#tag-edit-box').append('<textarea class="new-tags" rows="1" wrap="false">New Tag</textarea>')
+  $('#tag-edit-box').children().last().focus().select().prop('cols', $('#tag-edit-box').children().last().val().length)
 }
 
 // Toggle tag cloud

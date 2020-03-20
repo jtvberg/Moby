@@ -590,6 +590,23 @@ const toggleTags = () => {
   }
 }
 
+// Add new subtask event
+// eslint-disable-next-line no-unused-vars
+const addNewSubtask = () => {
+  const testSubtask = 'Subtask Test'
+  const newSubtask = `<div class="subtask-edit-host">
+                        <div class="fas fa-square subtask-checkbox subtask-unchecked"></div>
+                        <label class="subtask-label" contenteditable="true">${testSubtask}</label>
+                      </div>`
+  $('#subtask-edit-box').append(newSubtask)
+  $('#subtask-edit-box').children().last().children('label').last().focus().select()
+}
+
+// Subtask checkbox click handler
+$(document).on('click', '.subtask-checkbox', (e) => {
+  $(e.currentTarget).hasClass('subtask-unchecked') ? $(e.currentTarget).removeClass('subtask-unchecked').addClass('subtask-checked') : $(e.currentTarget).removeClass('subtask-checked').addClass('subtask-unchecked') 
+})
+
 // Add new stack event
 // eslint-disable-next-line no-unused-vars
 const addNewStackClick = (e) => {

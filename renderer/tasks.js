@@ -170,9 +170,17 @@ exports.addTask = (task, highlight) => {
     })
   }
   // Add subtasks
-  const testSubtask = 'Subtask'
+  const Subtasks = [{ SubtaskId: 1, Checked: true, Text: 'Subtask1' }, { SubtaskId: 2, Checked: false, Text: 'Subtask2' }]
   let subtaskHTML = ''
-  //subtaskHTML = `<label class="customcheck">${testSubtask}<input type="checkbox"><span class="checkmark"></span></label>`
+  if (Subtasks && Subtasks.length > 0) {
+    Subtasks.forEach((subtask) => {
+      const checked = subtask.Checked === true ? 'checked' : 'unchecked'
+      subtaskHTML += `<div class="subtask-host" id="${subtask.SubtaskId}">
+                        <div class="fas fa-square subtask-checkbox subtask-${checked}"></div>
+                        <label class="subtask-label">${subtask.Text}</label>
+                      </div>`
+    })
+  }
   // Check if age is toggled
   const showAge = $('.aging').is(':visible') ? 'style' : 'style="display: none;"'
   // Check if archived and update archive tooltip to delete

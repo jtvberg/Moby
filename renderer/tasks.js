@@ -80,6 +80,16 @@ exports.submitTask = (taskType) => {
       tags.push($(this).val().trim())
     }
   })
+  var subtasks = []
+  $('#subtask-edit-box > .subtask-edit-host').each(function () {
+    var newSubtaskData = {
+      SubtaskId: Date.now(),
+      Checked: false,
+      Text: $(this).find('.subtask-label').text()
+    }
+    subtasks.push(newSubtaskData)
+  })
+  console.log(subtasks)
   $('#check-sun').prop('checked') && weekDay.push(0)
   $('#check-mon').prop('checked') && weekDay.push(1)
   $('#check-tue').prop('checked') && weekDay.push(2)
@@ -105,7 +115,8 @@ exports.submitTask = (taskType) => {
     WeekDay: weekDay,
     MonthDay: monthDay,
     StackDate: stackDate,
-    Tags: tags
+    Tags: tags,
+    Subtasks: subtasks
   }
   if (taskType === 'new') {
     this.taskList.push(newTaskData)
@@ -129,6 +140,7 @@ exports.submitTask = (taskType) => {
       tags.push($(this).text().trim())
     })
     getTask.Tags = tags
+    getTask.Subtasks = subtasks
     $(`#${getTask.TaskId}`).remove()
   }
   this.saveTasks()
@@ -151,6 +163,7 @@ exports.cloneTask = (taskId, taskStack) => {
       WeekDay: getTask.WeekDay,
       MonthDay: getTask.MonthDay,
       Tags: getTask.Tags,
+      Subtasks: getTask.Subtasks,
       StackDate: Date.now()
     }
     this.taskList.push(newTaskData)
@@ -170,10 +183,9 @@ exports.addTask = (task, highlight) => {
     })
   }
   // Add subtasks
-  const Subtasks = [{ SubtaskId: 1, Checked: true, Text: 'Subtask1' }, { SubtaskId: 2, Checked: false, Text: 'Subtask2' }]
   let subtaskHTML = ''
-  if (Subtasks && Subtasks.length > 0) {
-    Subtasks.forEach((subtask) => {
+  if (task.Subtasks && task.Subtasks.length > 0) {
+    task.Subtasks.forEach((subtask) => {
       const checked = subtask.Checked === true ? 'checked' : 'unchecked'
       subtaskHTML += `<div class="subtask-host" id="${subtask.SubtaskId}">
                         <div class="fas fa-square subtask-checkbox subtask-${checked}"></div>

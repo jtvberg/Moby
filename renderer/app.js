@@ -404,6 +404,7 @@ function loadTaskModal (type, stack) {
   $('#task-detail').height('46px')
   $('#color-option-1').closest('.btn').button('toggle')
   $('#tag-edit-box').children().remove()
+  $('#subtask-edit-box').children().remove()
   $('#task-stack option[value="stack-archive"]').remove()
   if (type === 'new') {
     $('#task-modal-title').html('New Task')
@@ -430,6 +431,17 @@ function loadTaskModal (type, stack) {
       })
     }
     $('#tag-edit-box').append(tagHTML)
+    let subtaskHTML = ''
+    if (getTask.Subtasks && getTask.Subtasks.length > 0) {
+      getTask.Subtasks.forEach((subtask) => {
+        const checked = subtask.Checked === true ? 'checked' : 'unchecked'
+        subtaskHTML += `<div class="subtask-edit-host" id="${subtask.SubtaskId}">
+                          <div class="fas fa-square subtask-checkbox subtask-${checked}"></div>
+                          <label class="subtask-label" contenteditable="true">${subtask.Text}</label>
+                        </div>`
+      })
+    }
+    $('#subtask-edit-box').append(subtaskHTML)
     $('#count-select').val(getTask.Count)
     var dt = new Date(getTask.StartDate)
     $('#start-date').val(dt.getMonth() + 1 + '/' + dt.getDate() + '/' + dt.getFullYear())
@@ -593,14 +605,18 @@ const toggleTags = () => {
 // Add new subtask event
 // eslint-disable-next-line no-unused-vars
 const addNewSubtask = () => {
-  const testSubtask = 'Subtask Test'
   const newSubtask = `<div class="subtask-edit-host">
                         <div class="fas fa-square subtask-checkbox subtask-unchecked"></div>
-                        <label class="subtask-label" contenteditable="true">${testSubtask}</label>
+                        <label class="subtask-label" contenteditable="true">New Subtask</label>
                       </div>`
   $('#subtask-edit-box').append(newSubtask)
   $('#subtask-edit-box').children().last().children('label').last().focus().select()
 }
+
+// Subtask remove in edit modal
+$(document).on('contextmenu', '.subtask-checkbox', (e) => {
+  $(e.currentTarget).closest('.subtask-edit-host').remove()
+})
 
 // Subtask checkbox click handler
 $(document).on('click', '.subtask-checkbox', (e) => {

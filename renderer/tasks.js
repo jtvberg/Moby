@@ -66,7 +66,7 @@ exports.updateTaskDetail = (taskId, taskDetail) => {
 
 // Update subtasks
 exports.updateSubtaskCheck = (taskId, subtaskId, checked) => {
-  if (taskId && subtaskId && checked) {
+  if (taskId && subtaskId) {
     this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).Subtasks.find(stask => parseInt(stask.SubtaskId) === parseInt(subtaskId)).Checked = checked
     this.saveTasks()
   }

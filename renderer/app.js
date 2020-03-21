@@ -618,10 +618,19 @@ $(document).on('contextmenu', '.subtask-checkbox', (e) => {
   $(e.currentTarget).closest('.subtask-edit-host').remove()
 })
 
+function setSubtaskCheck (element) {
+  element.hasClass('subtask-unchecked') ? element.removeClass('subtask-unchecked').addClass('subtask-checked') : element.removeClass('subtask-checked').addClass('subtask-unchecked')
+  tasks.updateSubtaskCheck(element.closest('.card').prop('id'), element.parent().prop('id'), element.hasClass('subtask-checked'))
+}
+
 // Subtask checkbox click handler
 $(document).on('click', '.subtask-checkbox', (e) => {
-  $(e.currentTarget).hasClass('subtask-unchecked') ? $(e.currentTarget).removeClass('subtask-unchecked').addClass('subtask-checked') : $(e.currentTarget).removeClass('subtask-checked').addClass('subtask-unchecked')
-  tasks.updateSubtaskCheck($(e.currentTarget).closest('.card').prop('id'), $(e.currentTarget).parent().prop('id'), $(e.currentTarget).hasClass('subtask-checked'))
+  setSubtaskCheck($(e.currentTarget))
+})
+
+// Subtask label click handler
+$(document).on('click', '.subtask-label', (e) => {
+  setSubtaskCheck($(e.currentTarget).parent('.subtask-host').find('.subtask-checkbox'))
 })
 
 // Add new stack event

@@ -58,8 +58,18 @@ exports.updateTaskAge = (taskId) => {
 
 // Update task detail helper function
 exports.updateTaskDetail = (taskId, taskDetail) => {
-  this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).TaskDetail = taskDetail
-  this.saveTasks()
+  if (taskId && taskDetail) {
+    this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).TaskDetail = taskDetail
+    this.saveTasks()
+  }
+}
+
+// Update subtasks
+exports.updateSubtaskCheck = (taskId, subtaskId, checked) => {
+  if (taskId && subtaskId && checked) {
+    this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).Subtasks.find(stask => parseInt(stask.SubtaskId) === parseInt(subtaskId)).Checked = checked
+    this.saveTasks()
+  }
 }
 
 // Task submittal from modal
@@ -81,15 +91,16 @@ exports.submitTask = (taskType) => {
     }
   })
   var subtasks = []
+  var offset = 1
   $('#subtask-edit-box > .subtask-edit-host').each(function () {
     var newSubtaskData = {
-      SubtaskId: Date.now(),
-      Checked: false,
+      SubtaskId: Date.now() + offset,
+      Checked: $(this).find('.subtask-checkbox').hasClass('subtask-checked'),
       Text: $(this).find('.subtask-label').text()
     }
     subtasks.push(newSubtaskData)
+    offset++
   })
-  console.log(subtasks)
   $('#check-sun').prop('checked') && weekDay.push(0)
   $('#check-mon').prop('checked') && weekDay.push(1)
   $('#check-tue').prop('checked') && weekDay.push(2)

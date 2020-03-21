@@ -620,7 +620,8 @@ $(document).on('contextmenu', '.subtask-checkbox', (e) => {
 
 // Subtask checkbox click handler
 $(document).on('click', '.subtask-checkbox', (e) => {
-  $(e.currentTarget).hasClass('subtask-unchecked') ? $(e.currentTarget).removeClass('subtask-unchecked').addClass('subtask-checked') : $(e.currentTarget).removeClass('subtask-checked').addClass('subtask-unchecked') 
+  $(e.currentTarget).hasClass('subtask-unchecked') ? $(e.currentTarget).removeClass('subtask-unchecked').addClass('subtask-checked') : $(e.currentTarget).removeClass('subtask-checked').addClass('subtask-unchecked')
+  tasks.updateSubtaskCheck($(e.currentTarget).closest('.card').prop('id'), $(e.currentTarget).parent().prop('id'), $(e.currentTarget).hasClass('subtask-checked'))
 })
 
 // Add new stack event

@@ -3,8 +3,8 @@ const { ipcRenderer, remote } = require('electron')
 
 // Task creation from tray window; takes type as parameter from submit by type buttons
 function quickTask (type) {
-  var taskId = Date.now()
-  var newTaskData = {
+  const taskId = Date.now()
+  const newTaskData = {
     TaskStack: type,
     TaskId: taskId,
     TaskTitle: $('#quick-task-title').val() || 'No Title',

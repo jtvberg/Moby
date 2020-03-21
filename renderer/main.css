@@ -26,7 +26,7 @@ body {
 }
 
 .click-area {
-  position:absolute;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
@@ -80,7 +80,7 @@ body {
   padding: 0px 5px;
 }
 
-.titlebar, 
+.titlebar,
 .window-title {
   font-weight: 500;
   font-size: 100% !important;
@@ -398,7 +398,7 @@ body {
   width: fit-content;
   max-width: 100px;
 }
- 
+
 .cloud-tags:hover {
   background-color: var(--light);
   color: var(--dark);
@@ -418,6 +418,7 @@ body {
   width: -webkit-fill-available;
 }
 
+.add-subtask,
 .add-tag {
   margin-left: 5px;
 }
@@ -430,38 +431,34 @@ body {
   margin-bottom: 5px;
 }
 
-.customcheck {
-    display: block;
-    position: relative;
-    padding-left: 14px;
-    margin-bottom: 0px;
-    cursor: pointer;
-    font-size: calc(var(--font-base-size) + 10%);
-    -webkit-user-select: none;
-    user-select: none;
+.subtask-checkbox {
+  grid-column: 1;
+  margin-top: 3px;
 }
 
-.customcheck input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
+.subtask-checkbox:hover {
+  color: var(--highlight)
 }
 
-.checkmark {
-    position: absolute;
-    margin-top: 3px;
-    top: 0;
-    left: 0;
-    height: 12px;
-    width: 12px;
-    background-color: var(--light);
-    border-radius: 2px;
+.subtask-label {
+  grid-column: 2;
+  margin-bottom: 1px;
 }
 
-.customcheck:hover input ~ .checkmark {
-    background-color: var(--gray);
+.subtask-checked {
+  color: var(--checked);
 }
 
-.customcheck input:checked ~ .checkmark {
-    background-color: var(--checked);
+.subtask-unchecked {
+  color: var(--gray);
+}
+
+.subtask-edit-host {
+  display: grid;
+  grid-template-columns: 18px 1fr 3px;
+}
+
+.subtask-host {
+  display: grid;
+  grid-template-columns: 12px 1fr 3px;
 }

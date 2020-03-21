@@ -10,6 +10,7 @@ let taskType = 'new'
 let winMax = false
 let updStack = false
 let newTagList = []
+let match = ''
 
 // Custom titlebar instantiation
 const bg = getComputedStyle(document.documentElement).getPropertyValue('--background1').trim()
@@ -113,9 +114,9 @@ function getDefaultStacks () {
 
 // Save stacks to localstorage
 function saveStacks () {
-  var stacks = []
+  const stacks = []
   $('.stack-header').each(function () {
-    var stackData = {
+    const stackData = {
       StackId: $(this).closest('.stack').prop('id'),
       StackTitle: $(this).text()
     }
@@ -167,8 +168,8 @@ function addNewStack (addIndex) {
   if (!localStorage.getItem('stackList')) {
     saveStacks()
   }
-  var stacks = JSON.parse(localStorage.getItem('stackList'))
-  var stackData = {
+  const stacks = JSON.parse(localStorage.getItem('stackList'))
+  const stackData = {
     StackId: `${stackPrefix}${Date.now()}`,
     StackTitle: 'New Stack'
   }
@@ -185,7 +186,7 @@ function loadRemoveModal (removeIndex) {
   }
   $('#task-stack-new').empty()
   const stacks = JSON.parse(localStorage.getItem('stackList'))
-  var i = 0
+  let i = 0
   if (stacks.length > 1) {
     stacks.forEach(stack => {
       if (i !== removeIndex) {
@@ -200,7 +201,7 @@ function loadRemoveModal (removeIndex) {
 
 // Remove stack logic
 function removeStack (removeIndex, newStackId) {
-  var stacks = JSON.parse(localStorage.getItem('stackList'))
+  const stacks = JSON.parse(localStorage.getItem('stackList'))
   tasks.taskList.forEach(task => {
     if (task.TaskStack === stacks[removeIndex].StackId) {
       task.TaskStack = newStackId
@@ -274,11 +275,11 @@ function addScheduledTasks () {
     tasks.taskList.forEach((item) => {
       if (item.TaskStack === 'stack-schedule' && item.StartDate < Date.now()) {
         tasks.cloneTask(item.TaskId, 'stack-do')
-        var i = item.Count > 0 ? item.Count - 1 : item.Count
+        const i = item.Count > 0 ? item.Count - 1 : item.Count
         if (i === 0) {
           tasks.archiveTask(item.TaskId)
         } else {
-          var getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(item.TaskId))
+          const getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(item.TaskId))
           getTask.Count = i
           getTask.StartDate = getTask.StartDate + (86400000 * 7 * getTask.MonthDay)
           tasks.saveTasks()
@@ -389,8 +390,8 @@ function updateTitileBar () {
 
 // Task modal load event
 $('#task-modal').on('show.bs.modal', (e) => {
-  var type = $(e.relatedTarget).data('type-id') ? $(e.relatedTarget).data('type-id') : taskType
-  var stack = $(e.relatedTarget).data('stack-id') ? $(e.relatedTarget).data('stack-id') : 'stack-do'
+  const type = $(e.relatedTarget).data('type-id') ? $(e.relatedTarget).data('type-id') : taskType
+  const stack = $(e.relatedTarget).data('stack-id') ? $(e.relatedTarget).data('stack-id') : 'stack-do'
   loadTaskModal(type, stack)
 })
 
@@ -443,7 +444,7 @@ function loadTaskModal (type, stack) {
     }
     $('#subtask-edit-box').append(subtaskHTML)
     $('#count-select').val(getTask.Count)
-    var dt = new Date(getTask.StartDate)
+    const dt = new Date(getTask.StartDate)
     $('#start-date').val(dt.getMonth() + 1 + '/' + dt.getDate() + '/' + dt.getFullYear())
     if (getTask.weekDay) {
       $('#check-sun').prop('checked', getTask.WeekDay.includes(0))
@@ -557,7 +558,6 @@ const toggleAge = () => {
   }
 }
 
-let match = ''
 // Autofill, autosize new tag
 $(document).on('keyup', '.new-tags', function (e) {
   if (e.keyCode === 8) {
@@ -610,7 +610,8 @@ const addNewSubtask = () => {
                         <label class="subtask-label" contenteditable="true">New Subtask</label>
                       </div>`
   $('#subtask-edit-box').append(newSubtask)
-  $('#subtask-edit-box').children().last().children('label').last().focus().select()
+  $('#subtask-edit-box').children().last().children('label').last().focus()
+  document.execCommand('selectAll', false, null)
 }
 
 // Subtask remove in edit modal
@@ -667,7 +668,7 @@ const drag = (e) => {
 // eslint-disable-next-line no-unused-vars
 const drop = (e) => {
   e.preventDefault()
-  var data = e.dataTransfer.getData('text')
+  const data = e.dataTransfer.getData('text')
   if ($(e.target).hasClass('box')) {
     $(e.target).append($(`#${data}`))
   } else if ($(e.target).hasClass('stack')) {

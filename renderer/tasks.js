@@ -34,7 +34,7 @@ exports.saveTasks = () => {
 
 // Update task stack helper function
 exports.updateTaskStack = (taskId, taskStack) => {
-  var task = this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId) && task.TaskStack !== taskStack)
+  const task = this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId) && task.TaskStack !== taskStack)
   if (task) {
     task.StackDate = Date.now()
     task.TaskStack = taskStack
@@ -74,26 +74,26 @@ exports.updateSubtaskCheck = (taskId, subtaskId, checked) => {
 
 // Task submittal from modal
 exports.submitTask = (taskType) => {
-  var taskTitle = $('#task-title').val() || 'No Title'
-  var taskDetail = $('#task-detail').val()
-  var taskColor = $('#choose-color input:radio:checked').val() || 1
-  var taskStack = $('#task-stack').val()
-  var taskId = Date.now()
-  var count = $('#count-select').val() || 1
-  var startDate = new Date(Date.parse($('#start-date').val()) || Date.now()).getTime()
-  var monthDay = $('#choose-recur input:radio:checked').val() || 0
-  var weekDay = []
-  var stackDate = Date.now()
-  var tags = []
+  const taskTitle = $('#task-title').val() || 'No Title'
+  const taskDetail = $('#task-detail').val()
+  const taskColor = $('#choose-color input:radio:checked').val() || 1
+  let taskStack = $('#task-stack').val()
+  const taskId = Date.now()
+  let count = $('#count-select').val() || 1
+  const startDate = new Date(Date.parse($('#start-date').val()) || Date.now()).getTime()
+  const monthDay = $('#choose-recur input:radio:checked').val() || 0
+  const weekDay = []
+  const stackDate = Date.now()
+  const tags = []
   $('#tag-edit-box > .new-tags').each(function () {
     if ($(this).val() !== 'New Tag' && $(this).val().trim() !== '') {
       tags.push($(this).val().trim())
     }
   })
-  var subtasks = []
-  var offset = 1
+  const subtasks = []
+  let offset = 1
   $('#subtask-edit-box > .subtask-edit-host').each(function () {
-    var newSubtaskData = {
+    const newSubtaskData = {
       SubtaskId: Date.now() + offset,
       Checked: $(this).find('.subtask-checkbox').hasClass('subtask-checked'),
       Text: $(this).find('.subtask-label').text()
@@ -115,7 +115,7 @@ exports.submitTask = (taskType) => {
   if (startDate > Date.now()) {
     taskStack = 'stack-schedule'
   }
-  var newTaskData = {
+  const newTaskData = {
     TaskStack: taskStack,
     TaskId: taskId,
     TaskTitle: taskTitle,
@@ -132,7 +132,7 @@ exports.submitTask = (taskType) => {
   if (taskType === 'new') {
     this.taskList.push(newTaskData)
   } else {
-    var getTask = this.taskList.find(task => parseInt(task.TaskId) === parseInt(activeTask))
+    const getTask = this.taskList.find(task => parseInt(task.TaskId) === parseInt(activeTask))
     if (getTask.TaskStack === taskStack) {
       newTaskData.StackDate = getTask.StackDate
     } else {
@@ -161,9 +161,9 @@ exports.submitTask = (taskType) => {
 // Clone task to 'do'
 exports.cloneTask = (taskId, taskStack) => {
   if (taskId) {
-    var getTask = this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId))
-    var newTaskStack = taskStack !== undefined ? taskStack : getTask.StartDate > Date.now() ? 'stack-schedule' : 'stack-do'
-    var newTaskData = {
+    const getTask = this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId))
+    const newTaskStack = taskStack !== undefined ? taskStack : getTask.StartDate > Date.now() ? 'stack-schedule' : 'stack-do'
+    const newTaskData = {
       TaskStack: newTaskStack,
       TaskId: Date.now(),
       TaskTitle: getTask.TaskTitle,
@@ -307,7 +307,7 @@ exports.restoreTask = (taskId) => {
 // TODO: prompt for location
 exports.exportTasks = () => {
   if (this.taskList.length) {
-    var JSONexport = JSON.stringify(this.taskList)
+    const JSONexport = JSON.stringify(this.taskList)
     fs.writeFile(`${desktopPath}/moby_export_${Date.now()}.txt`, JSONexport, err => {
       if (err) {
         alert('An error occured during the export ' + err.message)
@@ -336,10 +336,10 @@ exports.importTasks = () => {
     }
     try {
       // Convert old import file to new model nonsense
-      var tl = data.toString().replace(/TaskStatus/g, 'TaskStack').replace(/TaskTheme/g, 'TaskColor').replace(/StatusDate/g, 'StackDate')
-      var JSONimport = JSON.parse(tl)
+      const tl = data.toString().replace(/TaskStatus/g, 'TaskStack').replace(/TaskTheme/g, 'TaskColor').replace(/StatusDate/g, 'StackDate')
+      const JSONimport = JSON.parse(tl)
       if (JSONimport.length) {
-        var i = 0
+        let i = 0
         JSONimport.forEach(task => {
           if (!this.taskList.some(e => e.TaskId === task.TaskId)) {
             this.taskList.push(task)

@@ -5,7 +5,8 @@
     <title>Moby</title>
     <link rel="stylesheet" href="../node_modules/@fortawesome/fontawesome-free/css/all.min.css">
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="var.css" id="default" title="Default">
+    <link rel="stylesheet" href="var.css">
+    <link rel="stylesheet" href="default.css" id="default" title="Default">
     <link rel="stylesheet" href="dark.css" id="dark" title="Dark">
     <link rel="stylesheet" href="light.css" id="light" title="Light">
     <link rel="stylesheet" href="steve.css" id="steve" title="Steve">
@@ -86,11 +87,13 @@
               <div class="form-group" id="panel-subtasks">
                 <label for="subtask-edit-box">Subtasks</label>
                 <div class="fas fa-plus-square add-subtask" onclick="addNewSubtask(event)"></div>
+                <small class="text-muted" style="margin-left: 5px;">Right-click checkbox to delete</small>
                 <div class="subtask-box" id="subtask-edit-box"></div>
               </div>
               <div class="form-group" id="panel-tags">
                 <label for="tag-edit-box">Tags</label>
                 <div class="fas fa-plus-square add-tag" onclick="addNewTag(event)"></div>
+                <small class="text-muted" style="margin-left: 5px;">Right-click existing tag to delete</small>
                 <div class="tag-box" id="tag-edit-box"></div>
               </div>
               <div class="panel-group" id="panel-recur">

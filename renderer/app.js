@@ -619,6 +619,7 @@ $(document).on('contextmenu', '.subtask-checkbox', (e) => {
   $(e.currentTarget).closest('.subtask-edit-host').remove()
 })
 
+// Subtask css class and array update
 function setSubtaskCheck (element) {
   element.hasClass('subtask-unchecked') ? element.removeClass('subtask-unchecked').addClass('subtask-checked') : element.removeClass('subtask-checked').addClass('subtask-unchecked')
   tasks.updateSubtaskCheck(element.closest('.card').prop('id'), element.parent().prop('id'), element.hasClass('subtask-checked'))

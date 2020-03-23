@@ -12,7 +12,7 @@ const createWindow = () => {
     width: 1200,
     height: 800,
     minWidth: 320,
-    minHeight: 400,
+    minHeight: 425,
     titleBarStyle: 'hidden',
     frame: false,
     webPreferences: {
@@ -143,5 +143,4 @@ ipcMain.on('win-min', () => {
 // IPC channel to update tags on task delete
 ipcMain.on('delete-task', () => {
   win.webContents.send('update-tags')
-  console.log('main-tag')
 })

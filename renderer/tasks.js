@@ -256,8 +256,8 @@ exports.addTask = (task, highlight) => {
   $(`#${task.TaskId}`).on('click', () => {
     window.activeTask = task.TaskId
     $('.card').removeClass('card-selected')
-    $(`#${task.TaskId}`).removeClass('card-highlighted')
-    $(`#${task.TaskId}`).addClass('card-selected')
+    $(`#${task.TaskId}`).removeClass('card-highlighted').addClass('card-selected')
+    $(`#${task.TaskId}`).parent().animate({ scrollTop: $(`#${task.TaskId}`).offset().top - $(`#${task.TaskId}`).parent().offset().top + $(`#${task.TaskId}`).parent().scrollTop() })
     $('.window-title').text(`Moby - ${task.TaskTitle}`)
   })
   // Stop right-click on card invoking remove stack
@@ -308,9 +308,11 @@ exports.deleteTask = (taskId) => {
   if (taskId) {
     $(`#del-button-${taskId}`).tooltip('hide')
     $(`#${taskId}`).remove()
+    this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).Tags.forEach(tag => {
+      this.tagList.splice(this.tagList.indexOf(tag), 1)
+    })
     this.taskList = this.taskList.filter(task => task.TaskId !== taskId)
     this.saveTasks()
-    console.log('task-tag')
     ipcRenderer.send('delete-task')
   }
 }

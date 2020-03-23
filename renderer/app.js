@@ -605,7 +605,6 @@ const toggleTags = () => {
 // IPC event to get update tag cloud on task delete
 ipcRenderer.on('update-tags', () => {
   loadTagCloud()
-  console.log('app-tag')
 })
 
 // Add new subtask event

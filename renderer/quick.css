@@ -32,6 +32,16 @@ body {
   margin-bottom: 5px;
 }
 
+.color-label {
+  margin-bottom: 0px;
+  vertical-align: middle;
+}
+
+.color-btn-group {
+  height: 20px;
+  width: 308px;
+}
+
 .quick-arrow {
   margin: 0;
   padding: 0;
@@ -48,6 +58,7 @@ body {
   text-align: right;
   display: flex;
   place-content: flex-end;
+  margin-top: 6px;
 }
 
 .btn {

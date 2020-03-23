@@ -21,6 +21,12 @@ function updateTaskListModel () {
   const rl = localStorage.getItem('taskList') || null
   if (rl) {
     const tl = JSON.parse(rl.replace(/TaskStatus/g, 'TaskStack').replace(/TaskTheme/g, 'TaskColor').replace(/StatusDate/g, 'StackDate')) || []
+    tl.forEach(task => {
+      console.log(task)
+      if ('UpdateTimestamp' in task) { } else {
+        task.UpdateTimestamp = task.StackDate
+      }
+    })
     localStorage.setItem('taskList', JSON.stringify(tl))
     return tl
   }
@@ -40,7 +46,7 @@ exports.updateTaskStack = (taskId, taskStack) => {
     task.TaskStack = taskStack
     const archDelete = task.TaskStack === 'stack-archive' ? 'Delete' : 'Archive'
     $(`#del-button-${task.TaskId}`).attr('data-original-title', `${archDelete} Task`)
-    this.saveTasks()
+    this.updateTimestamp(taskId)
   }
 }
 
@@ -60,7 +66,7 @@ exports.updateTaskAge = (taskId) => {
 exports.updateTaskDetail = (taskId, taskDetail) => {
   if (taskId && taskDetail) {
     this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).TaskDetail = taskDetail
-    this.saveTasks()
+    this.updateTimestamp(taskId)
   }
 }
 
@@ -68,6 +74,14 @@ exports.updateTaskDetail = (taskId, taskDetail) => {
 exports.updateSubtaskCheck = (taskId, subtaskId, checked) => {
   if (taskId && subtaskId) {
     this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).Subtasks.find(stask => parseInt(stask.SubtaskId) === parseInt(subtaskId)).Checked = checked
+    this.updateTimestamp(taskId)
+  }
+}
+
+// Update task global timestamp
+exports.updateTimestamp = (taskId) => {
+  if (taskId) {
+    this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).UpdateTimestamp = Date.now()
     this.saveTasks()
   }
 }
@@ -83,7 +97,8 @@ exports.submitTask = (taskType) => {
   const startDate = new Date(Date.parse($('#start-date').val()) || Date.now()).getTime()
   const monthDay = $('#choose-recur input:radio:checked').val() || 0
   const weekDay = []
-  const stackDate = Date.now()
+  const updateTimestamp = taskId
+  const stackDate = taskId
   const tags = []
   $('#tag-edit-box > .new-tags').each(function () {
     if ($(this).val() !== 'New Tag' && $(this).val().trim() !== '') {
@@ -127,7 +142,8 @@ exports.submitTask = (taskType) => {
     MonthDay: monthDay,
     StackDate: stackDate,
     Tags: tags,
-    Subtasks: subtasks
+    Subtasks: subtasks,
+    UpdateTimestamp: updateTimestamp
   }
   if (taskType === 'new') {
     this.taskList.push(newTaskData)
@@ -152,6 +168,7 @@ exports.submitTask = (taskType) => {
     })
     getTask.Tags = tags
     getTask.Subtasks = subtasks
+    getTask.UpdateTimestamp = updateTimestamp
     $(`#${getTask.TaskId}`).remove()
   }
   this.saveTasks()
@@ -163,9 +180,10 @@ exports.cloneTask = (taskId, taskStack) => {
   if (taskId) {
     const getTask = this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId))
     const newTaskStack = taskStack !== undefined ? taskStack : getTask.StartDate > Date.now() ? 'stack-schedule' : 'stack-do'
+    const now = Date.now()
     const newTaskData = {
       TaskStack: newTaskStack,
-      TaskId: Date.now(),
+      TaskId: now,
       TaskTitle: getTask.TaskTitle,
       TaskDetail: getTask.TaskDetail,
       TaskColor: getTask.TaskColor,
@@ -175,7 +193,8 @@ exports.cloneTask = (taskId, taskStack) => {
       MonthDay: getTask.MonthDay,
       Tags: getTask.Tags,
       Subtasks: getTask.Subtasks,
-      StackDate: Date.now()
+      StackDate: now,
+      UpdateTimestamp: now
     }
     this.taskList.push(newTaskData)
     this.saveTasks()
@@ -197,9 +216,9 @@ exports.addTask = (task, highlight) => {
   let subtaskHTML = ''
   if (task.Subtasks && task.Subtasks.length > 0) {
     task.Subtasks.forEach((subtask) => {
-      const checked = subtask.Checked === true ? 'checked' : 'unchecked'
+      const checked = subtask.Checked === true ? 'fa-check-square subtask-checked' : 'fa-square subtask-unchecked'
       subtaskHTML += `<div class="subtask-host" id="${subtask.SubtaskId}">
-                        <div class="fas fa-square subtask-checkbox subtask-${checked}"></div>
+                        <div class="fas subtask-checkbox ${checked}"></div>
                         <label class="subtask-label">${subtask.Text}</label>
                       </div>`
     })
@@ -291,6 +310,8 @@ exports.deleteTask = (taskId) => {
     $(`#${taskId}`).remove()
     this.taskList = this.taskList.filter(task => task.TaskId !== taskId)
     this.saveTasks()
+    console.log('task-tag')
+    ipcRenderer.send('delete-task')
   }
 }
 

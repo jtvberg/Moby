@@ -435,9 +435,9 @@ function loadTaskModal (type, stack) {
     let subtaskHTML = ''
     if (getTask.Subtasks && getTask.Subtasks.length > 0) {
       getTask.Subtasks.forEach((subtask) => {
-        const checked = subtask.Checked === true ? 'checked' : 'unchecked'
+        const checked = subtask.Checked === true ? 'fa-check-square subtask-checked' : 'fa-square subtask-unchecked'
         subtaskHTML += `<div class="subtask-edit-host" id="${subtask.SubtaskId}">
-                          <div class="fas fa-square subtask-checkbox subtask-${checked}"></div>
+                          <div class="fas subtask-checkbox ${checked}"></div>
                           <label class="subtask-label" contenteditable="true">${subtask.Text}</label>
                         </div>`
       })
@@ -602,6 +602,12 @@ const toggleTags = () => {
   }
 }
 
+// IPC event to get update tag cloud on task delete
+ipcRenderer.on('update-tags', () => {
+  loadTagCloud()
+  console.log('app-tag')
+})
+
 // Add new subtask event
 // eslint-disable-next-line no-unused-vars
 const addNewSubtask = () => {
@@ -621,7 +627,8 @@ $(document).on('contextmenu', '.subtask-checkbox', (e) => {
 
 // Subtask css class and array update
 function setSubtaskCheck (element) {
-  element.hasClass('subtask-unchecked') ? element.removeClass('subtask-unchecked').addClass('subtask-checked') : element.removeClass('subtask-checked').addClass('subtask-unchecked')
+  console.log('check')
+  element.hasClass('subtask-unchecked') ? element.removeClass('fa-square subtask-unchecked').addClass('fa-check-square subtask-checked') : element.removeClass('fa-check-square subtask-checked').addClass('fa-square subtask-unchecked')
   tasks.updateSubtaskCheck(element.closest('.card').prop('id'), element.parent().prop('id'), element.hasClass('subtask-checked'))
 }
 

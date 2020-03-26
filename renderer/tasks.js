@@ -22,7 +22,6 @@ function updateTaskListModel () {
   if (rl) {
     const tl = JSON.parse(rl.replace(/TaskStatus/g, 'TaskStack').replace(/TaskTheme/g, 'TaskColor').replace(/StatusDate/g, 'StackDate')) || []
     tl.forEach(task => {
-      console.log(task)
       if ('UpdateTimestamp' in task) { } else {
         task.UpdateTimestamp = task.StackDate
       }

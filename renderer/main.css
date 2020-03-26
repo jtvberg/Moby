@@ -462,3 +462,7 @@ body {
   display: grid;
   grid-template-columns: 12px 1fr 3px;
 }
+
+a {
+  cursor: pointer;
+}

@@ -144,3 +144,7 @@ ipcMain.on('win-min', () => {
 ipcMain.on('delete-task', () => {
   win.webContents.send('update-tags')
 })
+
+ipcMain.on('get-issues', () => {
+  win.webContents.send('send-issues')
+})

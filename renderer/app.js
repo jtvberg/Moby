@@ -4,6 +4,7 @@ const { ipcRenderer } = require('electron')
 const tasks = require('./tasks')
 require('bootstrap/js/dist/modal')
 require('./menu.js')
+const git = require('./gitHub.js')
 const customTitlebar = require('custom-electron-titlebar')
 const stackPrefix = 'stack-'
 let taskType = 'new'
@@ -18,6 +19,13 @@ const bg = getComputedStyle(document.documentElement).getPropertyValue('--backgr
 const ctb = new customTitlebar.Titlebar({
   backgroundColor: customTitlebar.Color.fromHex(bg),
   icon: './res/moby_icon.png'
+})
+
+ipcRenderer.on('send-issues', (e) => {
+  git.issueList.forEach(issue => {
+    git.addIssue(issue)
+  })
+  loadTagCloud()
 })
 
 // Load stacks
@@ -72,8 +80,8 @@ function getStacks () {
 // Load tag list UI
 function loadTagCloud () {
   $('#tag-cloud-box').children('.cloud-tags').remove()
-  if (tasks.tagList.length > 0) {
-    const utl = [...new Set(tasks.tagList)]
+  if (tasks.tagList.length > 0 || git.tagList.length > 0) {
+    const utl = [...new Set(tasks.tagList.concat(git.tagList))]
     utl.forEach((tag) => {
       $('#tag-cloud-box').append(`<div class="cloud-tags">${tag}</div>`)
     })
@@ -83,12 +91,9 @@ function loadTagCloud () {
 // Show tasks with tag
 $(document).on('click', '.cloud-tags', (e) => {
   $(e.currentTarget).addClass('cloud-tags-toggled')
-  tasks.taskList.forEach(task => {
-    if (task.Tags.includes($(e.currentTarget).text())) {
-      $(`#${task.TaskId}`).addClass('card-tagged')
-      $(`#${task.TaskId}`).find('.collapse').collapse('show')
-    }
-  })
+  $('.tags').filter(function () {
+    return $(this).text() === $(e.currentTarget).text()
+  }).closest('.card').addClass('card-tagged').find('.collapse').collapse('show')
 })
 
 // Show tasks with tag
@@ -626,7 +631,6 @@ $(document).on('contextmenu', '.subtask-checkbox', (e) => {
 
 // Subtask css class and array update
 function setSubtaskCheck (element) {
-  console.log('check')
   element.hasClass('subtask-unchecked') ? element.removeClass('fa-square subtask-unchecked').addClass('fa-check-square subtask-checked') : element.removeClass('fa-check-square subtask-checked').addClass('fa-square subtask-unchecked')
   tasks.updateSubtaskCheck(element.closest('.card').prop('id'), element.parent().prop('id'), element.hasClass('subtask-checked'))
 }

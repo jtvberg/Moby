@@ -182,6 +182,7 @@ function addNewStack (addIndex) {
   localStorage.setItem('stackList', JSON.stringify(stacks))
   getStacks()
   $(`#${stackData.StackId}`).find('.stack-header').focus()
+  document.execCommand('selectAll', false, null)
 }
 
 // Remove existing stack
@@ -674,6 +675,7 @@ const allowDrop = (e) => {
 // eslint-disable-next-line no-unused-vars
 const drag = (e) => {
   e.dataTransfer.setData('text', e.target.id)
+  console.log(e.target.id)
 }
 
 // eslint-disable-next-line no-unused-vars

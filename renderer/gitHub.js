@@ -4,17 +4,21 @@ const { Octokit } = require('@octokit/rest')
 const { shell } = require('electron')
 
 const octokit = new Octokit({
-  baseUrl: 'https://github.optum.com/api/v3'
+  // baseUrl: 'https://github.optum.com/api/v3'
+  baseUrl: 'https://api.github.com'
   // owner: 'jvanden3',
   // auth: 'd47bf429371210354bc206d690e7e0f0215d7bbe'
 })
 
+// https://api.github.com/repos/jtvberg/Moby/issues
 // https://github.optum.com/api/v3/repos/paymentintegrity/Clinical-Leads/issues
 exports.issueList = []
 
 exports.issuesCollection = octokit.paginate('GET /repos/:owner/:repo/issues', {
-  owner: 'paymentintegrity',
-  repo: 'Clinical-Leads'
+  // owner: 'paymentintegrity',
+  // repo: 'Clinical-Leads'
+  owner: 'jtvberg',
+  repo: 'Moby'
 }).then(issues => {
   this.issueList = issues
   ipcRenderer.send('get-issues')
@@ -34,10 +38,10 @@ exports.addIssue = (task) => {
   }
   const cd = new Date(task.created_at)
   const ud = new Date(task.updated_at)
-  const assigned = task.assignee.login ? task.assignee.login : 'NA'
-  const color = task.assignee.login && task.assignee.login === 'jvanden3' ? 2 : 1
+  const assigned = task.assignee ? task.assignee.login : 'NA'
+  const color = task.assignee && task.assignee.login === 'jvanden3' ? 2 : 1
   // Generate task card html
-  const taskHtml = `<div class="card color-${color} id="${task.number}" draggable="true" ondragstart="drag(event)">
+  const taskHtml = `<div class="card color-${color}" id="${task.number}" draggable="true" ondragstart="drag(event)">
                       <div style="clear: both" id="b${task.number}" data-toggle="collapse" data-target="#c${task.number}">
                         <span class="title">#${task.number} ${task.title}</span>
                       </div>
@@ -49,7 +53,8 @@ exports.addIssue = (task) => {
                       </div>
                     </div>`
   // Add task html to host
-  $('#stack-1585079248594').find('.box').append(taskHtml)
+  // $('#stack-1585079248594').find('.box').append(taskHtml)
+  $('#stack-1585248967408').find('.box').append(taskHtml)
   // Active task setting event
   $(`#${task.number}`).on('click', () => {
     window.activeTask = task.number

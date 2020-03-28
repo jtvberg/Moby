@@ -1,4 +1,3 @@
-/* global activeTask */
 // Modules and variable definition
 const { ipcRenderer } = require('electron')
 const fs = require('fs')
@@ -39,7 +38,7 @@ exports.saveTasks = () => {
 
 // Update task stack helper function
 exports.updateTaskStack = (taskId, taskStack) => {
-  const task = this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId) && task.TaskStack !== taskStack)
+  const task = this.taskList.find(task => task.TaskId === taskId && task.TaskStack !== taskStack)
   if (task) {
     task.StackDate = Date.now()
     task.TaskStack = taskStack
@@ -64,7 +63,7 @@ exports.updateTaskAge = (taskId) => {
 // Update task detail helper function
 exports.updateTaskDetail = (taskId, taskDetail) => {
   if (taskId && taskDetail) {
-    this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).TaskDetail = taskDetail
+    this.taskList.find(task => task.TaskId === taskId).TaskDetail = taskDetail
     this.updateTimestamp(taskId)
   }
 }
@@ -72,7 +71,7 @@ exports.updateTaskDetail = (taskId, taskDetail) => {
 // Update subtasks
 exports.updateSubtaskCheck = (taskId, subtaskId, checked) => {
   if (taskId && subtaskId) {
-    this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).Subtasks.find(stask => parseInt(stask.SubtaskId) === parseInt(subtaskId)).Checked = checked
+    this.taskList.find(task => task.TaskId === taskId).Subtasks.find(stask => stask.SubtaskId === subtaskId).Checked = checked
     this.updateTimestamp(taskId)
   }
 }
@@ -80,7 +79,7 @@ exports.updateSubtaskCheck = (taskId, subtaskId, checked) => {
 // Update task global timestamp
 exports.updateTimestamp = (taskId) => {
   if (taskId) {
-    this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).UpdateTimestamp = Date.now()
+    this.taskList.find(task => task.TaskId === taskId).UpdateTimestamp = Date.now()
     this.saveTasks()
   }
 }
@@ -147,7 +146,7 @@ exports.submitTask = (taskType) => {
   if (taskType === 'new') {
     this.taskList.push(newTaskData)
   } else {
-    const getTask = this.taskList.find(task => parseInt(task.TaskId) === parseInt(activeTask))
+    const getTask = this.taskList.find(task => task.TaskId === activeTask)
     if (getTask.TaskStack === taskStack) {
       newTaskData.StackDate = getTask.StackDate
     } else {
@@ -177,7 +176,7 @@ exports.submitTask = (taskType) => {
 // Clone task to 'do'
 exports.cloneTask = (taskId, taskStack) => {
   if (taskId) {
-    const getTask = this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId))
+    const getTask = this.taskList.find(task => task.TaskId === taskId)
     const newTaskStack = taskStack !== undefined ? taskStack : getTask.StartDate > Date.now() ? 'stack-schedule' : 'stack-do'
     const now = Date.now()
     const newTaskData = {
@@ -255,8 +254,7 @@ exports.addTask = (task, highlight) => {
   $(`#${task.TaskId}`).on('click', () => {
     window.activeTask = task.TaskId
     $('.card').removeClass('card-selected')
-    $(`#${task.TaskId}`).removeClass('card-highlighted').addClass('card-selected')
-    $(`#${task.TaskId}`).parent().animate({ scrollTop: $(`#${task.TaskId}`).offset().top - $(`#${task.TaskId}`).parent().offset().top + $(`#${task.TaskId}`).parent().scrollTop() })
+    $(`#${task.TaskId}`).removeClass('card-highlighted').addClass('card-selected').parent().animate({ scrollTop: $(`#${task.TaskId}`).offset().top - $(`#${task.TaskId}`).parent().offset().top + $(`#${task.TaskId}`).parent().scrollTop() })
     $('.window-title').text(`Moby - ${task.TaskTitle}`)
   })
   // Stop right-click on card invoking remove stack
@@ -307,7 +305,7 @@ exports.deleteTask = (taskId) => {
   if (taskId) {
     $(`#del-button-${taskId}`).tooltip('hide')
     $(`#${taskId}`).remove()
-    this.taskList.find(task => parseInt(task.TaskId) === parseInt(taskId)).Tags.forEach(tag => {
+    this.taskList.find(task => task.TaskId === taskId).Tags.forEach(tag => {
       this.tagList.splice(this.tagList.indexOf(tag), 1)
     })
     this.taskList = this.taskList.filter(task => task.TaskId !== taskId)

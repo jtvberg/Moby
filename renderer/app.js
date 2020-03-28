@@ -1,10 +1,9 @@
-/* global activeTask */
 // Modules and variable definition
 const { ipcRenderer } = require('electron')
 const tasks = require('./tasks')
+const git = require('./gitHub.js')
 require('bootstrap/js/dist/modal')
 require('./menu.js')
-const git = require('./gitHub.js')
 const customTitlebar = require('custom-electron-titlebar')
 const stackPrefix = 'stack-'
 let taskType = 'new'
@@ -21,29 +20,28 @@ const ctb = new customTitlebar.Titlebar({
   icon: './res/moby_icon.png'
 })
 
-ipcRenderer.on('send-issues', (e) => {
-  git.issueList.forEach(issue => {
-    git.addIssue(issue)
-  })
-  loadTagCloud()
-})
-
 // Load stacks
 getStacks()
 
+// Set intervals for scheduled tasks, update ageing, archive ageing and issue get
 // Evaluate for scheduled task
 addScheduledTasks()
-
-// Archive off tasks in 'Done' for more than a week
-archiveDoneTasks()
-
+window.setInterval(addScheduledTasks, 3600000)
 // Update task age in UI
 tasks.updateTaskAge()
-
-// Set intervals for scheduled tasks, update ageing, archive ageing
-window.setInterval(addScheduledTasks, 3600000)
 window.setInterval(tasks.updateTaskAge, 3600000)
+// Archive off tasks in 'Done' for more than a week
+archiveDoneTasks()
 window.setInterval(archiveDoneTasks, 3600000)
+// Get gitHub issues
+git.getIssues()
+window.setInterval(git.getIssues, 1000000)
+
+// IPC event when git issues returned; then add to stack
+ipcRenderer.on('send-issues', (e, stack) => {
+  git.issueList.forEach(git.addIssue)
+  loadTagCloud()
+})
 
 // Went and changed the model and need to fix it function
 function updateStackkListModel () {
@@ -72,8 +70,15 @@ function getStacks () {
   } else {
     getDefaultStacks()
   }
-  // Add tasks to the stacks
+  if (git.repoList.length > 0) {
+    git.repoList.forEach((repo) => {
+      buildStack(`stack-${repo.owner}-${repo.repo}`, repo.repo, index)
+      index++
+    })
+  }
+  // Add tasks, issues, tags to the stacks
   tasks.taskList.forEach(tasks.addTask)
+  git.issueList.forEach(git.addIssue)
   loadTagCloud()
 }
 
@@ -285,7 +290,7 @@ function addScheduledTasks () {
         if (i === 0) {
           tasks.archiveTask(item.TaskId)
         } else {
-          const getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(item.TaskId))
+          const getTask = tasks.taskList.find(task => task.TaskId === item.TaskId)
           getTask.Count = i
           getTask.StartDate = getTask.StartDate + (86400000 * 7 * getTask.MonthDay)
           tasks.saveTasks()
@@ -331,17 +336,17 @@ window.openTaskMenu = (type) => {
 
 // Task menu commands; Archive selected task
 window.cloneTaskMenu = () => {
-  tasks.cloneTask(activeTask)
+  tasks.cloneTask(window.activeTask)
 }
 
 // Task menu commands; Archive selected task
 window.archiveTaskMenu = () => {
-  tasks.archiveTask(activeTask)
+  tasks.archiveTask(window.activeTask)
 }
 
 // Task menu commands; Restore selected task
 window.restoreTaskMenu = () => {
-  tasks.restoreTask(activeTask)
+  tasks.restoreTask(window.activeTask)
 }
 
 // Task menu commands; Expand all tasks
@@ -420,7 +425,7 @@ function loadTaskModal (type, stack) {
     $('#choose-days').prop('disabled', true)
   } else {
     $('#task-modal-title').html('Edit Task')
-    const getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(activeTask))
+    const getTask = tasks.taskList.find(task => task.TaskId === window.activeTask)
     $('#task-title').val(getTask.TaskTitle)
     $('#task-detail').val(getTask.TaskDetail)
     if (getTask.TaskStack === 'stack-archive') {
@@ -523,7 +528,7 @@ $('#task-modal').keypress((e) => {
 
 // Restore archived task to 'Do' column
 $('#restore-button').click(() => {
-  tasks.restoreTask(activeTask)
+  tasks.restoreTask(window.activeTask)
   $('#restore-modal').modal('hide')
 })
 
@@ -675,7 +680,6 @@ const allowDrop = (e) => {
 // eslint-disable-next-line no-unused-vars
 const drag = (e) => {
   e.dataTransfer.setData('text', e.target.id)
-  console.log(e.target.id)
 }
 
 // eslint-disable-next-line no-unused-vars

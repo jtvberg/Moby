@@ -1,17 +1,16 @@
 // Modules and variable definition
-const { ipcRenderer } = require('electron')
+const { ipcRenderer, shell } = require('electron')
 const { Octokit } = require('@octokit/rest')
-const { shell } = require('electron')
 
 const octokit = new Octokit({
+  auth: 'bb72fbc0981f501df5071c9e6c5da8b9f2d5db64',
   baseUrl: 'https://api.github.com'
 })
 
-// https://api.github.com/repos/jtvberg/Moby/issues
-
 // Track repo list
-exports.repoList = [{ user: 'jtvberg', owner: 'jtvberg', repo: 'metadatum-obscura' },
-  { user: 'jtvberg', owner: 'jtvberg', repo: 'Moby' }]//, { user: 'jvanden3', owner: 'paymentintegrity', repo: 'Clinical-Leads' }]
+exports.repoList = [
+  { user: 'jtvberg', owner: 'jtvberg', repo: 'metadatum-obscura', url: 'https://github.com/jtvberg/metadatum-obscura' },
+  { user: 'jtvberg', owner: 'jtvberg', repo: 'Moby', url: 'https://github.com/jtvberg/Moby' }]
 
 // Track issue list
 exports.issueList = []
@@ -48,9 +47,10 @@ exports.addIssue = (issue) => {
   const id = issue.issueOjb.node_id.replace('=', '')
   const cd = new Date(issue.issueOjb.created_at)
   const ud = new Date(issue.issueOjb.updated_at)
+  const age = Math.floor((Date.now() - ud) / 86400000) + '/' + Math.floor((Date.now() - cd) / 86400000)
   const assigned = issue.issueOjb.assignee ? issue.issueOjb.assignee.login : 'NA'
   const color = issue.issueOjb.assignee && issue.issueOjb.assignee.login === issue.user ? 5 : 1
-  // remove existing cards
+  // Remove existing card instance
   $(`#${id}`).remove()
   // Add issue tags
   let tagHTML = '<div class="tags">Issue</div>'
@@ -60,10 +60,13 @@ exports.addIssue = (issue) => {
       this.tagList.push(tag.name)
     })
   }
+  // Check if age is toggled
+  const showAge = $('.aging').is(':visible') ? 'style' : 'style="display: none;"'
   // Generate issue card html
-  const issueHtml = `<div class="card color-${color}" id="${id}" draggable="true" ondragstart="drag(event)">
+  const issueHtml = `<div class="card color-${color}" id="${id}">
                       <div style="clear: both" id="b${id}" data-toggle="collapse" data-target="#c${id}">
                         <span class="title">#${issue.issueOjb.number} ${issue.issueOjb.title}</span>
+                        <span class="aging" id="a${id}" ${showAge}>${age}</span>
                       </div>
                       <div class="collapse collapse-content" id="c${id}">
                         <div class="detail" id="d${id}" contenteditable="true" style="white-space: pre-wrap;" draggable="true" ondragstart="event.preventDefault(); event.stopPropagation();">Created: ${cd.toLocaleDateString()}<br>Updated: ${ud.toLocaleDateString()}<br>Opened by: ${issue.issueOjb.user.login}<br>Assigned to: ${assigned}<br><a style="color: white" id="l${id}" href="${issue.issueOjb.html_url}">GitHub Link</a><br>${issue.issueOjb.body}</div>
@@ -73,7 +76,6 @@ exports.addIssue = (issue) => {
                       </div>
                     </div>`
   // Add issue html to host
-  // $('#stack-1585079248594').find('.box').append(issueHtml)
   $(issue.stack).find('.box').append(issueHtml)
   // Active issue setting event
   $(`#${id}`).on('click', () => {

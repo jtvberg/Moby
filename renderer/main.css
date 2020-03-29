@@ -34,11 +34,11 @@ body {
   z-index: 1000;
 }
 
+.git-stack,
 .stack {
   display: grid;
   grid-row: 1;
   grid-template-rows: 25px 1fr 25px;
-  background-color: var(--opaque);
   border-radius: 5px;
   max-height: 100%;
   padding: 5px 0px;
@@ -46,6 +46,14 @@ body {
   overflow: auto;
   position: relative;
   -webkit-app-region: no-drag;
+}
+
+.stack {
+  background-color: var(--opaque);
+}
+
+.git-stack {
+  background-color: var(--trans);
 }
 
 .header {

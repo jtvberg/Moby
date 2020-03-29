@@ -1,5 +1,5 @@
 // Modules and variable definition
-const { ipcRenderer } = require('electron')
+const { ipcRenderer, shell } = require('electron')
 const tasks = require('./tasks')
 const git = require('./gitHub.js')
 require('bootstrap/js/dist/modal')
@@ -72,7 +72,7 @@ function getStacks () {
   }
   if (git.repoList.length > 0) {
     git.repoList.forEach((repo) => {
-      buildStack(`git-stack-${repo.owner}-${repo.repo}`, repo.repo, index)
+      buildStack(`git-stack-${repo.owner}-${repo.repo}`, repo.repo, index, repo.url)
       index++
     })
   }
@@ -142,18 +142,21 @@ function saveStacks () {
 }
 
 // Build out and insert stacks
-function buildStack (id, title, index) {
-  // TODO: Check if ID exists
+function buildStack (id, title, index, url) {
+  const isDefault = id.substring(0, 6) === stackPrefix
+  const stackClass = isDefault ? 'stack' : 'git-stack'
+  const dragDrop = isDefault ? ' ondrop="drop(event)" ondragover="allowDrop(event)"' : ''
+  const addTaskBtn = isDefault ? `" href="#task-modal" data-toggle="modal" data-stack-id="${id}" data-type-id="new"` : ` add-issue" data-url="${url}"`
   const addStackBtn = id === 'stack-do' ? '' : '<div class="stack-add fas fa-caret-square-left" data-toggle="tooltip" title="Insert Stack" onclick="addNewStackClick(event)"></div>'
   const removeStackBtn = id === 'stack-do' || id === 'stack-done' ? '' : `<div class="dropdown-menu dropdown-menu-sm ddcm" id="context-menu-${id}">
                                                     <a class="dropdown-item" href="#remove-modal" data-toggle="modal">Remove Stack</a>
                                                   </div>`
-  const stackHtml = `<div class="stack" id="${id}" data-stack-index="${index}" ondrop="drop(event)" ondragover="allowDrop(event)">
+  const stackHtml = `<div class="${stackClass}" id="${id}" data-stack-index="${index}"${dragDrop}>
                       ${addStackBtn}
-                      <div class="header stack-header" contenteditable="true" onclick="document.execCommand('selectAll',false,null)" oncontextmenu="event.preventDefault(); event.stopPropagation();">${title}</div>
+                      <div class="header stack-header" contenteditable="${isDefault}" onclick="document.execCommand('selectAll',false,null)" oncontextmenu="event.preventDefault(); event.stopPropagation();">${title}</div>
                       ${removeStackBtn}
                       <div class="box"></div>
-                      <div class="footer fas fa-plus fa-2x" href="#task-modal" data-toggle="modal" data-stack-id="${id}" data-type-id="new"></div>
+                      <div class="footer fas fa-plus fa-2x${addTaskBtn}></div>
                     </div>`
   $('.stack-host').append(stackHtml)
   $(`#${id}`).on('contextmenu', () => {
@@ -174,6 +177,11 @@ function buildStack (id, title, index) {
     $(`#context-menu-${id}`).removeClass('show').hide().css({ width: '0px' })
   })
 }
+
+// Stack add for git issues
+$('.add-issue').click((e) => {
+  shell.openExternal(`${$(e.currentTarget).data('url')}/issues/new`)
+})
 
 // Add new user defined stack
 function addNewStack (addIndex) {

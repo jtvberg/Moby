@@ -38,7 +38,7 @@ exports.saveTasks = () => {
 
 // Update task stack helper function
 exports.updateTaskStack = (taskId, taskStack) => {
-  const task = this.taskList.find(task => task.TaskId === taskId && task.TaskStack !== taskStack)
+  const task = this.taskList.find(task => task.TaskId === parseInt(taskId) && task.TaskStack !== taskStack)
   if (task) {
     task.StackDate = Date.now()
     task.TaskStack = taskStack
@@ -63,7 +63,7 @@ exports.updateTaskAge = (taskId) => {
 // Update task detail helper function
 exports.updateTaskDetail = (taskId, taskDetail) => {
   if (taskId && taskDetail) {
-    this.taskList.find(task => task.TaskId === taskId).TaskDetail = taskDetail
+    this.taskList.find(task => task.TaskId === parseInt(taskId)).TaskDetail = taskDetail
     this.updateTimestamp(taskId)
   }
 }
@@ -71,8 +71,7 @@ exports.updateTaskDetail = (taskId, taskDetail) => {
 // Update subtasks
 exports.updateSubtaskCheck = (taskId, subtaskId, checked) => {
   if (taskId && subtaskId) {
-    // undefined coming up next line
-    this.taskList.find(task => task.TaskId === taskId).Subtasks.find(stask => stask.SubtaskId === subtaskId).Checked = checked
+    this.taskList.find(task => task.TaskId === parseInt(taskId)).Subtasks.find(stask => stask.SubtaskId === parseInt(subtaskId)).Checked = checked
     this.updateTimestamp(taskId)
   }
 }
@@ -80,7 +79,7 @@ exports.updateSubtaskCheck = (taskId, subtaskId, checked) => {
 // Update task global timestamp
 exports.updateTimestamp = (taskId) => {
   if (taskId) {
-    this.taskList.find(task => task.TaskId === taskId).UpdateTimestamp = Date.now()
+    this.taskList.find(task => task.TaskId === parseInt(taskId)).UpdateTimestamp = Date.now()
     this.saveTasks()
   }
 }

@@ -3,7 +3,7 @@ const { ipcRenderer, shell } = require('electron')
 const { Octokit } = require('@octokit/rest')
 
 const octokit = new Octokit({
-  auth: 'bb72fbc0981f501df5071c9e6c5da8b9f2d5db64',
+  auth: '',
   baseUrl: 'https://api.github.com'
 })
 

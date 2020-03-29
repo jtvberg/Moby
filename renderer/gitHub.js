@@ -1,37 +1,35 @@
 // Modules and variable definition
 const { ipcRenderer, shell } = require('electron')
 const { Octokit } = require('@octokit/rest')
-
-const octokit = new Octokit({
-  auth: '',
-  baseUrl: 'https://api.github.com'
-})
+const octokit = new Octokit()
 
 // Track repo list
-exports.repoList = [
-  { user: 'jtvberg', owner: 'jtvberg', repo: 'metadatum-obscura', url: 'https://github.com/jtvberg/metadatum-obscura' },
-  { user: 'jtvberg', owner: 'jtvberg', repo: 'Moby', url: 'https://github.com/jtvberg/Moby' }]
+exports.repoList = JSON.parse(localStorage.getItem('repoList')) || []
 
 // Track issue list
 exports.issueList = []
 
 // Get issues from repo
 exports.getIssues = () => {
-  this.repoList.forEach((repo) => {
-    octokit.paginate('GET /repos/:owner/:repo/issues', {
-      owner: repo.owner,
-      repo: repo.repo
-    }).then(issues => {
-      issues.forEach((issue) => {
-        this.issueList.push({
-          stack: `#git-stack-${repo.owner}-${repo.repo}`,
-          user: repo.user,
-          issueOjb: issue
+  if (this.repoList.length > 0) {
+    this.repoList.forEach((repo) => {
+      octokit.paginate('GET /repos/:owner/:repo/issues', {
+        auth: repo.auth,
+        baseUrl: repo.baseUrl,
+        owner: repo.owner,
+        repo: repo.repo
+      }).then(issues => {
+        issues.forEach((issue) => {
+          this.issueList.push({
+            stack: `#git-stack-${repo.owner}-${repo.repo}`,
+            user: repo.user,
+            issueOjb: issue
+          })
         })
+        ipcRenderer.send('get-issues')
       })
-      ipcRenderer.send('get-issues')
     })
-  })
+  }
 }
 
 // Clear issues from stacks

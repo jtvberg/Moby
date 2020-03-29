@@ -71,6 +71,7 @@ exports.updateTaskDetail = (taskId, taskDetail) => {
 // Update subtasks
 exports.updateSubtaskCheck = (taskId, subtaskId, checked) => {
   if (taskId && subtaskId) {
+    // undefined coming up next line
     this.taskList.find(task => task.TaskId === taskId).Subtasks.find(stask => stask.SubtaskId === subtaskId).Checked = checked
     this.updateTimestamp(taskId)
   }
@@ -146,13 +147,13 @@ exports.submitTask = (taskType) => {
   if (taskType === 'new') {
     this.taskList.push(newTaskData)
   } else {
-    const getTask = this.taskList.find(task => task.TaskId === activeTask)
+    const getTask = this.taskList.find(task => task.TaskId === window.activeTask)
     if (getTask.TaskStack === taskStack) {
       newTaskData.StackDate = getTask.StackDate
     } else {
       getTask.StackDate = stackDate
     }
-    newTaskData.TaskId = activeTask
+    newTaskData.TaskId = window.activeTask
     getTask.TaskTitle = taskTitle
     getTask.TaskDetail = taskDetail
     getTask.TaskColor = taskColor

@@ -7,8 +7,11 @@ const octokit = new Octokit({
   baseUrl: 'https://api.github.com'
 })
 
+// https://api.github.com/repos/jtvberg/Moby/issues
+
 // Track repo list
-exports.repoList = []
+exports.repoList = [{ user: 'jtvberg', owner: 'jtvberg', repo: 'metadatum-obscura' },
+  { user: 'jtvberg', owner: 'jtvberg', repo: 'Moby' }]//, { user: 'jvanden3', owner: 'paymentintegrity', repo: 'Clinical-Leads' }]
 
 // Track issue list
 exports.issueList = []
@@ -22,7 +25,7 @@ exports.getIssues = () => {
     }).then(issues => {
       issues.forEach((issue) => {
         this.issueList.push({
-          stack: `#stack-${repo.owner}-${repo.repo}`,
+          stack: `#git-stack-${repo.owner}-${repo.repo}`,
           user: repo.user,
           issueOjb: issue
         })

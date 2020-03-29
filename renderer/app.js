@@ -72,7 +72,7 @@ function getStacks () {
   }
   if (git.repoList.length > 0) {
     git.repoList.forEach((repo) => {
-      buildStack(`stack-${repo.owner}-${repo.repo}`, repo.repo, index)
+      buildStack(`git-stack-${repo.owner}-${repo.repo}`, repo.repo, index)
       index++
     })
   }
@@ -126,11 +126,13 @@ function getDefaultStacks () {
 function saveStacks () {
   const stacks = []
   $('.stack-header').each(function () {
-    const stackData = {
-      StackId: $(this).closest('.stack').prop('id'),
-      StackTitle: $(this).text()
+    if ($(this).closest('.stack').prop('id').substring(0, 6) === stackPrefix) {
+      const stackData = {
+        StackId: $(this).closest('.stack').prop('id'),
+        StackTitle: $(this).text()
+      }
+      stacks.push(stackData)
     }
-    stacks.push(stackData)
   })
   localStorage.setItem('stackList', JSON.stringify(stacks))
   $('#task-stack').empty()

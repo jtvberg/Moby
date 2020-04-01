@@ -54,6 +54,8 @@ body {
 
 .git-stack {
   background-color: var(--trans);
+  justify-self: right;
+  width: -webkit-fill-available;
 }
 
 .header {
@@ -297,6 +299,10 @@ body {
 .menu-item {
   padding: 4px;
   -webkit-app-region: no-drag;
+}
+
+.menu-item-toggled {
+  color: var(--light)
 }
 
 .color-item {

@@ -21,7 +21,8 @@
         <span href="#schedule-modal" data-toggle="modal">
           <div class="menu-item fas fa-calendar fa-2x" data-toggle="tooltip" title="Scheduled Tasks"></div>
         </span>
-        <div class="menu-item fas fa-tags fa-2x" style="font-size: 150%;" data-toggle="tooltip" title="Toggle Tags" onclick="toggleTags(event)"></div>
+        <div class="menu-item fas fa-tags fa-2x" id="tags-button" style="font-size: 150%;" data-toggle="tooltip" title="Toggle Tags" onclick="toggleTags(event)"></div>
+        <div class="menu-item fab fa-github fa-2x" id="git-button" data-toggle="tooltip" title="Toggle GitHub Issues" onclick="toggleIssues(event)"></div>
         <div class="menu-item fas fa-expand-arrows-alt fa-2x" data-toggle="tooltip" title="Expand All" onclick="expandAll(event)"></div>
         <div class="menu-item fas fa-compress-arrows-alt fa-2x" data-toggle="tooltip" title="Collapse All" onclick="collapseAll(event)"></div>
         <div class="menu-item fas fa-sign-out-alt fa-2x" data-toggle="tooltip" title="Exit" onclick="exit(event)"></div>

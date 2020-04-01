@@ -1,7 +1,6 @@
 // Modules and variable definition
 const { ipcRenderer, shell } = require('electron')
 const { Octokit } = require('@octokit/rest')
-const octokit = new Octokit()
 
 // Track repo list
 exports.repoList = JSON.parse(localStorage.getItem('repoList')) || []
@@ -13,8 +12,8 @@ exports.issueList = []
 exports.getIssues = () => {
   if (this.repoList.length > 0) {
     this.repoList.forEach((repo) => {
+      const octokit = new Octokit({ auth: repo.auth })
       octokit.paginate('GET /repos/:owner/:repo/issues', {
-        auth: repo.auth,
         baseUrl: repo.baseUrl,
         owner: repo.owner,
         repo: repo.repo

@@ -38,7 +38,7 @@ git.getIssues()
 window.setInterval(git.getIssues, 1000000)
 
 // IPC event when git issues returned; then add to stack
-ipcRenderer.on('send-issues', (e, stack) => {
+ipcRenderer.on('send-issues', () => {
   git.issueList.forEach(git.addIssue)
   loadTagCloud()
 })
@@ -58,7 +58,7 @@ function updateStackkListModel () {
 function getStacks () {
   updateStackkListModel()
   const stacks = JSON.parse(localStorage.getItem('stackList')) || []
-  $('.stack-host').children('.stack').remove()
+  $('.stack-host').children('.stack, .git-stack').remove()
   let index = 0
   if (stacks.length > 1) {
     $('#task-stack').empty()
@@ -126,7 +126,7 @@ function getDefaultStacks () {
 function saveStacks () {
   const stacks = []
   $('.stack-header').each(function () {
-    if ($(this).closest('.stack').prop('id').substring(0, 6) === stackPrefix) {
+    if ($(this).closest('.stack').prop('id') && $(this).closest('.stack').prop('id').substring(0, 6) === stackPrefix) {
       const stackData = {
         StackId: $(this).closest('.stack').prop('id'),
         StackTitle: $(this).text()
@@ -147,8 +147,8 @@ function buildStack (id, title, index, url) {
   const stackClass = isDefault ? 'stack' : 'git-stack'
   const dragDrop = isDefault ? ' ondrop="drop(event)" ondragover="allowDrop(event)"' : ''
   const addTaskBtn = isDefault ? `" href="#task-modal" data-toggle="modal" data-stack-id="${id}" data-type-id="new"` : ` add-issue" data-url="${url}"`
-  const addStackBtn = id === 'stack-do' ? '' : '<div class="stack-add fas fa-caret-square-left" data-toggle="tooltip" title="Insert Stack" onclick="addNewStackClick(event)"></div>'
-  const removeStackBtn = id === 'stack-do' || id === 'stack-done' ? '' : `<div class="dropdown-menu dropdown-menu-sm ddcm" id="context-menu-${id}">
+  const addStackBtn = id === 'stack-do' || !isDefault ? '' : '<div class="stack-add fas fa-caret-square-left" data-toggle="tooltip" title="Insert Stack" onclick="addNewStackClick(event)"></div>'
+  const removeStackBtn = id === 'stack-do' || id === 'stack-done' || !isDefault ? '' : `<div class="dropdown-menu dropdown-menu-sm ddcm" id="context-menu-${id}">
                                                     <a class="dropdown-item" href="#remove-modal" data-toggle="modal">Remove Stack</a>
                                                   </div>`
   const stackHtml = `<div class="${stackClass}" id="${id}" data-stack-index="${index}"${dragDrop}>
@@ -176,6 +176,7 @@ function buildStack (id, title, index, url) {
   $('.stack-host').on('mouseleave', () => {
     $(`#context-menu-${id}`).removeClass('show').hide().css({ width: '0px' })
   })
+  if (!isDefault) { $('#git-button').addClass('menu-item-toggled') }
 }
 
 // Stack add for git issues
@@ -618,10 +619,37 @@ const toggleTags = () => {
     $('.tag-cloud').animate({ width: '0px' }, 'fast').hide(0)
     $('.card').removeClass('card-tagged')
     $('.cloud-tags').removeClass('cloud-tags-toggled')
+    $('#tags-button').removeClass('menu-item-toggled')
   } else {
     $('.tag-cloud').show().animate({ width: '105px' }, 'fast')
+    $('#tags-button').addClass('menu-item-toggled')
   }
 }
+
+// Toggle tag cloud
+// eslint-disable-next-line no-unused-vars
+const toggleIssues = () => {
+  let delay = 0
+  if ($('.git-stack').is(':visible')) {
+    // $('.stack').show()
+    $('.git-stack').each(function () {
+      $(this).delay(delay).animate({ width: '0px' }, 200)
+      delay += 100
+    }).hide(0)
+    $('#git-button').removeClass('menu-item-toggled')
+  } else {
+    // $('.stack').hide(0)
+    $('.git-stack').each(function () {
+      $(this).show()// .delay(delay).animate({ width: 'auto' }, 200)
+      delay += 100
+    })
+    $('#git-button').addClass('menu-item-toggled')
+  }
+}
+
+//$('#element1').fadeOut(500, function() {
+//  $('#element2').fadeIn(500)
+//})
 
 // IPC event to get update tag cloud on task delete
 ipcRenderer.on('update-tags', () => {

@@ -64,10 +64,21 @@ body {
   font-weight: 500;
   justify-self: center;
   text-align: center;
+  margin-left: 30px;
+  margin-right: 30px;
 }
 
 .stack-add {
   color: var(--trans);
+  display: table;
+  top: 5px;
+  left: 5px;
+  font-size: calc(var(--font-base-size) + 50%);
+  position: absolute;
+}
+
+.git-stack-icon {
+  color: var(--light);
   display: table;
   top: 5px;
   left: 5px;

@@ -147,7 +147,8 @@ function buildStack (id, title, index, url) {
   const stackClass = isDefault ? 'stack' : 'git-stack'
   const dragDrop = isDefault ? ' ondrop="drop(event)" ondragover="allowDrop(event)"' : ''
   const addTaskBtn = isDefault ? `" href="#task-modal" data-toggle="modal" data-stack-id="${id}" data-type-id="new"` : ` add-issue" data-url="${url}"`
-  const addStackBtn = id === 'stack-do' || !isDefault ? '' : '<div class="stack-add fas fa-caret-square-left" data-toggle="tooltip" title="Insert Stack" onclick="addNewStackClick(event)"></div>'
+  let addStackBtn = id === 'stack-do' ? '' : '<div class="stack-add fas fa-caret-square-left" data-toggle="tooltip" title="Insert Stack" onclick="addNewStackClick(event)"></div>'
+  addStackBtn = id.substring(0, 9) === 'git-stack' ? `<div class="git-stack-icon fab fa-github" data-toggle="tooltip" title="Source Link" data-url="${url}"></div>` : addStackBtn
   const removeStackBtn = id === 'stack-do' || id === 'stack-done' || !isDefault ? '' : `<div class="dropdown-menu dropdown-menu-sm ddcm" id="context-menu-${id}">
                                                     <a class="dropdown-item" href="#remove-modal" data-toggle="modal">Remove Stack</a>
                                                   </div>`
@@ -182,6 +183,11 @@ function buildStack (id, title, index, url) {
 // Stack add for git issues
 $('.add-issue').click((e) => {
   shell.openExternal(`${$(e.currentTarget).data('url')}/issues/new`)
+})
+
+// Stack add for git issues
+$('.git-stack-icon').click((e) => {
+  shell.openExternal($(e.currentTarget).data('url'))
 })
 
 // Add new user defined stack
@@ -629,27 +635,16 @@ const toggleTags = () => {
 // Toggle tag cloud
 // eslint-disable-next-line no-unused-vars
 const toggleIssues = () => {
-  let delay = 0
   if ($('.git-stack').is(':visible')) {
     // $('.stack').show()
-    $('.git-stack').each(function () {
-      $(this).delay(delay).animate({ width: '0px' }, 200)
-      delay += 100
-    }).hide(0)
+    $('.git-stack').hide(0)
     $('#git-button').removeClass('menu-item-toggled')
   } else {
     // $('.stack').hide(0)
-    $('.git-stack').each(function () {
-      $(this).show()// .delay(delay).animate({ width: 'auto' }, 200)
-      delay += 100
-    })
+    $('.git-stack').show()
     $('#git-button').addClass('menu-item-toggled')
   }
 }
-
-//$('#element1').fadeOut(500, function() {
-//  $('#element2').fadeIn(500)
-//})
 
 // IPC event to get update tag cloud on task delete
 ipcRenderer.on('update-tags', () => {

@@ -93,6 +93,10 @@ if (process.platform === 'darwin') {
         role: 'about'
       },
       {
+        label: 'Settings',
+        click () { window.settingsMenu() }
+      },
+      {
         label: 'Theme',
         submenu: [
           {

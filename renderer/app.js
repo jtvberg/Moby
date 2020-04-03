@@ -393,15 +393,26 @@ window.importTasksMenu = () => {
 }
 
 // Theme menu commands
+window.settingsMenu = () => {
+  loadSettingsModal()
+}
+
+// Theme menu commands
 window.setThemeMenu = (themeId) => {
   setTheme(themeId)
 }
 
+// Load Settings modal
+function loadSettingsModal () {
+  $('#collapse-general, #collapse-gitHub, #collapse-rally, #collapse-serviceNow').collapse('hide')
+  $('#settings-modal').modal('show')
+}
+
 // Set theme
 function setTheme (themeId) {
-  $('#default, #dark, #light, #steve').prop('disabled', true)
+  $('.css-theme').prop('disabled', true)
   $(`#${themeId}`).prop('disabled', false)
-  if (themeId === 'steve') {
+  if ($(`#${themeId}`).data('img') === 'happy') {
     $('#moby-bg-img').prop('src', 'res/moby_bg_steve.png')
   } else {
     $('#moby-bg-img').prop('src', 'res/moby_bg.png')

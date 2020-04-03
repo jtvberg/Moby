@@ -46,6 +46,7 @@ exports.addIssue = (issue) => {
   const ud = new Date(issue.issueOjb.updated_at)
   const age = Math.floor((Date.now() - ud) / 86400000) + '/' + Math.floor((Date.now() - cd) / 86400000)
   const assigned = issue.issueOjb.assignee ? issue.issueOjb.assignee.login : 'NA'
+  // Set card color
   let color = issue.issueOjb.user.login === issue.user ? 5 : 1
   issue.issueOjb.assignees.forEach((assignee) => {
     if (assignee.login === issue.user) { color = 3 }

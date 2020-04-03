@@ -6,10 +6,10 @@
     <link rel="stylesheet" href="../node_modules/@fortawesome/fontawesome-free/css/all.min.css">
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="var.css">
-    <link rel="stylesheet" href="default.css" id="default" title="Default">
-    <link rel="stylesheet" href="dark.css" id="dark" title="Dark">
-    <link rel="stylesheet" href="light.css" id="light" title="Light">
-    <link rel="stylesheet" href="steve.css" id="steve" title="Steve">
+    <link rel="stylesheet" class="css-theme" href="default.css" id="default" title="Default" data-img="default">
+    <link rel="stylesheet" class="css-theme" href="dark.css" id="dark" title="Dark" data-img="default">
+    <link rel="stylesheet" class="css-theme" href="light.css" id="light" title="Light" data-img="default">
+    <link rel="stylesheet" class="css-theme" href="steve.css" id="steve" title="Steve" data-img="happy">
     <link rel="stylesheet" href="main.css">
   </head>
   <body id="main-window">
@@ -263,6 +263,87 @@
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
             <button id="remove-stack-button" type="button" class="btn btn-primary" data-stack-index="-1">Remove</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="settings-modal" class="modal fade" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="settings-modal-title">Settings</h5>
+            <button type="button" class="close" data-dismiss="modal">
+              <span>&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form id="settings-form">
+              <div class="panel-group" id="panel-general">
+                <div class="panel">
+                  <div class="panel-header">
+                    <a class="collapsed" data-toggle="collapse" data-target="#collapse-general">
+                      <i class="fa fa-chevron-down"></i>
+                      General Settings
+                    </a>
+                  </div>
+                  <div class="panel-body">
+                    <div id="collapse-general" class="collapse" data-parent="#panel-general">
+                      <label>Thing</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="panel-group" id="panel-gitHub">
+                <div class="panel">
+                  <div class="panel-header">
+                    <a class="collapsed" data-toggle="collapse" data-target="#collapse-gitHub">
+                      <i class="fa fa-chevron-down"></i>
+                      GitHub Integration
+                    </a>
+                  </div>
+                  <div class="panel-body">
+                    <div id="collapse-gitHub" class="collapse" data-parent="#panel-gitHub">
+                      <label>Thing</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="panel-group" id="panel-rally">
+                <div class="panel">
+                  <div class="panel-header">
+                    <a class="collapsed" data-toggle="collapse" data-target="#collapse-rally">
+                      <i class="fa fa-chevron-down"></i>
+                      Rally Integration
+                    </a>
+                  </div>
+                  <div class="panel-body">
+                    <div id="collapse-rally" class="collapse" data-parent="#panel-rally">
+                      <label>Thing</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="panel-group" id="panel-serviceNow">
+                <div class="panel">
+                  <div class="panel-header">
+                    <a class="collapsed" data-toggle="collapse" data-target="#collapse-serviceNow">
+                      <i class="fa fa-chevron-down"></i>
+                      ServiceNow Integration
+                    </a>
+                  </div>
+                  <div class="panel-body">
+                    <div id="collapse-serviceNow" class="collapse" data-parent="#panel-serviceNow">
+                      <label>Thing</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button id="submit-button" type="button" class="btn btn-primary">Save Changes</button>
           </div>
         </div>
       </div>

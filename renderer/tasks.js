@@ -105,11 +105,11 @@ exports.submitTask = (taskType) => {
   })
   const subtasks = []
   let offset = 1
-  $('#subtask-edit-box > .subtask-edit-host').each(function () {
+  $('#subtask-edit-box > .check-modal-host').each(function () {
     const newSubtaskData = {
       SubtaskId: Date.now() + offset,
-      Checked: $(this).find('.subtask-checkbox').hasClass('subtask-checked'),
-      Text: $(this).find('.subtask-label').text()
+      Checked: $(this).find('.check-checkbox').hasClass('check-checked'),
+      Text: $(this).find('.check-label').text()
     }
     subtasks.push(newSubtaskData)
     offset++
@@ -214,10 +214,10 @@ exports.addTask = (task, highlight) => {
   let subtaskHTML = ''
   if (task.Subtasks && task.Subtasks.length > 0) {
     task.Subtasks.forEach((subtask) => {
-      const checked = subtask.Checked === true ? 'fa-check-square subtask-checked' : 'fa-square subtask-unchecked'
-      subtaskHTML += `<div class="subtask-host" id="${subtask.SubtaskId}">
-                        <div class="fas subtask-checkbox ${checked}"></div>
-                        <label class="subtask-label">${subtask.Text}</label>
+      const checked = subtask.Checked === true ? 'fa-check-square check-checked' : 'fa-square check-unchecked'
+      subtaskHTML += `<div class="check-host" id="${subtask.SubtaskId}">
+                        <div class="fas check-checkbox ${checked}"></div>
+                        <label class="check-label">${subtask.Text}</label>
                       </div>`
     })
   }

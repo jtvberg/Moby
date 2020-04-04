@@ -2,6 +2,7 @@
 const { ipcRenderer, shell } = require('electron')
 const tasks = require('./tasks')
 const git = require('./gitHub.js')
+const fs = require('fs')
 require('bootstrap/js/dist/modal')
 require('./menu.js')
 const customTitlebar = require('custom-electron-titlebar')
@@ -11,7 +12,12 @@ let winMax = false
 let updStack = false
 let newTagList = []
 let match = ''
+let desktopPath = ''
 
+// IPC event to get system desktop path
+ipcRenderer.on('desktop-path', (e, data) => {
+  desktopPath = data
+})
 // Custom titlebar instantiation
 const bg = getComputedStyle(document.documentElement).getPropertyValue('--background1').trim()
 // eslint-disable-next-line no-new
@@ -33,7 +39,7 @@ window.setInterval(tasks.updateTaskAge, 3600000)
 // Archive off tasks in 'Done' for more than a week
 archiveDoneTasks()
 window.setInterval(archiveDoneTasks, 3600000)
-// Get gitHub issues
+// Get GitHub issues
 git.getIssues()
 window.setInterval(git.getIssues, 1000000)
 
@@ -145,6 +151,7 @@ function saveStacks () {
 function buildStack (id, title, index, url) {
   const isDefault = id.substring(0, 6) === stackPrefix
   const stackClass = isDefault ? 'stack' : 'git-stack'
+  const itemType = isDefault ? 'Task' : 'Issue'
   const dragDrop = isDefault ? ' ondrop="drop(event)" ondragover="allowDrop(event)"' : ''
   const addTaskBtn = isDefault ? `" href="#task-modal" data-toggle="modal" data-stack-id="${id}" data-type-id="new"` : ` add-issue" data-url="${url}"`
   let addStackBtn = id === 'stack-do' ? '' : '<div class="stack-add fas fa-caret-square-left" data-toggle="tooltip" title="Insert Stack" onclick="addNewStackClick(event)"></div>'
@@ -157,7 +164,9 @@ function buildStack (id, title, index, url) {
                       <div class="header stack-header" contenteditable="${isDefault}" onclick="document.execCommand('selectAll',false,null)" oncontextmenu="event.preventDefault(); event.stopPropagation();">${title}</div>
                       ${removeStackBtn}
                       <div class="box"></div>
-                      <div class="footer fas fa-plus fa-2x${addTaskBtn}></div>
+                      <span data-toggle="tooltip" title="Add ${itemType}" style="justify-self: right;">
+                        <div class="footer fas fa-plus fa-2x${addTaskBtn}></div>
+                      <span>
                     </div>`
   $('.stack-host').append(stackHtml)
   $(`#${id}`).on('contextmenu', () => {
@@ -177,7 +186,9 @@ function buildStack (id, title, index, url) {
   $('.stack-host').on('mouseleave', () => {
     $(`#context-menu-${id}`).removeClass('show').hide().css({ width: '0px' })
   })
-  if (!isDefault) { $('#git-button').addClass('menu-item-toggled') }
+  if (!isDefault) {
+    $('#git-button').show().addClass('menu-item-toggled')
+  }
 }
 
 // Stack add for git issues
@@ -384,6 +395,8 @@ window.toggleAgeMenu = () => {
 // Task menu commands; Export all tasks
 window.exportTasksMenu = () => {
   tasks.exportTasks()
+  exportStacks()
+  exportRepos()
 }
 
 // Task menu commands; Import all tasks
@@ -402,10 +415,34 @@ window.setThemeMenu = (themeId) => {
   setTheme(themeId)
 }
 
-// Load Settings modal
-function loadSettingsModal () {
-  $('#collapse-general, #collapse-gitHub, #collapse-rally, #collapse-serviceNow').collapse('hide')
-  $('#settings-modal').modal('show')
+// Exports all stacks to file to desktop
+// TODO: prompt for location
+function exportStacks () {
+  const JSONexport = localStorage.getItem('stackList')
+  fs.writeFile(`${desktopPath}/moby_stack_export_${Date.now()}.txt`, JSONexport, err => {
+    if (err) {
+      alert('An error occured during the export ' + err.message)
+      return
+    }
+    alert('The export has completed succesfully and is located on your desktop')
+  })
+}
+
+// Exports all stacks to file to desktop
+// TODO: prompt for location
+function exportRepos () {
+  if (git.repoList.length) {
+    const JSONexport = JSON.stringify(git.repoList)
+    fs.writeFile(`${desktopPath}/moby_repo_export_${Date.now()}.txt`, JSONexport, err => {
+      if (err) {
+        alert('An error occured during the export ' + err.message)
+        return
+      }
+      alert('The export has completed succesfully and is located on your desktop')
+    })
+  } else {
+    alert('Nothing to export')
+  }
 }
 
 // Set theme
@@ -474,10 +511,10 @@ function loadTaskModal (type, stack) {
     let subtaskHTML = ''
     if (getTask.Subtasks && getTask.Subtasks.length > 0) {
       getTask.Subtasks.forEach((subtask) => {
-        const checked = subtask.Checked === true ? 'fa-check-square subtask-checked' : 'fa-square subtask-unchecked'
-        subtaskHTML += `<div class="subtask-edit-host" id="${subtask.SubtaskId}">
-                          <div class="fas subtask-checkbox ${checked}"></div>
-                          <label class="subtask-label" contenteditable="true">${subtask.Text}</label>
+        const checked = subtask.Checked === true ? 'fa-check-square check-checked' : 'fa-square check-unchecked'
+        subtaskHTML += `<div class="check-modal-host" id="${subtask.SubtaskId}">
+                          <div class="fas check-checkbox ${checked}"></div>
+                          <label class="check-label" contenteditable="true">${subtask.Text}</label>
                         </div>`
       })
     }
@@ -665,9 +702,9 @@ ipcRenderer.on('update-tags', () => {
 // Add new subtask event
 // eslint-disable-next-line no-unused-vars
 const addNewSubtask = () => {
-  const newSubtask = `<div class="subtask-edit-host">
-                        <div class="fas fa-square subtask-checkbox subtask-unchecked"></div>
-                        <label class="subtask-label" contenteditable="true">New Subtask</label>
+  const newSubtask = `<div class="check-modal-host">
+                        <div class="fas fa-square check-checkbox check-unchecked"></div>
+                        <label class="check-label" contenteditable="true">New Subtask</label>
                       </div>`
   $('#subtask-edit-box').append(newSubtask)
   $('#subtask-edit-box').children().last().children('label').last().focus()
@@ -675,24 +712,24 @@ const addNewSubtask = () => {
 }
 
 // Subtask remove in edit modal
-$(document).on('contextmenu', '.subtask-checkbox', (e) => {
-  $(e.currentTarget).closest('.subtask-edit-host').remove()
+$(document).on('contextmenu', '.check-checkbox', (e) => {
+  $(e.currentTarget).closest('.check-modal-host').remove()
 })
 
 // Subtask css class and array update
 function setSubtaskCheck (element) {
-  element.hasClass('subtask-unchecked') ? element.removeClass('fa-square subtask-unchecked').addClass('fa-check-square subtask-checked') : element.removeClass('fa-check-square subtask-checked').addClass('fa-square subtask-unchecked')
-  tasks.updateSubtaskCheck(element.closest('.card').prop('id'), element.parent().prop('id'), element.hasClass('subtask-checked'))
+  element.hasClass('check-unchecked') ? element.removeClass('fa-square check-unchecked').addClass('fa-check-square check-checked') : element.removeClass('fa-check-square check-checked').addClass('fa-square check-unchecked')
+  tasks.updateSubtaskCheck(element.closest('.card').prop('id'), element.parent().prop('id'), element.hasClass('check-checked'))
 }
 
 // Subtask checkbox click handler
-$(document).on('click', '.subtask-checkbox', (e) => {
+$(document).on('click', '.check-checkbox', (e) => {
   setSubtaskCheck($(e.currentTarget))
 })
 
 // Subtask label click handler
-$(document).on('click', '.subtask-label', (e) => {
-  setSubtaskCheck($(e.currentTarget).parent('.subtask-host').find('.subtask-checkbox'))
+$(document).on('click', '.check-label', (e) => {
+  setSubtaskCheck($(e.currentTarget).parent('.check-host').find('.check-checkbox'))
 })
 
 // Add new stack event
@@ -700,6 +737,51 @@ $(document).on('click', '.subtask-label', (e) => {
 const addNewStackClick = (e) => {
   $(e.currentTarget).tooltip('hide')
   addNewStack($(e.currentTarget).closest('.stack').data('stack-index'))
+}
+
+// Load Settings modal
+function loadSettingsModal () {
+  $('#settings-github-repos').children().remove()
+  $('#collapse-general, #collapse-github, #collapse-rally, #collapse-serviceNow').collapse('hide')
+  let gitHubRepo = ''
+  git.repoList.forEach((repo) => {
+    gitHubRepo += `<div class="github-repo">
+                        <div>${repo.repo}</div>
+                        <small style="margin-left: 5px;">GitHub URL</small>
+                        <input class="form-control form-control-sm text-box" placeholder="Enter GitHub URL" value="${repo.url}">
+                        <small class="text-muted" style="margin-left: 5px;">This is the home location of the repo</small>
+                        <br>
+                        <small style="margin-left: 5px;">User Name</small>
+                        <input class="form-control form-control-sm text-box" placeholder="Enter User Name" value="${repo.user}">
+                        <small class="text-muted" style="margin-left: 5px;">Your user name on the related GitHub instance</small>
+                        <br>
+                        <small style="margin-left: 5px;">Personal Access Token</small>
+                        <input class="form-control form-control-sm text-box" placeholder="Enter Token" value="${repo.auth}">
+                        <small class="text-muted" style="margin-left: 5px;">Not required but you may be throttled. Click here to obtain one</small>
+                      </div>`
+  })
+  $('#settings-github-repos').append(gitHubRepo)
+  $('#settings-modal').modal('show')
+}
+
+// Add new GitHub repo
+// eslint-disable-next-line no-unused-vars
+const addNewGitHub = () => {
+  const newGitHubRepo = `<div class="github-repo">
+                          <div>New Repo</div>
+                          <small style="margin-left: 5px;">GitHub URL</small>
+                          <input class="form-control form-control-sm" placeholder="Enter GitHub URL">
+                          <small class="text-muted" style="margin-left: 5px;">This is the home location of the repo</small>
+                          <br>
+                          <small style="margin-left: 5px;">User Name</small>
+                          <input class="form-control form-control-sm" placeholder="Enter User Name">
+                          <small class="text-muted" style="margin-left: 5px;">Your user name on the related GitHub instance</small>
+                          <br>
+                          <small style="margin-left: 5px;">Personal Access Token</small>
+                          <input class="form-control form-control-sm" placeholder="Enter Token">
+                          <small class="text-muted" style="margin-left: 5px;">Not required but you may be throttled. Click here to obtain one</small>
+                        </div>`
+  $('#settings-github-repos').append(newGitHubRepo)
 }
 
 // Color toggle event

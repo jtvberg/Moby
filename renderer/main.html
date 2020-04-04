@@ -22,7 +22,7 @@
           <div class="menu-item fas fa-calendar fa-2x" data-toggle="tooltip" title="Scheduled Tasks"></div>
         </span>
         <div class="menu-item fas fa-tags fa-2x" id="tags-button" style="font-size: 150%;" data-toggle="tooltip" title="Toggle Tags" onclick="toggleTags(event)"></div>
-        <div class="menu-item fab fa-github fa-2x" id="git-button" data-toggle="tooltip" title="Toggle GitHub Issues" onclick="toggleIssues(event)"></div>
+        <div class="menu-item fab fa-github fa-2x" id="git-button" style="display: none;" data-toggle="tooltip" title="Toggle GitHub Issues" onclick="toggleIssues(event)"></div>
         <div class="menu-item fas fa-expand-arrows-alt fa-2x" data-toggle="tooltip" title="Expand All" onclick="expandAll(event)"></div>
         <div class="menu-item fas fa-compress-arrows-alt fa-2x" data-toggle="tooltip" title="Collapse All" onclick="collapseAll(event)"></div>
         <div class="menu-item fas fa-sign-out-alt fa-2x" data-toggle="tooltip" title="Exit" onclick="exit(event)"></div>
@@ -56,13 +56,13 @@
           <div class="modal-body">
             <form id="task-form">
               <div class="form-group">
-                <input class="form-control" id="task-title" placeholder="Title">
+                <input class="form-control text-box" id="task-title" placeholder="Title">
               </div>
               <div class="form-group">
-                <textarea class="form-control" id="task-detail" placeholder="Detail"></textarea>
+                <textarea class="form-control text-box" id="task-detail" placeholder="Detail"></textarea>
               </div>
               <div class="form-group">
-                <select class="form-control form-control-sm" id="task-stack">
+                <select class="form-control form-control-sm text-box" id="task-stack">
                 </select>
               </div>
               <div class="form-group">
@@ -87,13 +87,13 @@
               </div>
               <div class="form-group" id="panel-subtasks">
                 <label for="subtask-edit-box">Subtasks</label>
-                <div class="fas fa-plus-square add-subtask" onclick="addNewSubtask(event)"></div>
+                <div class="fas fa-plus-square add-subtask" data-toggle="tooltip" title="Add Subtask" onclick="addNewSubtask(event)"></div>
                 <small class="text-muted" style="margin-left: 5px;">Right-click checkbox to delete</small>
                 <div class="subtask-box" id="subtask-edit-box"></div>
               </div>
               <div class="form-group" id="panel-tags">
                 <label for="tag-edit-box">Tags</label>
-                <div class="fas fa-plus-square add-tag" onclick="addNewTag(event)"></div>
+                <div class="fas fa-plus-square add-tag" data-toggle="tooltip" title="Add Tag" onclick="addNewTag(event)"></div>
                 <small class="text-muted" style="margin-left: 5px;">Right-click existing tag to delete</small>
                 <div class="tag-box" id="tag-edit-box"></div>
               </div>
@@ -269,7 +269,7 @@
     </div>
 
     <div id="settings-modal" class="modal fade" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
+      <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="settings-modal-title">Settings</h5>
@@ -279,62 +279,79 @@
           </div>
           <div class="modal-body">
             <form id="settings-form">
-              <div class="panel-group" id="panel-general">
-                <div class="panel">
-                  <div class="panel-header">
-                    <a class="collapsed" data-toggle="collapse" data-target="#collapse-general">
-                      <i class="fa fa-chevron-down"></i>
-                      General Settings
-                    </a>
-                  </div>
-                  <div class="panel-body">
-                    <div id="collapse-general" class="collapse" data-parent="#panel-general">
-                      <label>Thing</label>
+              <div class="form-group">
+                <div class="panel-group" id="panel-general">
+                  <div class="panel">
+                    <div class="panel-header">
+                      <a class="collapsed" data-toggle="collapse" data-target="#collapse-general">
+                        <i class="fa fa-chevron-down"></i>
+                        General Settings
+                      </a>
+                    </div>
+                    <div class="panel-body">
+                      <div id="collapse-general" class="collapse settings-group" data-parent="#panel-general">
+                        <div class="check-modal-host">
+                          <div class="fas fa-square check-checkbox check-unchecked"></div>
+                          <label class="check-label" contenteditable="true">Card Color Glyphs</label>
+                        </div>
+                        <div class="check-modal-host">
+                          <div class="fas fa-square check-checkbox check-unchecked"></div>
+                          <label class="check-label" contenteditable="true">Aging Default On</label>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="panel-group" id="panel-gitHub">
-                <div class="panel">
-                  <div class="panel-header">
-                    <a class="collapsed" data-toggle="collapse" data-target="#collapse-gitHub">
-                      <i class="fa fa-chevron-down"></i>
-                      GitHub Integration
-                    </a>
-                  </div>
-                  <div class="panel-body">
-                    <div id="collapse-gitHub" class="collapse" data-parent="#panel-gitHub">
-                      <label>Thing</label>
+              <div class="form-group">
+                <div class="panel-group" id="panel-github">
+                  <div class="panel">
+                    <div class="panel-header">
+                      <a class="collapsed" data-toggle="collapse" data-target="#collapse-github">
+                        <i class="fa fa-chevron-down"></i>
+                        GitHub Integration
+                      </a>
+                    </div>
+                    <div class="panel-body">
+                      <div id="collapse-github" class="collapse settings-github-group" data-parent="#panel-github">
+                        <label>Repos</label>
+                        <div class="fas fa-plus-square add-github" data-toggle="tooltip" title="Add Repo" onclick="addNewGitHub(event)"></div>
+                        <div id="settings-github-repos"></div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="panel-group" id="panel-rally">
-                <div class="panel">
-                  <div class="panel-header">
-                    <a class="collapsed" data-toggle="collapse" data-target="#collapse-rally">
-                      <i class="fa fa-chevron-down"></i>
-                      Rally Integration
-                    </a>
-                  </div>
-                  <div class="panel-body">
-                    <div id="collapse-rally" class="collapse" data-parent="#panel-rally">
-                      <label>Thing</label>
+              <div class="form-group">
+                <div class="panel-group" id="panel-rally">
+                  <div class="panel">
+                    <div class="panel-header">
+                      <a class="collapsed" data-toggle="collapse" data-target="#collapse-rally">
+                        <i class="fa fa-chevron-down"></i>
+                        Rally Integration
+                      </a>
+                    </div>
+                    <div class="panel-body">
+                      <div id="collapse-rally" class="collapse" data-parent="#panel-rally">
+                        <label>Thing</label>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="panel-group" id="panel-serviceNow">
-                <div class="panel">
-                  <div class="panel-header">
-                    <a class="collapsed" data-toggle="collapse" data-target="#collapse-serviceNow">
-                      <i class="fa fa-chevron-down"></i>
-                      ServiceNow Integration
-                    </a>
-                  </div>
-                  <div class="panel-body">
-                    <div id="collapse-serviceNow" class="collapse" data-parent="#panel-serviceNow">
-                      <label>Thing</label>
+              <div class="form-group">
+                <div class="panel-group" id="panel-serviceNow">
+                  <div class="panel">
+                    <div class="panel-header">
+                      <a class="collapsed" data-toggle="collapse" data-target="#collapse-serviceNow">
+                        <i class="fa fa-chevron-down"></i>
+                        ServiceNow Integration
+                      </a>
+                    </div>
+                    <div class="panel-body">
+                      <div id="collapse-serviceNow" class="collapse" data-parent="#panel-serviceNow">
+                        <label>Thing</label>
+                      </div>
                     </div>
                   </div>
                 </div>

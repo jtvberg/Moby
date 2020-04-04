@@ -93,27 +93,32 @@ if (process.platform === 'darwin') {
         role: 'about'
       },
       {
-        label: 'Settings',
-        click () { window.settingsMenu() }
-      },
-      {
-        label: 'Theme',
+        label: 'Preferences',
         submenu: [
           {
-            label: 'Defaut',
-            click () { window.setThemeMenu('default') }
+            label: 'Settings',
+            click () { window.settingsMenu() }
           },
           {
-            label: 'Dark',
-            click () { window.setThemeMenu('dark') }
-          },
-          {
-            label: 'Light',
-            click () { window.setThemeMenu('light') }
-          },
-          {
-            label: 'Steve',
-            click () { window.setThemeMenu('steve') }
+            label: 'Theme',
+            submenu: [
+              {
+                label: 'Defaut',
+                click () { window.setThemeMenu('default') }
+              },
+              {
+                label: 'Dark',
+                click () { window.setThemeMenu('dark') }
+              },
+              {
+                label: 'Light',
+                click () { window.setThemeMenu('light') }
+              },
+              {
+                label: 'Steve',
+                click () { window.setThemeMenu('steve') }
+              }
+            ]
           }
         ]
       },

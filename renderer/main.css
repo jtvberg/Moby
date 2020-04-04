@@ -411,8 +411,8 @@ body {
 
 .cloud-tags {
   border-radius: 3px;
-  margin: 1px;
-  padding: 2px 5px;
+  margin: 2px;
+  padding: 1px 5px;
   -webkit-app-region: no-drag;
   background-color: var(--tag-background);
   color: var(--tag-color);
@@ -448,6 +448,8 @@ body {
   margin-left: 5px;
 }
 
+.add-github:hover,
+.add-subtask:hover,
 .add-tag:hover {
   color: var(--highlight)
 }
@@ -456,38 +458,62 @@ body {
   margin-bottom: 5px;
 }
 
-.subtask-checkbox {
-  grid-column: 1;
-  margin-top: 3px;
-}
-
-.subtask-checkbox:hover {
-  color: var(--highlight)
-}
-
-.subtask-label {
-  grid-column: 2;
-  margin-bottom: 1px;
-}
-
-.subtask-checked {
-  color: var(--checked);
-}
-
-.subtask-unchecked {
-  color: var(--gray);
-}
-
-.subtask-edit-host {
+.check-modal-host {
   display: grid;
   grid-template-columns: 18px 1fr 3px;
 }
 
-.subtask-host {
+.check-host {
   display: grid;
   grid-template-columns: 12px 1fr 3px;
 }
 
+.check-checkbox {
+  grid-column: 1;
+  margin-top: 3px;
+}
+
+.check-checkbox:hover {
+  color: var(--highlight)
+}
+
+.check-label {
+  grid-column: 2;
+  margin-bottom: 1px;
+}
+
+.check-checked {
+  color: var(--checked);
+}
+
+.check-unchecked {
+  color: var(--gray);
+}
+
 a {
   cursor: pointer;
+}
+
+.settings-group {
+  margin-left: 30px;
+  font-size: calc(var(--font-base-size) - 10%);
+}
+
+.settings-github-group {
+  margin-left: 30px;
+}
+
+.text-box {
+  background-color: var(--background1);
+  border-width: 0px !important;
+  color: var(--light);
+}
+
+.github-repo {
+  border-color: var(--background1) !important;
+  border-width: 1px !important;
+  border: solid;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px;
 }

@@ -12,16 +12,16 @@ exports.issueList = []
 exports.getIssues = () => {
   if (this.repoList.length > 0) {
     this.repoList.forEach((repo) => {
-      const octokit = new Octokit({ auth: repo.auth })
+      const octokit = new Octokit({ auth: repo.Auth })
       octokit.paginate('GET /repos/:owner/:repo/issues', {
-        baseUrl: repo.baseUrl,
-        owner: repo.owner,
-        repo: repo.repo
+        baseUrl: repo.BaseUrl,
+        owner: repo.Owner,
+        repo: repo.Repo
       }).then(issues => {
         issues.forEach((issue) => {
           this.issueList.push({
-            stack: `#git-stack-${repo.owner}-${repo.repo}`,
-            user: repo.user,
+            stack: `#git-stack-${repo.Owner}-${repo.Repo}`,
+            user: repo.User,
             issueOjb: issue
           })
         })
@@ -29,11 +29,6 @@ exports.getIssues = () => {
       })
     })
   }
-}
-
-// Clear issues from stacks
-exports.clearIssues = (stack) => {
-  $(stack).find('.box').children().remove()
 }
 
 // Track tag list

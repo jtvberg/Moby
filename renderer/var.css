@@ -35,3 +35,21 @@
 .color-5 {
   background-color: var(--green);
 }
+
+.text-box {
+  background-color: var(--background1);
+  border-width: 0px !important;
+  color: var(--light);
+}
+
+.text-box:focus {
+  background-color: var(--background1);
+  border-width: 0px !important;
+  color: var(--light);
+}
+
+.text-box:disabled {
+  background-color: var(--background2);
+  border-width: 0px !important;
+  color: var(--light);
+}

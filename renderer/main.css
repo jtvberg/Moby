@@ -461,6 +461,7 @@ body {
 .check-modal-host {
   display: grid;
   grid-template-columns: 18px 1fr 3px;
+  grid-template-rows: 1fr auto;
 }
 
 .check-host {
@@ -470,6 +471,7 @@ body {
 
 .check-checkbox {
   grid-column: 1;
+  grid-row: 1;
   margin-top: 3px;
 }
 
@@ -479,7 +481,15 @@ body {
 
 .check-label {
   grid-column: 2;
+  grid-row: 1;
   margin-bottom: 1px;
+}
+
+.check-description {
+  grid-column-start: 1;
+  grid-column-end: 3;
+  grid-row: 2;
+  margin-bottom: 7px;
 }
 
 .check-checked {
@@ -501,12 +511,6 @@ a {
 
 .settings-github-group {
   margin-left: 30px;
-}
-
-.text-box {
-  background-color: var(--background1);
-  border-width: 0px !important;
-  color: var(--light);
 }
 
 .github-repo {

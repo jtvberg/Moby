@@ -78,7 +78,7 @@ function getStacks () {
   }
   if (git.repoList.length > 0) {
     git.repoList.forEach((repo) => {
-      buildStack(`git-stack-${repo.owner}-${repo.repo}`, repo.repo, index, repo.url)
+      buildStack(`git-stack-${repo.Owner}-${repo.Repo}`, repo.Repo, index, repo.Url)
       index++
     })
   }
@@ -487,7 +487,7 @@ function loadTaskModal (type, stack) {
     $('#task-modal-title').html('New Task')
     $('form').get(0).reset()
     $('#task-stack').val(stack)
-    $('#choose-days').prop('disabled', true)
+    enableRecur()
   } else {
     $('#task-modal-title').html('Edit Task')
     const getTask = tasks.taskList.find(task => task.TaskId === window.activeTask)
@@ -532,6 +532,7 @@ function loadTaskModal (type, stack) {
       $('#check-sat').prop('checked', getTask.WeekDay.includes(6))
     }
     $(`input[name=radio-recur][value=${getTask.MonthDay}]`).prop('checked', true)
+    enableRecur(!$('#radio-once').is(':checked'))
   }
 }
 
@@ -559,23 +560,32 @@ $('#task-detail').on('focus mouseenter', function () {
   }
 })
 
+// Double clikc on card opens edit modal
+$('.card').dblclick((e) => {
+  $(e.currentTarget).find('#edit-button').click()
+})
+
 // Recurrence elements enable logic
-function enableRecur () {
-  $('#choose-days').prop('disabled', false)
-  $('#count-select').prop('disabled', false)
-  $('#recur-count').removeClass('disabled-form-label')
+function enableRecur (enable) {
+  if (enable) {
+    $('#choose-days').show()
+    $('#count-select').show()
+    $('#recur-count').show()
+  } else {
+    $('#choose-days').hide()
+    $('#count-select').val(1).hide()
+    $(':checkbox').prop('checked', false)
+    $('#recur-count').hide()
+  }
 }
 
 // Active radio button change events
 $('#radio-weekly, #radio-biWeekly, #radio-triWeekly, #radio-monthly').click(() => {
-  enableRecur()
+  enableRecur(true)
 })
 
 $('#radio-once').click(() => {
-  $('#choose-days').prop('disabled', true)
-  $('#count-select').val(1).prop('disabled', true)
-  $(':checkbox').prop('checked', false)
-  $('#recur-count').addClass('disabled-form-label')
+  enableRecur()
 })
 
 // Task modal submit event
@@ -739,26 +749,39 @@ const addNewStackClick = (e) => {
   addNewStack($(e.currentTarget).closest('.stack').data('stack-index'))
 }
 
+const buildRepoItem = (repo) => {
+  const repoTitle = repo ? repo.Repo : 'New Repo'
+  const repoUrl = repo ? repo.Url : ''
+  const repoUser = repo ? repo.User : ''
+  const repoAuth = repo ? repo.Auth : ''
+  const repoItem = `<div class="github-repo">
+                      <div>${repoTitle}</div>
+                      <small style="margin-left: 5px;">GitHub URL</small>
+                      <input class="form-control form-control-sm text-box" placeholder="Enter GitHub URL" value="${repoUrl}">
+                      <small class="text-muted" style="margin-left: 5px;">This is the home location of the repo</small>
+                      <div class="form-row"">
+                        <div class="form-group col-md-4">
+                          <small style="margin-left: 5px;">User Name</small>
+                          <input class="form-control form-control-sm text-box" placeholder="Enter User Name" value="${repoUser}">
+                          <small class="text-muted" style="margin-left: 5px;">Your user name on this GitHub instance</small>
+                        </div>
+                        <div class="form-group col-md-8">
+                          <small style="margin-left: 5px;">Personal Access Token</small>
+                          <input class="form-control form-control-sm text-box" placeholder="Enter Token" value="${repoAuth}">
+                          <small class="text-muted" style="margin-left: 5px;">Not required but you may be throttled. Click here to obtain one</small>
+                        </div>
+                      </div>
+                    </div>`
+  return repoItem
+}
+
 // Load Settings modal
 function loadSettingsModal () {
   $('#settings-github-repos').children().remove()
   $('#collapse-general, #collapse-github, #collapse-rally, #collapse-serviceNow').collapse('hide')
   let gitHubRepo = ''
   git.repoList.forEach((repo) => {
-    gitHubRepo += `<div class="github-repo">
-                        <div>${repo.repo}</div>
-                        <small style="margin-left: 5px;">GitHub URL</small>
-                        <input class="form-control form-control-sm text-box" placeholder="Enter GitHub URL" value="${repo.url}">
-                        <small class="text-muted" style="margin-left: 5px;">This is the home location of the repo</small>
-                        <br>
-                        <small style="margin-left: 5px;">User Name</small>
-                        <input class="form-control form-control-sm text-box" placeholder="Enter User Name" value="${repo.user}">
-                        <small class="text-muted" style="margin-left: 5px;">Your user name on the related GitHub instance</small>
-                        <br>
-                        <small style="margin-left: 5px;">Personal Access Token</small>
-                        <input class="form-control form-control-sm text-box" placeholder="Enter Token" value="${repo.auth}">
-                        <small class="text-muted" style="margin-left: 5px;">Not required but you may be throttled. Click here to obtain one</small>
-                      </div>`
+    gitHubRepo += buildRepoItem(repo)
   })
   $('#settings-github-repos').append(gitHubRepo)
   $('#settings-modal').modal('show')
@@ -767,21 +790,7 @@ function loadSettingsModal () {
 // Add new GitHub repo
 // eslint-disable-next-line no-unused-vars
 const addNewGitHub = () => {
-  const newGitHubRepo = `<div class="github-repo">
-                          <div>New Repo</div>
-                          <small style="margin-left: 5px;">GitHub URL</small>
-                          <input class="form-control form-control-sm" placeholder="Enter GitHub URL">
-                          <small class="text-muted" style="margin-left: 5px;">This is the home location of the repo</small>
-                          <br>
-                          <small style="margin-left: 5px;">User Name</small>
-                          <input class="form-control form-control-sm" placeholder="Enter User Name">
-                          <small class="text-muted" style="margin-left: 5px;">Your user name on the related GitHub instance</small>
-                          <br>
-                          <small style="margin-left: 5px;">Personal Access Token</small>
-                          <input class="form-control form-control-sm" placeholder="Enter Token">
-                          <small class="text-muted" style="margin-left: 5px;">Not required but you may be throttled. Click here to obtain one</small>
-                        </div>`
-  $('#settings-github-repos').append(newGitHubRepo)
+  $('#settings-github-repos').append(buildRepoItem)
 }
 
 // Color toggle event

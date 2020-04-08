@@ -10,26 +10,10 @@ ipcRenderer.on('desktop-path', (e, data) => {
 })
 
 // Track taskList with array
-exports.taskList = updateTaskListModel() // JSON.parse(localStorage.getItem('taskList')) || []
+exports.taskList = JSON.parse(localStorage.getItem('taskList')) || []
 
 // Track tag list
 exports.tagList = []
-
-// Went and changed the model and need to fix it function
-function updateTaskListModel () {
-  const rl = localStorage.getItem('taskList') || null
-  if (rl) {
-    const tl = JSON.parse(rl.replace(/TaskStatus/g, 'TaskStack').replace(/TaskTheme/g, 'TaskColor').replace(/StatusDate/g, 'StackDate')) || []
-    tl.forEach(task => {
-      if ('UpdateTimestamp' in task) { } else {
-        task.UpdateTimestamp = task.StackDate
-      }
-    })
-    localStorage.setItem('taskList', JSON.stringify(tl))
-    return tl
-  }
-  return []
-}
 
 // Save taskList to localstorage
 exports.saveTasks = () => {
@@ -355,9 +339,7 @@ exports.importTasks = () => {
       return
     }
     try {
-      // Convert old import file to new model nonsense
-      const tl = data.toString().replace(/TaskStatus/g, 'TaskStack').replace(/TaskTheme/g, 'TaskColor').replace(/StatusDate/g, 'StackDate')
-      const JSONimport = JSON.parse(tl)
+      const JSONimport = JSON.parse(data)
       if (JSONimport.length) {
         let i = 0
         JSONimport.forEach(task => {

@@ -1,7 +1,8 @@
 // Modules and variable definition
 const { ipcRenderer, shell } = require('electron')
+const settings = require('./settings')
 const tasks = require('./tasks')
-const git = require('./gitHub.js')
+const git = require('./gitHub')
 const fs = require('fs')
 require('bootstrap/js/dist/modal')
 require('./menu.js')
@@ -26,6 +27,9 @@ const ctb = new customTitlebar.Titlebar({
   icon: './res/moby_icon.png'
 })
 
+// Apply settings
+applySettings()
+
 // Load stacks
 getStacks()
 
@@ -49,20 +53,17 @@ ipcRenderer.on('send-issues', () => {
   loadTagCloud()
 })
 
-// Went and changed the model and need to fix it function
-function updateStackkListModel () {
-  const rl = localStorage.getItem('stackList') || null
-  if (rl) {
-    const tl = JSON.parse(rl.replace(/stackId/g, 'StackId').replace(/stackTitle/g, 'StackTitle')) || []
-    localStorage.setItem('stackList', JSON.stringify(tl))
-    return tl
-  }
-  return []
+// Import settings from local storate and apply
+function applySettings () {
+  setTheme(settings.mobySettings.Theme)
+  toggleCheck($('#settings-glyphs'), settings.mobySettings.ColorGlyphs)
+  toggleCheck($('#settings-aging'), settings.mobySettings.Aging)
+  toggleCheck($('#settings-dblclick'), settings.mobySettings.DblClick)
+  toggleCheck($('#settings-github-toggle'), settings.mobySettings.GhToggle)
 }
 
 // Stack load; if non defined use default
 function getStacks () {
-  updateStackkListModel()
   const stacks = JSON.parse(localStorage.getItem('stackList')) || []
   $('.stack-host').children('.stack, .git-stack').remove()
   let index = 0
@@ -395,8 +396,8 @@ window.toggleAgeMenu = () => {
 // Task menu commands; Export all tasks
 window.exportTasksMenu = () => {
   tasks.exportTasks()
-  exportStacks()
-  exportRepos()
+  // exportStacks()
+  // exportRepos()
 }
 
 // Task menu commands; Import all tasks
@@ -405,7 +406,7 @@ window.importTasksMenu = () => {
   loadTagCloud() // TODO: this doesn't work
 }
 
-// Theme menu commands
+// Settings menu commands
 window.settingsMenu = () => {
   loadSettingsModal()
 }
@@ -455,6 +456,7 @@ function setTheme (themeId) {
     $('#moby-bg-img').prop('src', 'res/moby_bg.png')
   }
   updateTitileBar()
+  settings.saveSettings(themeId)
   ipcRenderer.send('theme-change', themeId)
 }
 
@@ -728,8 +730,18 @@ $(document).on('contextmenu', '.check-checkbox', (e) => {
 
 // Subtask css class and array update
 function setSubtaskCheck (element) {
-  element.hasClass('check-unchecked') ? element.removeClass('fa-square check-unchecked').addClass('fa-check-square check-checked') : element.removeClass('fa-check-square check-checked').addClass('fa-square check-unchecked')
+  toggleCheck(element)
   tasks.updateSubtaskCheck(element.closest('.card').prop('id'), element.parent().prop('id'), element.hasClass('check-checked'))
+}
+
+function toggleCheck (element, check) {
+  if (check === true) {
+    element.removeClass('fa-square check-unchecked').addClass('fa-check-square check-checked')
+  } else if (check === false) {
+    element.removeClass('fa-check-square check-checked').addClass('fa-square check-unchecked')
+  } else {
+    element.hasClass('check-unchecked') ? element.removeClass('fa-square check-unchecked').addClass('fa-check-square check-checked') : element.removeClass('fa-check-square check-checked').addClass('fa-square check-unchecked')
+  }
 }
 
 // Subtask checkbox click handler
@@ -756,19 +768,26 @@ const buildRepoItem = (repo) => {
   const repoAuth = repo ? repo.Auth : ''
   const repoItem = `<div class="github-repo">
                       <div>${repoTitle}</div>
-                      <small style="margin-left: 5px;">GitHub URL</small>
+                      <small class="left-margin">GitHub URL</small>
                       <input class="form-control form-control-sm text-box" placeholder="Enter GitHub URL" value="${repoUrl}">
-                      <small class="text-muted" style="margin-left: 5px;">This is the home location of the repo</small>
-                      <div class="form-row"">
+                      <small class="text-muted left-margin">This is the home location of the repo</small>
+                      <div class="form-row">
                         <div class="form-group col-md-4">
-                          <small style="margin-left: 5px;">User Name</small>
+                          <small class="left-margin">User Name</small>
                           <input class="form-control form-control-sm text-box" placeholder="Enter User Name" value="${repoUser}">
-                          <small class="text-muted" style="margin-left: 5px;">Your user name on this GitHub instance</small>
+                          <small class="text-muted left-margin">Your user name on this GitHub instance</small>
                         </div>
                         <div class="form-group col-md-8">
-                          <small style="margin-left: 5px;">Personal Access Token</small>
+                          <small class="left-margin">Personal Access Token</small>
                           <input class="form-control form-control-sm text-box" placeholder="Enter Token" value="${repoAuth}">
-                          <small class="text-muted" style="margin-left: 5px;">Not required but you may be throttled. Click here to obtain one</small>
+                          <small class="text-muted left-margin">Not required but you may be throttled. Click here to obtain one</small>
+                        </div>
+                      </div>
+                      <div class="form-row left-margin" style="margin-top: -10px;">
+                        <div class="check-modal-host">
+                          <small class="fas fa-square check-checkbox check-unchecked" id="settings-github-assigned"></small>
+                          <small class="check-label small-check">Assigned to me</small>
+                          <small class="text-muted check-description">Checked will only show issues that have been assigned to you</small>
                         </div>
                       </div>
                     </div>`
@@ -786,6 +805,11 @@ function loadSettingsModal () {
   $('#settings-github-repos').append(gitHubRepo)
   $('#settings-modal').modal('show')
 }
+
+$('#settings-button').click(() => {
+  $('#settings-modal').modal('hide')
+  settings.saveSettings()
+})
 
 // Add new GitHub repo
 // eslint-disable-next-line no-unused-vars

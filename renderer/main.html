@@ -291,17 +291,17 @@
                     <div class="panel-body">
                       <div id="collapse-general" class="collapse settings-group" data-parent="#panel-general">
                         <div class="check-modal-host">
-                          <div class="fas fa-square check-checkbox check-unchecked"></div>
+                          <div class="fas fa-square check-checkbox check-unchecked" id="settings-glyphs"></div>
                           <label class="check-label">Card Color Glyphs</label>
                           <small class="text-muted check-description">Adds glyphs to the task cards to delineate color</small>
                         </div>
                         <div class="check-modal-host">
-                          <div class="fas fa-square check-checkbox check-unchecked"></div>
+                          <div class="fas fa-square check-checkbox check-unchecked" id="settings-aging"></div>
                           <label class="check-label">Aging Default On</label>
                           <small class="text-muted check-description">Aging numbers will be shown by default</small>
                         </div>
                         <div class="check-modal-host">
-                          <div class="fas fa-square check-checkbox check-unchecked"></div>
+                          <div class="fas fa-square check-checkbox check-unchecked" id="settings-dblclick"></div>
                           <label class="check-label">Open Task on Double-click</label>
                           <small class="text-muted check-description">Opens the edit modal when double-clicking on a task card</small>
                         </div>
@@ -321,6 +321,11 @@
                     </div>
                     <div class="panel-body">
                       <div id="collapse-github" class="collapse settings-github-group" data-parent="#panel-github">
+                        <div class="check-modal-host">
+                          <div class="fas fa-square check-checkbox check-unchecked" id="settings-github-toggle"></div>
+                          <label class="check-label">GitHub Toggle Button Behavior</label>
+                          <small class="text-muted check-description">Checked will show only GitHub issues when toggled on. Default behavior will add the stacks to the current view. </small>
+                        </div>
                         <label>Repos</label>
                         <div class="fas fa-plus-square add-github" data-toggle="tooltip" title="Add Repo" onclick="addNewGitHub(event)"></div>
                         <div id="settings-github-repos"></div>
@@ -329,7 +334,7 @@
                   </div>
                 </div>
               </div>
-              <div class="form-group">
+              <div hidden class="form-group">
                 <div class="panel-group" id="panel-rally">
                   <div class="panel">
                     <div class="panel-header">
@@ -346,7 +351,7 @@
                   </div>
                 </div>
               </div>
-              <div class="form-group">
+              <div hidden class="form-group">
                 <div class="panel-group" id="panel-serviceNow">
                   <div class="panel">
                     <div class="panel-header">
@@ -367,7 +372,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button id="submit-button" type="button" class="btn btn-primary">Save Changes</button>
+            <button id="settings-button" type="button" class="btn btn-primary">Save Changes</button>
           </div>
         </div>
       </div>

@@ -1,0 +1,80 @@
+[
+    {
+        "stacks": [
+            {
+                "StackId": "stack-do",
+                "StackTitle": "Backlog"
+            },
+            {
+                "StackId": "stack-1585594207483",
+                "StackTitle": "Next"
+            },
+            {
+                "StackId": "stack-doing",
+                "StackTitle": "Doing"
+            },
+            {
+                "StackId": "stack-1583428381855",
+                "StackTitle": "Tracking"
+            },
+            {
+                "StackId": "stack-done",
+                "StackTitle": "Done"
+            }
+        ]
+    },
+    {
+        "tasks": [
+            {
+                "TaskStack": "stack-archive",
+                "TaskId": 1563376777788,
+                "TaskTitle": "Make Slide for Data Tracker",
+                "TaskDetail": "",
+                "TaskColor": 1,
+                "Tags": [],
+                "StackDate": 1575661861471,
+                "UpdateTimestamp": 1575661861471
+            },
+            {
+                "TaskStack": "stack-archive",
+                "TaskId": 1563473678769,
+                "TaskTitle": "PACS Data In-take",
+                "TaskDetail": "Finish out the task list and publish",
+                "TaskColor": 1,
+                "Tags": [],
+                "StackDate": 1572884579564,
+                "UpdateTimestamp": 1572884579564
+            }
+        ]
+    },
+    {
+        "settings": {
+            "Theme": "default",
+            "ColorGlyphs": false,
+            "Aging": false,
+            "DblClick": false
+        }
+    },
+    {
+        "repos": [
+            {
+                "User": "jtvberg",
+                "Owner": "jtvberg",
+                "Repo": "Moby",
+                "Url": "https://github.com/jtvberg/Moby",
+                "BaseUrl": "https://api.github.com",
+                "Auth": "bdec9fecfce01676de6953318287c7f94665edac",
+                "AssignedOnly": false
+            },
+            {
+                "User": "jvanden3",
+                "Owner": "paymentintegrity",
+                "Repo": "Clinical-Leads",
+                "Url": "https://github.optum.com/paymentintegrity/Clinical-Leads",
+                "BaseUrl": "https://github.optum.com/api/v3",
+                "Auth": "d47bf429371210354bc206d690e7e0f0215d7bbe",
+                "AssignedOnly": true
+            }
+        ]
+    }
+]

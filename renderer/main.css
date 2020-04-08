@@ -504,13 +504,10 @@ a {
   cursor: pointer;
 }
 
+.settings-github-group,
 .settings-group {
   margin-left: 30px;
   font-size: calc(var(--font-base-size) - 10%);
-}
-
-.settings-github-group {
-  margin-left: 30px;
 }
 
 .github-repo {
@@ -520,4 +517,12 @@ a {
   border-radius: 5px;
   padding: 5px;
   margin: 5px;
+}
+
+.left-margin {
+  margin-left: 5px;
+}
+
+.small-check {
+  margin-left: -4px;
 }

@@ -1,5 +1,5 @@
 // Modules and variable definition
-const { ipcRenderer, shell } = require('electron')
+const { ipcRenderer, shell, remote } = require('electron')
 const settings = require('./settings')
 const tasks = require('./tasks')
 const git = require('./gitHub')
@@ -27,9 +27,6 @@ const ctb = new customTitlebar.Titlebar({
   icon: './res/moby_icon.png'
 })
 
-// Apply settings
-applySettings()
-
 // Load stacks
 getStacks()
 
@@ -55,11 +52,66 @@ ipcRenderer.on('send-issues', () => {
 
 // Import settings from local storate and apply
 function applySettings () {
+  // Set theme
   setTheme(settings.mobySettings.Theme)
+  // Set check states on settings modal
   toggleCheck($('#settings-glyphs'), settings.mobySettings.ColorGlyphs)
-  toggleCheck($('#settings-aging'), settings.mobySettings.Aging)
   toggleCheck($('#settings-dblclick'), settings.mobySettings.DblClick)
   toggleCheck($('#settings-github-toggle'), settings.mobySettings.GhToggle)
+  toggleCheck($('#settings-aging'), settings.mobySettings.Aging)
+  // Toggle Aging
+  remote.Menu.getApplicationMenu().getMenuItemById('menu-task-age').checked = settings.mobySettings.Aging
+  toggleAge(settings.mobySettings.Aging)
+  // Toggle Color Glyphs
+  toggleColorGlyphs(settings.mobySettings.ColorGlyphs)
+  // Toggle Task Double-click to edit
+  toggleDblClickTask(settings.mobySettings.DblClick)
+  // Toggle Github stack behavior
+  toggleGhStacksView(settings.mobySettings.GhToggle)
+}
+
+// Toggle aging on tasks handler
+function toggleAge (check) {
+  if (check === true) {
+    $('.aging').show()
+  } else if (check === false) {
+    $('.aging').hide()
+  } else {
+    ($('.aging').is(':visible')) ? $('.aging').hide() : $('.aging').show()
+  }
+}
+
+// Toggle color glyphs on tasks handler
+function toggleColorGlyphs (check) {
+  if (check === true) {
+    $('.aging').show()
+  } else if (check === false) {
+    $('.aging').hide()
+  } else {
+    ($('.aging').is(':visible')) ? $('.aging').hide() : $('.aging').show()
+  }
+}
+
+// Toggle double-click to edit task
+function toggleDblClickTask (check) {
+  if (check === true) {
+    $('.aging').show()
+  } else if (check === false) {
+    $('.aging').hide()
+  } else {
+    ($('.aging').is(':visible')) ? $('.aging').hide() : $('.aging').show()
+  }
+}
+
+// Toggle GitHub issues view
+function toggleGhStacksView (check) {
+  if (check === true) {
+    $('.aging').show()
+  } else if (check === false) {
+    $('.aging').hide()
+  } else {
+    ($('.aging').is(':visible')) ? $('.aging').hide() : $('.aging').show()
+  }
 }
 
 // Stack load; if non defined use default
@@ -87,6 +139,7 @@ function getStacks () {
   tasks.taskList.forEach(tasks.addTask)
   git.issueList.forEach(git.addIssue)
   loadTagCloud()
+  applySettings()
 }
 
 // Load tag list UI
@@ -106,6 +159,7 @@ $(document).on('click', '.cloud-tags', (e) => {
   $('.tags').filter(function () {
     return $(this).text() === $(e.currentTarget).text()
   }).closest('.card').addClass('card-tagged').find('.collapse').collapse('show')
+  console.log(settings.mobySettings.Aging)
 })
 
 // Show tasks with tag
@@ -414,6 +468,7 @@ window.settingsMenu = () => {
 // Theme menu commands
 window.setThemeMenu = (themeId) => {
   setTheme(themeId)
+  settings.saveSettings(themeId)
 }
 
 // Exports all stacks to file to desktop
@@ -456,7 +511,6 @@ function setTheme (themeId) {
     $('#moby-bg-img').prop('src', 'res/moby_bg.png')
   }
   updateTitileBar()
-  settings.saveSettings(themeId)
   ipcRenderer.send('theme-change', themeId)
 }
 
@@ -635,15 +689,6 @@ const expandAll = () => {
 // Collapse all tasks event
 const collapseAll = () => {
   $('.collapse').collapse('hide')
-}
-
-// Toggle aging on tasks event
-const toggleAge = () => {
-  if ($('.aging').is(':visible')) {
-    $('.aging').hide()
-  } else {
-    $('.aging').show()
-  }
 }
 
 // Autofill, autosize new tag

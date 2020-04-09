@@ -1,4 +1,6 @@
 
+exports.mobySettings = JSON.parse(localStorage.getItem('mobySettings'))
+
 exports.defaultSettings = () => {
   const settings = {
     Theme: 'default',
@@ -10,8 +12,6 @@ exports.defaultSettings = () => {
   localStorage.setItem('mobySettings', JSON.stringify(settings))
 }
 
-exports.mobySettings = JSON.parse(localStorage.getItem('mobySettings'))
-
 exports.saveSettings = (themeId) => {
   const theme = themeId || this.mobySettings.Theme
   const settings = {
@@ -22,4 +22,5 @@ exports.saveSettings = (themeId) => {
     GhToggle: $('#settings-github-toggle').hasClass('check-checked')
   }
   localStorage.setItem('mobySettings', JSON.stringify(settings))
+  console.log(settings)
 }

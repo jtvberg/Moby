@@ -206,7 +206,7 @@ exports.addTask = (task, highlight) => {
     })
   }
   // Check if age is toggled
-  const showAge = $('.aging').is(':visible') ? 'style' : 'style="display: none;"'
+  const showAge = $('.aging').is(':visible') ? '' : 'style="display: none;"'
   // Check if archived and update archive tooltip to delete
   const archDelete = task.TaskStack === 'stack-archive' ? 'Delete' : 'Archive'
   // Check if clone to highlight

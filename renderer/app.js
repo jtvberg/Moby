@@ -64,10 +64,6 @@ function applySettings () {
   toggleAge(settings.mobySettings.Aging)
   // Toggle Color Glyphs
   toggleColorGlyphs(settings.mobySettings.ColorGlyphs)
-  // Toggle Task Double-click to edit
-  toggleDblClickTask(settings.mobySettings.DblClick)
-  // Toggle Github stack behavior
-  toggleGhStacksView(settings.mobySettings.GhToggle)
 }
 
 // Toggle aging on tasks handler
@@ -83,28 +79,6 @@ function toggleAge (check) {
 
 // Toggle color glyphs on tasks handler
 function toggleColorGlyphs (check) {
-  if (check === true) {
-    $('.aging').show()
-  } else if (check === false) {
-    $('.aging').hide()
-  } else {
-    ($('.aging').is(':visible')) ? $('.aging').hide() : $('.aging').show()
-  }
-}
-
-// Toggle double-click to edit task
-function toggleDblClickTask (check) {
-  if (check === true) {
-    $('.aging').show()
-  } else if (check === false) {
-    $('.aging').hide()
-  } else {
-    ($('.aging').is(':visible')) ? $('.aging').hide() : $('.aging').show()
-  }
-}
-
-// Toggle GitHub issues view
-function toggleGhStacksView (check) {
   if (check === true) {
     $('.aging').show()
   } else if (check === false) {
@@ -242,7 +216,12 @@ function buildStack (id, title, index, url) {
     $(`#context-menu-${id}`).removeClass('show').hide().css({ width: '0px' })
   })
   if (!isDefault) {
-    $('#git-button').show().addClass('menu-item-toggled')
+    $('#git-button').show()
+    if (settings.mobySettings.GhToggle === false) {
+      $('#git-button').addClass('menu-item-toggled')
+    } else {
+      $('.git-stack').hide(0)
+    }
   }
 }
 
@@ -741,11 +720,12 @@ const toggleTags = () => {
 // eslint-disable-next-line no-unused-vars
 const toggleIssues = () => {
   if ($('.git-stack').is(':visible')) {
-    // $('.stack').show()
+    $('.stack').show()
     $('.git-stack').hide(0)
     $('#git-button').removeClass('menu-item-toggled')
   } else {
-    // $('.stack').hide(0)
+    console.log(settings.mobySettings.GhToggle)
+    if (settings.mobySettings.GhToggle === true) { $('.stack').hide(0) }
     $('.git-stack').show()
     $('#git-button').addClass('menu-item-toggled')
   }

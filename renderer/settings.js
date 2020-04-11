@@ -22,5 +22,4 @@ exports.saveSettings = (themeId) => {
     GhToggle: $('#settings-github-toggle').hasClass('check-checked')
   }
   localStorage.setItem('mobySettings', JSON.stringify(settings))
-  console.log(settings)
 }

@@ -161,8 +161,10 @@ exports.submitTask = (taskType) => {
 exports.cloneTask = (taskId, taskStack) => {
   if (taskId) {
     const getTask = this.taskList.find(task => task.TaskId === taskId)
-    const newTaskStack = taskStack !== undefined ? taskStack : getTask.StartDate > Date.now() ? 'stack-schedule' : 'stack-do'
     const now = Date.now()
+    const newTaskStack = taskStack !== undefined ? taskStack : getTask.StartDate > now ? 'stack-schedule' : 'stack-do'
+    const subtasks = getTask.Subtasks
+    subtasks.forEach((sub) => { sub.Checked = false })
     const newTaskData = {
       TaskStack: newTaskStack,
       TaskId: now,
@@ -174,7 +176,7 @@ exports.cloneTask = (taskId, taskStack) => {
       WeekDay: getTask.WeekDay,
       MonthDay: getTask.MonthDay,
       Tags: getTask.Tags,
-      Subtasks: getTask.Subtasks,
+      Subtasks: subtasks,
       StackDate: now,
       UpdateTimestamp: now
     }

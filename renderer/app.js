@@ -80,11 +80,15 @@ function toggleAge (check) {
 // Toggle color glyphs on tasks handler
 function toggleColorGlyphs (check) {
   if (check === true) {
-    $('.aging').show()
+    $('.color-box').hide()
+    $('.color-glyph-edit').show()
+    $('.color-glyph').show()
   } else if (check === false) {
-    $('.aging').hide()
+    $('.color-glyph').hide()
+    $('.color-glyph-edit').hide()
+    $('.color-box').show()
   } else {
-    ($('.aging').is(':visible')) ? $('.aging').hide() : $('.aging').show()
+    ($('.color-glyph').is(':visible')) ? $('.color-glyph').hide() : $('.color-glyph').show()
   }
 }
 
@@ -133,7 +137,6 @@ $(document).on('click', '.cloud-tags', (e) => {
   $('.tags').filter(function () {
     return $(this).text() === $(e.currentTarget).text()
   }).closest('.card').addClass('card-tagged').find('.collapse').collapse('show')
-  console.log(settings.mobySettings.Aging)
 })
 
 // Show tasks with tag
@@ -522,6 +525,8 @@ function loadTaskModal (type, stack) {
     $('#task-modal-title').html('New Task')
     $('form').get(0).reset()
     $('#task-stack').val(stack)
+    const dt = new Date(Date.now())
+    $('#start-date').val(dt.getMonth() + 1 + '/' + dt.getDate() + '/' + dt.getFullYear())
     enableRecur()
   } else {
     $('#task-modal-title').html('Edit Task')
@@ -724,7 +729,6 @@ const toggleIssues = () => {
     $('.git-stack').hide(0)
     $('#git-button').removeClass('menu-item-toggled')
   } else {
-    console.log(settings.mobySettings.GhToggle)
     if (settings.mobySettings.GhToggle === true) { $('.stack').hide(0) }
     $('.git-stack').show()
     $('#git-button').addClass('menu-item-toggled')
@@ -834,6 +838,8 @@ function loadSettingsModal () {
 $('#settings-button').click(() => {
   $('#settings-modal').modal('hide')
   settings.saveSettings()
+  toggleColorGlyphs(settings.mobySettings.ColorGlyphs)
+  // TODO: send to quick
 })
 
 // Add new GitHub repo

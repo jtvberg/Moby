@@ -10,7 +10,22 @@ ipcRenderer.on('desktop-path', (e, data) => {
 })
 
 // Track taskList with array
-exports.taskList = JSON.parse(localStorage.getItem('taskList')) || []
+exports.taskList = updateTaskListModel() // JSON.parse(localStorage.getItem('taskList')) || []
+
+// Function for when I change something about the data model
+function updateTaskListModel () {
+  const rl = localStorage.getItem('taskList') || null
+  if (rl) {
+    const tl = JSON.parse(rl) || []
+    tl.forEach(task => {
+      task.TaskColor = parseInt(task.TaskColor)
+      task.MonthDay = parseInt(task.MonthDay)
+    })
+    localStorage.setItem('taskList', JSON.stringify(tl))
+    return tl
+  }
+  return []
+}
 
 // Track tag list
 exports.tagList = []
@@ -70,14 +85,15 @@ exports.updateTimestamp = (taskId) => {
 
 // Task submittal from modal
 exports.submitTask = (taskType) => {
+  const now = Date.now()
   const taskTitle = $('#task-title').val() || 'No Title'
   const taskDetail = $('#task-detail').val()
-  const taskColor = $('#choose-color input:radio:checked').val() || 1
+  const taskColor = parseInt($('#choose-color input:radio:checked').val()) || 1
   let taskStack = $('#task-stack').val()
-  const taskId = Date.now()
-  let count = $('#count-select').val() || 1
-  const startDate = new Date(Date.parse($('#start-date').val()) || Date.now()).getTime()
-  const monthDay = $('#choose-recur input:radio:checked').val() || 0
+  const taskId = now
+  let count = parseInt($('#count-select').val()) || 1
+  const startDate = new Date(Date.parse($('#start-date').val()) || now).getTime()
+  const monthDay = parseInt($('#choose-recur input:radio:checked').val()) || 0
   const weekDay = []
   const updateTimestamp = taskId
   const stackDate = taskId
@@ -91,7 +107,7 @@ exports.submitTask = (taskType) => {
   let offset = 1
   $('#subtask-edit-box > .check-modal-host').each(function () {
     const newSubtaskData = {
-      SubtaskId: Date.now() + offset,
+      SubtaskId: now + offset,
       Checked: $(this).find('.check-checkbox').hasClass('check-checked'),
       Text: $(this).find('.check-label').text()
     }
@@ -109,7 +125,7 @@ exports.submitTask = (taskType) => {
     weekDay.push(new Date(startDate).getDay())
   }
   count *= weekDay.length > 0 ? weekDay.length : 1
-  if (startDate > Date.now()) {
+  if (startDate > now) {
     taskStack = 'stack-schedule'
   }
   const newTaskData = {
@@ -207,6 +223,27 @@ exports.addTask = (task, highlight) => {
                       </div>`
     })
   }
+  // Color glyphs
+  let colorGlyph = ''
+  switch (task.TaskColor) {
+    case 1:
+      colorGlyph = 'cloud'
+      break
+    case 2:
+      colorGlyph = 'heart'
+      break
+    case 3:
+      colorGlyph = 'crown'
+      break
+    case 4:
+      colorGlyph = 'carrot'
+      break
+    case 5:
+      colorGlyph = 'tree'
+      break
+  }
+  // Show color glyphs
+  const showColorGlyphs = $('.color-glyph').is(':visible') ? '' : 'style="display: none;"'
   // Check if age is toggled
   const showAge = $('.aging').is(':visible') ? '' : 'style="display: none;"'
   // Check if archived and update archive tooltip to delete
@@ -216,6 +253,7 @@ exports.addTask = (task, highlight) => {
   // Generate task card html
   const taskHtml = `<div class="card ${taskHighlight} color-${task.TaskColor}" id="${task.TaskId}" draggable="true" ondragstart="drag(event)">
                       <div style="clear: both" id="b${task.TaskId}" data-toggle="collapse" data-target="#c${task.TaskId}">
+                        <span class="color-glyph fas fa-${colorGlyph}" ${showColorGlyphs}></span>
                         <span class="title">${task.TaskTitle}</span>
                         <span class="aging" id="a${task.TaskId}" ${showAge}></span>
                       </div>

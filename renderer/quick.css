@@ -43,6 +43,11 @@ body {
   margin-left: -4px;
 }
 
+.color-glyph-edit {
+  position: relative;
+  top: -12px;
+}
+
 .quick-arrow {
   margin: 0;
   padding: 0;

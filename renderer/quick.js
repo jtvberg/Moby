@@ -26,6 +26,7 @@ function quickTask (type) {
 ipcRenderer.on('quick-reset', (e) => {
   $('#quick-task-form').trigger('reset')
   $('#quick-task-detail').height('48px')
+  toggleColorGlyphs(false)
   $('#color-option-1').closest('.btn').button('toggle')
   $('#submit-button-group').children('.submit-button').remove()
   const stacks = JSON.parse(localStorage.getItem('stackList'))
@@ -38,6 +39,15 @@ ipcRenderer.on('quick-reset', (e) => {
   })
   $('#quick-task-title').focus()
 })
+
+// Toggle color glyphs on tasks handler
+function toggleColorGlyphs (check) {
+  if (check === true) {
+    $('.color-glyph-edit').show()
+  } else {
+    $('.color-glyph-edit').hide()
+  }
+}
 
 // Make quick submit buttons against available stacks
 function makeSubmitButton (stackId, stackTitle) {

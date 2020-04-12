@@ -93,3 +93,18 @@ exports.addIssue = (issue) => {
     $('[data-toggle="tooltip"]').tooltip({ delay: { show: 1500, hide: 100 } })
   })
 }
+
+// Add repo
+exports.addRepo = (repo) => {
+
+}
+
+// Remove repo
+exports.removeRepo = (repo) => {
+  
+}
+
+// Update repo
+exports.updateeRepo = (repo) => {
+  
+}

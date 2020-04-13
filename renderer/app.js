@@ -795,6 +795,8 @@ const buildRepoItem = (repo) => {
   const repoUrl = repo ? repo.Url : ''
   const repoUser = repo ? repo.User : ''
   const repoAuth = repo ? repo.Auth : ''
+  console.log(repo.AssignToMe)
+  const repoAssigned = repo && repo.AssignToMe === true ? 'fa-check-square check-checked' : 'fa-square check-unchecked'
   const repoItem = `<div class="github-repo">
                       <div>${repoTitle}</div>
                       <small class="left-margin">GitHub URL</small>
@@ -814,7 +816,7 @@ const buildRepoItem = (repo) => {
                       </div>
                       <div class="form-row left-margin" style="margin-top: -10px;">
                         <div class="check-modal-host">
-                          <small class="fas fa-square check-checkbox check-unchecked" id="settings-github-assigned"></small>
+                          <small class="fas ${repoAssigned} check-checkbox" id="settings-github-assigned"></small>
                           <small class="check-label small-check">Assigned to me</small>
                           <small class="text-muted check-description">Checked will only show issues that have been assigned to you</small>
                         </div>

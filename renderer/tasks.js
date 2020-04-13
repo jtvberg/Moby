@@ -180,7 +180,7 @@ exports.cloneTask = (taskId, taskStack) => {
     const now = Date.now()
     const newTaskStack = taskStack !== undefined ? taskStack : getTask.StartDate > now ? 'stack-schedule' : 'stack-do'
     const subtasks = getTask.Subtasks
-    subtasks.forEach((sub) => { sub.Checked = false })
+    if (subtasks) { subtasks.forEach((sub) => { sub.Checked = false }) }
     const newTaskData = {
       TaskStack: newTaskStack,
       TaskId: now,
@@ -348,7 +348,6 @@ exports.restoreTask = (taskId) => {
 }
 
 // Exports all tasks to file to desktop
-// TODO: prompt for location
 exports.exportTasks = () => {
   if (this.taskList.length) {
     const JSONexport = JSON.stringify(this.taskList)

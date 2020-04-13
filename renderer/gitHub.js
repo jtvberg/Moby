@@ -94,17 +94,25 @@ exports.addIssue = (issue) => {
   })
 }
 
+// Save taskList to localstorage
+exports.saveRepos = () => {
+  localStorage.setItem('repoList', JSON.stringify(this.repoList))
+}
+
 // Add repo
-exports.addRepo = (repo) => {
-
-}
-
-// Remove repo
-exports.removeRepo = (repo) => {
-  
-}
-
-// Update repo
-exports.updateeRepo = (repo) => {
-  
+exports.submitRepo = (repoId) => {
+  const url = new URL($(`#surl${repoId}`).val())
+  const newRepo = {
+    RepoId: repoId,
+    AssingToMe: $(`#satm${repoId}`).hasClass('check-checked'),
+    Auth: $(`#sat${repoId}`).val(),
+    BaseUrl: url.hostname.toLowerCase().includes('optum') ? 'https://github.optum.com/api/v3' : 'https://api.github.com',
+    Owner: url.pathname.split('/')[1],
+    Repo: url.pathname.split('/')[2],
+    Url: $(`#surl${repoId}`).val(),
+    User: $(`#sun${repoId}`).val()
+  }
+  this.repoList = this.repoList.filter(repo => repo.RepoId !== repoId)
+  this.repoList.push(newRepo)
+  this.saveRepos()
 }

@@ -371,7 +371,6 @@ function archiveDoneTasks () {
     tasks.taskList.forEach((item) => {
       if (item.TaskStack === 'stack-done' && item.StackDate < Date.now() - (86400000 * 7)) {
         tasks.archiveTask(item.TaskId)
-        // TODO: add flag for delete on archive
       }
     })
   }
@@ -439,7 +438,7 @@ window.exportTasksMenu = () => {
 // Task menu commands; Import all tasks
 window.importTasksMenu = () => {
   tasks.importTasks()
-  loadTagCloud() // TODO: this doesn't work
+  loadTagCloud()
 }
 
 // Settings menu commands
@@ -454,7 +453,6 @@ window.setThemeMenu = (themeId) => {
 }
 
 // Exports all stacks to file to desktop
-// TODO: prompt for location
 function exportStacks () {
   const JSONexport = localStorage.getItem('stackList')
   fs.writeFile(`${desktopPath}/moby_stack_export_${Date.now()}.txt`, JSONexport, err => {
@@ -466,8 +464,7 @@ function exportStacks () {
   })
 }
 
-// Exports all stacks to file to desktop
-// TODO: prompt for location
+// Exports all repos to file to desktop
 function exportRepos () {
   if (git.repoList.length) {
     const JSONexport = JSON.stringify(git.repoList)
@@ -729,7 +726,11 @@ const toggleIssues = () => {
     $('.git-stack').hide(0)
     $('#git-button').removeClass('menu-item-toggled')
   } else {
-    if (settings.mobySettings.GhToggle === true) { $('.stack').hide(0) }
+    if (settings.mobySettings.GhToggle === true) {
+      $('.stack').hide(0)
+      $('#stack-archive').show()
+      $('#stack-schedule').show()
+    }
     $('.git-stack').show()
     $('#git-button').addClass('menu-item-toggled')
   }
@@ -795,28 +796,28 @@ const buildRepoItem = (repo) => {
   const repoUrl = repo ? repo.Url : ''
   const repoUser = repo ? repo.User : ''
   const repoAuth = repo ? repo.Auth : ''
-  console.log(repo.AssignToMe)
+  const repoId = repo ? repo.RepoId : Date.now()
   const repoAssigned = repo && repo.AssignToMe === true ? 'fa-check-square check-checked' : 'fa-square check-unchecked'
-  const repoItem = `<div class="github-repo">
+  const repoItem = `<div class="github-repo" data-repo-id="${repoId}">
                       <div>${repoTitle}</div>
                       <small class="left-margin">GitHub URL</small>
-                      <input class="form-control form-control-sm text-box" placeholder="Enter GitHub URL" value="${repoUrl}">
+                      <input class="form-control form-control-sm text-box" id="surl${repoId}" placeholder="Enter GitHub URL" value="${repoUrl}">
                       <small class="text-muted left-margin">This is the home location of the repo</small>
                       <div class="form-row">
                         <div class="form-group col-md-4">
                           <small class="left-margin">User Name</small>
-                          <input class="form-control form-control-sm text-box" placeholder="Enter User Name" value="${repoUser}">
+                          <input class="form-control form-control-sm text-box" id="sun${repoId}" placeholder="Enter User Name" value="${repoUser}">
                           <small class="text-muted left-margin">Your user name on this GitHub instance</small>
                         </div>
                         <div class="form-group col-md-8">
                           <small class="left-margin">Personal Access Token</small>
-                          <input class="form-control form-control-sm text-box" placeholder="Enter Token" value="${repoAuth}">
+                          <input class="form-control form-control-sm text-box" id="sat${repoId}" placeholder="Enter Token" value="${repoAuth}">
                           <small class="text-muted left-margin">Not required but you may be throttled. Click here to obtain one</small>
                         </div>
                       </div>
                       <div class="form-row left-margin" style="margin-top: -10px;">
                         <div class="check-modal-host">
-                          <small class="fas ${repoAssigned} check-checkbox" id="settings-github-assigned"></small>
+                          <small class="fas ${repoAssigned} check-checkbox" id="satm${repoId}"></small>
                           <small class="check-label small-check">Assigned to me</small>
                           <small class="text-muted check-description">Checked will only show issues that have been assigned to you</small>
                         </div>
@@ -839,9 +840,16 @@ function loadSettingsModal () {
 
 $('#settings-button').click(() => {
   $('#settings-modal').modal('hide')
+  // save general settings
   settings.saveSettings()
+  // add/update repos
+  $('.github-repo').each(function () {
+    git.submitRepo($(this).data('repo-id'))
+  })
+  // activate settings
   toggleColorGlyphs(settings.mobySettings.ColorGlyphs)
-  // TODO: send to quick
+  getStacks()
+  git.getIssues()
 })
 
 // Add new GitHub repo

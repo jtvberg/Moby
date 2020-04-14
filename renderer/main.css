@@ -465,6 +465,8 @@ body {
   margin-left: 5px;
 }
 
+.repo-menu-item-deactivate:hover,
+.repo-menu-item-clone:hover,
 .add-github:hover,
 .add-subtask:hover,
 .add-tag:hover {
@@ -542,4 +544,8 @@ a {
 
 .small-check {
   margin-left: -4px;
+}
+
+.repo-menu {
+  float: right;
 }

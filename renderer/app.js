@@ -799,35 +799,50 @@ const buildRepoItem = (repo) => {
   const repoId = repo ? repo.RepoId : Date.now()
   const repoAssigned = repo && repo.AssignToMe === true ? 'fa-check-square check-checked' : 'fa-square check-unchecked'
   const repoItem = `<div class="github-repo" data-repo-id="${repoId}">
+                      <div class="repo-menu">
+                        <div class="repo-menu-item-deactivate fas fa-minus-square" id="deactivate-button-${repoId}" data-toggle="tooltip" title="Deactivate"></div>
+                        <div class="repo-menu-item-clone fas fa-clone" id="clone-button-${repoId}" data-toggle="tooltip" title="Clone Repo"></div>
+                      </div>
                       <div>${repoTitle}</div>
                       <small class="left-margin">GitHub URL</small>
-                      <input class="form-control form-control-sm text-box" id="surl${repoId}" placeholder="Enter GitHub URL" value="${repoUrl}">
+                      <input class="form-control form-control-sm text-box repo-edit" id="surl${repoId}" placeholder="Enter GitHub URL" value="${repoUrl}">
                       <small class="text-muted left-margin">This is the home location of the repo</small>
                       <div class="form-row">
                         <div class="form-group col-md-4">
                           <small class="left-margin">User Name</small>
-                          <input class="form-control form-control-sm text-box" id="sun${repoId}" placeholder="Enter User Name" value="${repoUser}">
+                          <input class="form-control form-control-sm text-box repo-edit" id="sun${repoId}" placeholder="Enter User Name" value="${repoUser}">
                           <small class="text-muted left-margin">Your user name on this GitHub instance</small>
                         </div>
                         <div class="form-group col-md-8">
                           <small class="left-margin">Personal Access Token</small>
-                          <input class="form-control form-control-sm text-box" id="sat${repoId}" placeholder="Enter Token" value="${repoAuth}">
+                          <input class="form-control form-control-sm text-box repo-edit" id="sat${repoId}" placeholder="Enter Token" value="${repoAuth}">
                           <small class="text-muted left-margin">Not required but you may be throttled. Click here to obtain one</small>
                         </div>
                       </div>
                       <div class="form-row left-margin" style="margin-top: -10px;">
                         <div class="check-modal-host">
-                          <small class="fas ${repoAssigned} check-checkbox" id="satm${repoId}"></small>
+                          <small class="fas ${repoAssigned} check-checkbox repo-edit" id="satm${repoId}"></small>
                           <small class="check-label small-check">Assigned to me</small>
                           <small class="text-muted check-description">Checked will only show issues that have been assigned to you</small>
                         </div>
                       </div>
                     </div>`
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip({ delay: { show: 1500, hide: 100 } })
+  })
   return repoItem
 }
 
+$(document).on('click', '.repo-menu-item-clone', (e) => {
+  const newRepo = git.repoList.find(repo => repo.RepoId === $(e.currentTarget).closest('.github-repo').data('repo-id'))
+  newRepo.RepoId = Date.now()
+  console.log(newRepo)
+  $('#settings-github-repos').append(buildRepoItem(newRepo))
+})
+
 // Load Settings modal
 function loadSettingsModal () {
+  repoChange = false
   $('#settings-github-repos').children().remove()
   $('#collapse-general, #collapse-github, #collapse-rally, #collapse-serviceNow').collapse('hide')
   let gitHubRepo = ''
@@ -838,18 +853,29 @@ function loadSettingsModal () {
   $('#settings-modal').modal('show')
 }
 
+// Track for changes in repo entries
+let repoChange = false
+$(document).on('change', '.repo-edit', (e) => {
+  repoChange = true
+  $(e.currentTarget).addClass('text-box-change')
+})
+
+// Save changes button click handler
 $('#settings-button').click(() => {
   $('#settings-modal').modal('hide')
   // save general settings
   settings.saveSettings()
-  // add/update repos
-  $('.github-repo').each(function () {
-    git.submitRepo($(this).data('repo-id'))
-  })
   // activate settings
   toggleColorGlyphs(settings.mobySettings.ColorGlyphs)
-  getStacks()
-  git.getIssues()
+  // add/update repos
+  console.log(repoChange)
+  if (repoChange) {
+    $('.github-repo').each(function () {
+      git.submitRepo($(this).data('repo-id'))
+    })
+    getStacks()
+    git.getIssues()
+  }
 })
 
 // Add new GitHub repo

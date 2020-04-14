@@ -46,18 +46,24 @@
 
 .text-box {
   background-color: var(--background1);
-  border-width: 0px !important;
+  border-width: 0px;
   color: var(--light);
 }
 
 .text-box:focus {
   background-color: var(--background1);
-  border-width: 0px !important;
+  border-width: 0px;
   color: var(--light);
 }
 
 .text-box:disabled {
   background-color: var(--background2);
-  border-width: 0px !important;
+  border-width: 0px;
   color: var(--light);
+}
+
+
+.text-box-change {
+  border-color: var(--highlight);
+  border-width: 2px;
 }

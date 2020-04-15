@@ -218,8 +218,8 @@ exports.addTask = (task, highlight) => {
     task.Subtasks.forEach((subtask) => {
       const checked = subtask.Checked === true ? 'fa-check-square check-checked' : 'fa-square check-unchecked'
       subtaskHTML += `<div class="check-host" id="${subtask.SubtaskId}">
-                        <div class="fas check-checkbox ${checked}"></div>
-                        <label class="check-label">${subtask.Text}</label>
+                        <div class="fas check-checkbox ${checked} check-card-checkbox"></div>
+                        <label class="check-label check-card-label">${subtask.Text}</label>
                       </div>`
     })
   }

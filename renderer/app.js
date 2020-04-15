@@ -54,11 +54,6 @@ ipcRenderer.on('send-issues', () => {
 function applySettings () {
   // Set theme
   setTheme(settings.mobySettings.Theme)
-  // Set check states on settings modal
-  toggleCheck($('#settings-glyphs'), settings.mobySettings.ColorGlyphs)
-  toggleCheck($('#settings-dblclick'), settings.mobySettings.DblClick)
-  toggleCheck($('#settings-github-toggle'), settings.mobySettings.GhToggle)
-  toggleCheck($('#settings-aging'), settings.mobySettings.Aging)
   // Toggle Aging
   remote.Menu.getApplicationMenu().getMenuItemById('menu-task-age').checked = settings.mobySettings.Aging
   toggleAge(settings.mobySettings.Aging)
@@ -109,8 +104,10 @@ function getStacks () {
   }
   if (git.repoList.length > 0) {
     git.repoList.forEach((repo) => {
-      buildStack(`git-stack-${repo.Owner}-${repo.Repo}`, repo.Repo, index, repo.Url)
-      index++
+      if (repo.Active) {
+        buildStack(`git-stack-${repo.Owner}-${repo.Repo}`, repo.Repo, index, repo.Url)
+        index++
+      }
     })
   }
   // Add tasks, issues, tags to the stacks
@@ -745,7 +742,7 @@ ipcRenderer.on('update-tags', () => {
 // eslint-disable-next-line no-unused-vars
 const addNewSubtask = () => {
   const newSubtask = `<div class="check-modal-host">
-                        <div class="fas fa-square check-checkbox check-unchecked"></div>
+                        <div class="fas fa-square check-unchecked check-checkbox"></div>
                         <label class="check-label" contenteditable="true">New Subtask</label>
                       </div>`
   $('#subtask-edit-box').append(newSubtask)
@@ -760,7 +757,6 @@ $(document).on('contextmenu', '.check-checkbox', (e) => {
 
 // Subtask css class and array update
 function setSubtaskCheck (element) {
-  toggleCheck(element)
   tasks.updateSubtaskCheck(element.closest('.card').prop('id'), element.parent().prop('id'), element.hasClass('check-checked'))
 }
 
@@ -774,13 +770,23 @@ function toggleCheck (element, check) {
   }
 }
 
-// Subtask checkbox click handler
+// Checkbox click handler
 $(document).on('click', '.check-checkbox', (e) => {
+  toggleCheck($(e.currentTarget))
+})
+
+// Checkbox label click handler
+$(document).on('click', '.check-label', (e) => {
+  toggleCheck($(e.currentTarget).parent('.check-host, .repo-check').find('.check-checkbox'))
+})
+
+// Subtask checkbox click handler
+$(document).on('click', '.check-card-checkbox', (e) => {
   setSubtaskCheck($(e.currentTarget))
 })
 
-// Subtask label click handler
-$(document).on('click', '.check-label', (e) => {
+// Subtask checkbox label click handler
+$(document).on('click', '.check-card-label', (e) => {
   setSubtaskCheck($(e.currentTarget).parent('.check-host').find('.check-checkbox'))
 })
 
@@ -797,16 +803,23 @@ const buildRepoItem = (repo) => {
   const repoUser = repo ? repo.User : ''
   const repoAuth = repo ? repo.Auth : ''
   const repoId = repo ? repo.RepoId : Date.now()
+  const repoActive = repo ? repo.Active : true
+  const repoActiveCheck = repoActive ? 'fa-check-square check-checked' : 'fa-square check-unchecked'
   const repoAssigned = repo && repo.AssignToMe === true ? 'fa-check-square check-checked' : 'fa-square check-unchecked'
   const repoItem = `<div class="github-repo" data-repo-id="${repoId}">
                       <div class="repo-menu">
-                        <div class="repo-menu-item-deactivate fas fa-minus-square" id="deactivate-button-${repoId}" data-toggle="tooltip" title="Deactivate"></div>
+                        <div class="repo-menu-item-delete fas fa-minus-square" id="delete-button-${repoId}" data-toggle="tooltip" title="Delete Repo"></div>
                         <div class="repo-menu-item-clone fas fa-clone" id="clone-button-${repoId}" data-toggle="tooltip" title="Clone Repo"></div>
                       </div>
-                      <div>${repoTitle}</div>
-                      <small class="left-margin">GitHub URL</small>
-                      <input class="form-control form-control-sm text-box repo-edit" id="surl${repoId}" placeholder="Enter GitHub URL" value="${repoUrl}">
-                      <small class="text-muted left-margin">This is the home location of the repo</small>
+                      <div class="check-modal-host repo-check">
+                        <div class="repo-menu-item-deactivate fas ${repoActiveCheck} check-checkbox" id="deactivate-button-${repoId}" data-toggle="tooltip" title="Active"></div>
+                        <div class="check-label">${repoTitle}</div>
+                      </div>
+                      <div>
+                        <small class="left-margin">GitHub URL</small>
+                        <input class="form-control form-control-sm text-box repo-edit" id="surl${repoId}" placeholder="Enter GitHub URL" value="${repoUrl}">
+                        <small class="text-muted left-margin">This is the home location of the repo</small>
+                      </div>
                       <div class="form-row">
                         <div class="form-group col-md-4">
                           <small class="left-margin">User Name</small>
@@ -820,10 +833,10 @@ const buildRepoItem = (repo) => {
                         </div>
                       </div>
                       <div class="form-row left-margin" style="margin-top: -10px;">
-                        <div class="check-modal-host">
-                          <small class="fas ${repoAssigned} check-checkbox repo-edit" id="satm${repoId}"></small>
-                          <small class="check-label small-check">Assigned to me</small>
-                          <small class="text-muted check-description">Checked will only show issues that have been assigned to you</small>
+                        <div class="check-modal-host repo-check">
+                          <small class="fas ${repoAssigned} check-checkbox" id="satm${repoId}"></small>
+                          <small class="check-label small-check">Assigned to or Opened by me</small>
+                          <small class="text-muted check-description">Checked will only show issues that have been assigned to or opened by you</small>
                         </div>
                       </div>
                     </div>`
@@ -833,16 +846,22 @@ const buildRepoItem = (repo) => {
   return repoItem
 }
 
+// Clone repo
 $(document).on('click', '.repo-menu-item-clone', (e) => {
   const newRepo = git.repoList.find(repo => repo.RepoId === $(e.currentTarget).closest('.github-repo').data('repo-id'))
   newRepo.RepoId = Date.now()
-  console.log(newRepo)
   $('#settings-github-repos').append(buildRepoItem(newRepo))
 })
 
 // Load Settings modal
 function loadSettingsModal () {
   repoChange = false
+  // Set check states on settings modal
+  toggleCheck($('#settings-glyphs'), settings.mobySettings.ColorGlyphs)
+  toggleCheck($('#settings-dblclick'), settings.mobySettings.DblClick)
+  toggleCheck($('#settings-github-toggle'), settings.mobySettings.GhToggle)
+  toggleCheck($('#settings-aging'), settings.mobySettings.Aging)
+  // Reload repos
   $('#settings-github-repos').children().remove()
   $('#collapse-general, #collapse-github, #collapse-rally, #collapse-serviceNow').collapse('hide')
   let gitHubRepo = ''
@@ -857,7 +876,31 @@ function loadSettingsModal () {
 let repoChange = false
 $(document).on('change', '.repo-edit', (e) => {
   repoChange = true
-  $(e.currentTarget).addClass('text-box-change')
+  $(e.currentTarget).addClass('input-change')
+})
+$(document).on('click', '.repo-check', (e) => {
+  repoChange = true
+})
+
+// Assigned to me checkbox click handler
+$(document).on('click', '.check-card-checkbox', (e) => {
+  repoChange = true
+})
+
+// Assigned to me checkbox label click handler
+$(document).on('click', '.check-card-label', (e) => {
+  repoChange = true
+})
+
+// Deactivate repo
+$(document).on('click', '.repo-menu-item-deactivate', (e) => {
+  repoChange = true
+})
+
+// Deactivate repo
+$(document).on('click', '.repo-menu-item-delete', (e) => {
+  $(e.currentTarget).closest('.github-repo').remove()
+  repoChange = true
 })
 
 // Save changes button click handler
@@ -868,13 +911,12 @@ $('#settings-button').click(() => {
   // activate settings
   toggleColorGlyphs(settings.mobySettings.ColorGlyphs)
   // add/update repos
-  console.log(repoChange)
   if (repoChange) {
+    git.repoList = []
     $('.github-repo').each(function () {
       git.submitRepo($(this).data('repo-id'))
     })
     getStacks()
-    git.getIssues()
   }
 })
 

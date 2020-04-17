@@ -85,6 +85,7 @@ function toggleColorGlyphs (check) {
   } else {
     ($('.color-glyph').is(':visible')) ? $('.color-glyph').hide() : $('.color-glyph').show()
   }
+  ipcRenderer.send('glyph-toggle', check)
 }
 
 // Stack load; if non defined use default
@@ -851,6 +852,7 @@ $(document).on('click', '.repo-menu-item-clone', (e) => {
   const newRepo = git.repoList.find(repo => repo.RepoId === $(e.currentTarget).closest('.github-repo').data('repo-id'))
   newRepo.RepoId = Date.now()
   $('#settings-github-repos').append(buildRepoItem(newRepo))
+  $('.modal-body').animate({ scrollTop: $(document).height() }, 'fast')
 })
 
 // Load Settings modal
@@ -924,6 +926,7 @@ $('#settings-button').click(() => {
 // eslint-disable-next-line no-unused-vars
 const addNewGitHub = () => {
   $('#settings-github-repos').append(buildRepoItem)
+  $('.modal-body').animate({ scrollTop: $(document).height() }, 'fast')
 }
 
 // Color toggle event

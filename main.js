@@ -125,6 +125,11 @@ ipcMain.on('theme-change', (e, data) => {
   quick.webContents.send('quick-theme', data)
 })
 
+// IPC channel to toggle glyphs in quick task
+ipcMain.on('glyph-toggle', (e, data) => {
+  quick.webContents.send('quick-glyph', data)
+})
+
 // IPC channel to maximize window
 ipcMain.on('win-max', () => {
   win.maximize()

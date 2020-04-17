@@ -26,7 +26,6 @@ function quickTask (type) {
 ipcRenderer.on('quick-reset', (e) => {
   $('#quick-task-form').trigger('reset')
   $('#quick-task-detail').height('48px')
-  toggleColorGlyphs(false)
   $('#color-option-1').closest('.btn').button('toggle')
   $('#submit-button-group').children('.submit-button').remove()
   const stacks = JSON.parse(localStorage.getItem('stackList'))
@@ -39,15 +38,6 @@ ipcRenderer.on('quick-reset', (e) => {
   })
   $('#quick-task-title').focus()
 })
-
-// Toggle color glyphs on tasks handler
-function toggleColorGlyphs (check) {
-  if (check === true) {
-    $('.color-glyph-edit').show()
-  } else {
-    $('.color-glyph-edit').hide()
-  }
-}
 
 // Make quick submit buttons against available stacks
 function makeSubmitButton (stackId, stackTitle) {
@@ -78,6 +68,11 @@ ipcRenderer.on('quick-theme', (e, data) => {
   setTheme(data)
 })
 
+// IPC call to set quick menu glyph toggle
+ipcRenderer.on('quick-glyph', (e, data) => {
+  toggleColorGlyphs(data)
+})
+
 // Set theme
 function setTheme (themeId) {
   $('#default').prop('disabled', true)
@@ -85,4 +80,13 @@ function setTheme (themeId) {
   $('#light').prop('disabled', true)
   $('#steve').prop('disabled', true)
   $(`#${themeId}`).prop('disabled', false)
+}
+
+// Toggle color glyphs on tasks handler
+function toggleColorGlyphs (check) {
+  if (check === true) {
+    $('.color-glyph-edit').show()
+  } else {
+    $('.color-glyph-edit').hide()
+  }
 }

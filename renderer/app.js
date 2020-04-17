@@ -52,13 +52,15 @@ ipcRenderer.on('send-issues', () => {
 
 // Import settings from local storate and apply
 function applySettings () {
-  // Set theme
-  setTheme(settings.mobySettings.Theme)
-  // Toggle Aging
-  remote.Menu.getApplicationMenu().getMenuItemById('menu-task-age').checked = settings.mobySettings.Aging
-  toggleAge(settings.mobySettings.Aging)
-  // Toggle Color Glyphs
-  toggleColorGlyphs(settings.mobySettings.ColorGlyphs)
+  if (settings.mobySettings) {
+    // Set theme
+    setTheme(settings.mobySettings.Theme)
+    // Toggle Aging
+    remote.Menu.getApplicationMenu().getMenuItemById('menu-task-age').checked = settings.mobySettings.Aging
+    toggleAge(settings.mobySettings.Aging)
+    // Toggle Color Glyphs
+    toggleColorGlyphs(settings.mobySettings.ColorGlyphs)
+  }
 }
 
 // Toggle aging on tasks handler
@@ -218,10 +220,12 @@ function buildStack (id, title, index, url) {
   })
   if (!isDefault) {
     $('#git-button').show()
-    if (settings.mobySettings.GhToggle === false) {
-      $('#git-button').addClass('menu-item-toggled')
-    } else {
-      $('.git-stack').hide(0)
+    if (settings.mobySettings) {
+      if (settings.mobySettings.GhToggle === false) {
+        $('#git-button').addClass('menu-item-toggled')
+      } else {
+        $('.git-stack').hide(0)
+      }
     }
   }
 }
@@ -426,17 +430,14 @@ window.toggleAgeMenu = () => {
   toggleAge()
 }
 
-// Task menu commands; Export all tasks
-window.exportTasksMenu = () => {
-  tasks.exportTasks()
-  // exportStacks()
-  // exportRepos()
+// Task menu commands; Export all data
+window.exportDataMenu = () => {
+  exportData()
 }
 
-// Task menu commands; Import all tasks
-window.importTasksMenu = () => {
-  tasks.importTasks()
-  loadTagCloud()
+// Task menu commands; Import all data
+window.importDataMenu = () => {
+  importData()
 }
 
 // Settings menu commands
@@ -450,10 +451,16 @@ window.setThemeMenu = (themeId) => {
   settings.saveSettings(themeId)
 }
 
-// Exports all stacks to file to desktop
-function exportStacks () {
-  const JSONexport = localStorage.getItem('stackList')
-  fs.writeFile(`${desktopPath}/moby_stack_export_${Date.now()}.txt`, JSONexport, err => {
+// Export all data
+function exportData () {
+  const JSONexport = {
+    ExportTs: Date.now(),
+    Stacks: JSON.parse(localStorage.getItem('stackList')) || [],
+    Tasks: JSON.parse(localStorage.getItem('taskList')) || [],
+    Settings: JSON.parse(localStorage.getItem('mobySettings')) || [],
+    Repos: JSON.parse(localStorage.getItem('repoList')) || []
+  }
+  fs.writeFile(`${desktopPath}/moby_export_${Date.now()}.txt`, JSON.stringify(JSONexport), err => {
     if (err) {
       alert('An error occured during the export ' + err.message)
       return
@@ -462,20 +469,95 @@ function exportStacks () {
   })
 }
 
-// Exports all repos to file to desktop
-function exportRepos () {
-  if (git.repoList.length) {
-    const JSONexport = JSON.stringify(git.repoList)
-    fs.writeFile(`${desktopPath}/moby_repo_export_${Date.now()}.txt`, JSONexport, err => {
-      if (err) {
-        alert('An error occured during the export ' + err.message)
-        return
+// Import all data
+function importData () {
+  let latestExport = 0
+  const searchString = 'moby_export_'
+  // Find the latest export file by extenstion and suffix
+  fs.readdirSync(desktopPath).filter(file => (file.split('.').pop().toLowerCase() === 'txt') && (file.substring(0, searchString.length) === searchString)).forEach((file) => {
+    latestExport = file.substring(searchString.length, file.length - 4) > latestExport ? file.substring(searchString.length, file.length - 4) : latestExport
+  })
+  // Read in the latest file ignoring dupes by ID (not date or content)
+  fs.readFile(`${desktopPath}/${searchString}${latestExport}.txt`, (err, data) => {
+    let alertString = ''
+    if (err) {
+      alertString += 'An error occured during the import ' + err.message
+      return
+    }
+    try {
+      // Settings import
+      const JSONimport = JSON.parse(data).Settings
+      if (JSONimport) {
+        localStorage.setItem('mobySettings', JSON.stringify(JSONimport))
+        settings.refreshSettings()
+        alertString += 'Settings imported succesfully'
+      } else {
+        alertString += 'No settings found'
       }
-      alert('The export has completed succesfully and is located on your desktop')
-    })
-  } else {
-    alert('Nothing to export')
-  }
+    } catch (err) {
+      alert(err)
+    }
+    try {
+      // Task import
+      const JSONimport = JSON.parse(data).Tasks
+      if (JSONimport) {
+        let i = 0
+        JSONimport.forEach(task => {
+          if (!tasks.taskList.some(e => e.TaskId === task.TaskId)) {
+            tasks.taskList.push(task)
+            i++
+          }
+        })
+        tasks.saveTasks()
+        if (i > 1) {
+          alertString += `\n${i} tasks imported succesfully`
+        } else if (i === 1) {
+          alertString += '\n1 task imported succesfully'
+        } else {
+          alertString += '\nNo tasks found'
+        }
+      } else {
+        alert('\n No tasks found')
+      }
+    } catch (err) {
+      alert(err)
+    }
+    try {
+      // Stack import
+      const JSONimport = JSON.parse(data).Stacks
+      if (JSONimport) {
+        localStorage.setItem('stackList', JSON.stringify(JSONimport))
+        if (JSONimport.length > 1) {
+          alertString += `\n${JSONimport.length} stacks imported succesfully`
+        } else if (JSONimport.length === 1) {
+          alertString += '\n1 stack imported succesfully'
+        }
+      } else {
+        alertString += '\nNo stacks found'
+      }
+    } catch (err) {
+      alert(err)
+    }
+    try {
+      // Repo import
+      const JSONimport = JSON.parse(data).Repos
+      if (JSONimport) {
+        localStorage.setItem('repoList', JSON.stringify(JSONimport))
+        git.refreshRepos()
+        if (JSONimport.length > 1) {
+          alertString += `\n${JSONimport.length} repos imported succesfully`
+        } else if (JSONimport.length === 1) {
+          alertString += '\n1 repo imported succesfully'
+        }
+      } else {
+        alertString += '\nNo repos found'
+      }
+    } catch (err) {
+      alert(err)
+    }
+    alert(alertString)
+    getStacks()
+  })
 }
 
 // Set theme
@@ -724,7 +806,7 @@ const toggleIssues = () => {
     $('.git-stack').hide(0)
     $('#git-button').removeClass('menu-item-toggled')
   } else {
-    if (settings.mobySettings.GhToggle === true) {
+    if (settings.mobySettings && settings.mobySettings.GhToggle === true) {
       $('.stack').hide(0)
       $('#stack-archive').show()
       $('#stack-schedule').show()

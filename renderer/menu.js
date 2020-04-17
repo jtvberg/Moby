@@ -50,17 +50,6 @@ const template = [
         type: 'checkbox',
         accelerator: 'CmdOrCtrl+G',
         click () { window.toggleAgeMenu() }
-      },
-      {
-        type: 'separator'
-      },
-      {
-        label: 'Export Tasks',
-        click () { window.exportTasksMenu() }
-      },
-      {
-        label: 'Import Tasks',
-        click () { window.importTasksMenu() }
       }
     ]
   },
@@ -123,6 +112,17 @@ if (process.platform === 'darwin') {
             ]
           }
         ]
+      },
+      {
+        type: 'separator'
+      },
+      {
+        label: 'Export Data',
+        click () { window.exportDataMenu() }
+      },
+      {
+        label: 'Import Data',
+        click () { window.importDataMenu() }
       },
       {
         type: 'separator'

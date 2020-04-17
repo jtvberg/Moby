@@ -1,6 +1,10 @@
 
 exports.mobySettings = JSON.parse(localStorage.getItem('mobySettings'))
 
+exports.refreshSettings = () => {
+  this.mobySettings = JSON.parse(localStorage.getItem('mobySettings'))
+}
+
 exports.defaultSettings = () => {
   const settings = {
     Theme: 'default',

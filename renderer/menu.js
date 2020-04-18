@@ -46,19 +46,10 @@ const template = [
       },
       {
         label: 'Toggle Task Age',
+        id: 'menu-task-age',
         type: 'checkbox',
+        accelerator: 'CmdOrCtrl+G',
         click () { window.toggleAgeMenu() }
-      },
-      {
-        type: 'separator'
-      },
-      {
-        label: 'Export Tasks',
-        click () { window.exportTasksMenu() }
-      },
-      {
-        label: 'Import Tasks',
-        click () { window.importTasksMenu() }
       }
     ]
   },
@@ -93,25 +84,45 @@ if (process.platform === 'darwin') {
         role: 'about'
       },
       {
-        label: 'Theme',
+        label: 'Preferences',
         submenu: [
           {
-            label: 'Defaut',
-            click () { window.setThemeMenu('default') }
+            label: 'Settings',
+            click () { window.settingsMenu() }
           },
           {
-            label: 'Dark',
-            click () { window.setThemeMenu('dark') }
-          },
-          {
-            label: 'Light',
-            click () { window.setThemeMenu('light') }
-          },
-          {
-            label: 'Steve',
-            click () { window.setThemeMenu('steve') }
+            label: 'Theme',
+            submenu: [
+              {
+                label: 'Defaut',
+                click () { window.setThemeMenu('default') }
+              },
+              {
+                label: 'Dark',
+                click () { window.setThemeMenu('dark') }
+              },
+              {
+                label: 'Light',
+                click () { window.setThemeMenu('light') }
+              },
+              {
+                label: 'Steve',
+                click () { window.setThemeMenu('steve') }
+              }
+            ]
           }
         ]
+      },
+      {
+        type: 'separator'
+      },
+      {
+        label: 'Export Data',
+        click () { window.exportDataMenu() }
+      },
+      {
+        label: 'Import Data',
+        click () { window.importDataMenu() }
       },
       {
         type: 'separator'

@@ -12,7 +12,7 @@ const createWindow = () => {
     width: 1200,
     height: 800,
     minWidth: 320,
-    minHeight: 400,
+    minHeight: 425,
     titleBarStyle: 'hidden',
     frame: false,
     webPreferences: {
@@ -125,6 +125,11 @@ ipcMain.on('theme-change', (e, data) => {
   quick.webContents.send('quick-theme', data)
 })
 
+// IPC channel to toggle glyphs in quick task
+ipcMain.on('glyph-toggle', (e, data) => {
+  quick.webContents.send('quick-glyph', data)
+})
+
 // IPC channel to maximize window
 ipcMain.on('win-max', () => {
   win.maximize()
@@ -138,4 +143,13 @@ ipcMain.on('win-restore', () => {
 // IPC channel to minimize window
 ipcMain.on('win-min', () => {
   win.minimize()
+})
+
+// IPC channel to update tags on task delete
+ipcMain.on('delete-task', () => {
+  win.webContents.send('update-tags')
+})
+
+ipcMain.on('get-issues', () => {
+  win.webContents.send('send-issues')
 })

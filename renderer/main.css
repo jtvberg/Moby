@@ -34,11 +34,11 @@ body {
   z-index: 1000;
 }
 
+.git-stack,
 .stack {
   display: grid;
   grid-row: 1;
   grid-template-rows: 25px 1fr 25px;
-  background-color: var(--opaque);
   border-radius: 5px;
   max-height: 100%;
   padding: 5px 0px;
@@ -48,16 +48,37 @@ body {
   -webkit-app-region: no-drag;
 }
 
+.stack {
+  background-color: var(--opaque);
+}
+
+.git-stack {
+  background-color: var(--trans);
+  justify-self: right;
+  width: -webkit-fill-available;
+}
+
 .header {
   color: var(--light);
   font-size: calc(var(--font-base-size) + 20%);
   font-weight: 500;
   justify-self: center;
   text-align: center;
+  margin-left: 30px;
+  margin-right: 30px;
 }
 
 .stack-add {
   color: var(--trans);
+  display: table;
+  top: 5px;
+  left: 5px;
+  font-size: calc(var(--font-base-size) + 50%);
+  position: absolute;
+}
+
+.git-stack-icon {
+  color: var(--light);
   display: table;
   top: 5px;
   left: 5px;
@@ -118,6 +139,7 @@ body {
   position: fixed;
   padding: 6px;
   bottom: 0px;
+  align-items: center;
 }
 
 .logo {
@@ -152,6 +174,11 @@ body {
   border-color: var(--background1);
   background-color: var(--background2);
   color: var(--light);
+  max-height: calc(100vh - 57px);
+}
+
+.modal-body{
+  overflow-y: auto;
 }
 
 .ddcm {
@@ -219,6 +246,12 @@ body {
 
 .title {
   float: left;
+}
+
+.color-glyph {
+  float: left;
+  margin-top: 4px;
+  margin-right: 2px;
 }
 
 .aging {
@@ -291,6 +324,10 @@ body {
   -webkit-app-region: no-drag;
 }
 
+.menu-item-toggled {
+  color: var(--light)
+}
+
 .color-item {
   padding: 2px 0px 0px 0px;
   border-color: var(--highlight) !important;
@@ -320,6 +357,11 @@ body {
 
 .color-pick-5 {
   color: var(--green);
+}
+
+.color-glyph-edit {
+  position: relative;
+  top: -8px;
 }
 
 .footer:hover,
@@ -386,8 +428,8 @@ body {
 
 .cloud-tags {
   border-radius: 3px;
-  margin: 1px;
-  padding: 2px 5px;
+  margin: 2px;
+  padding: 1px 5px;
   -webkit-app-region: no-drag;
   background-color: var(--tag-background);
   color: var(--tag-color);
@@ -423,6 +465,10 @@ body {
   margin-left: 5px;
 }
 
+.repo-menu-item-delete:hover,
+.repo-menu-item-clone:hover,
+.add-github:hover,
+.add-subtask:hover,
 .add-tag:hover {
   color: var(--highlight)
 }
@@ -431,34 +477,75 @@ body {
   margin-bottom: 5px;
 }
 
-.subtask-checkbox {
+.check-modal-host {
+  display: grid;
+  grid-template-columns: 18px 1fr 3px;
+  grid-template-rows: 1fr auto;
+}
+
+.check-host {
+  display: grid;
+  grid-template-columns: 12px 1fr 3px;
+}
+
+.check-checkbox {
   grid-column: 1;
+  grid-row: 1;
   margin-top: 3px;
 }
 
-.subtask-checkbox:hover {
+.check-checkbox:hover {
   color: var(--highlight)
 }
 
-.subtask-label {
+.check-label {
   grid-column: 2;
+  grid-row: 1;
   margin-bottom: 1px;
 }
 
-.subtask-checked {
+.check-description {
+  grid-column-start: 1;
+  grid-column-end: 3;
+  grid-row: 2;
+  margin-bottom: 7px;
+}
+
+.check-checked {
   color: var(--checked);
 }
 
-.subtask-unchecked {
+.check-unchecked {
   color: var(--gray);
 }
 
-.subtask-edit-host {
-  display: grid;
-  grid-template-columns: 18px 1fr 3px;
+a {
+  cursor: pointer;
 }
 
-.subtask-host {
-  display: grid;
-  grid-template-columns: 12px 1fr 3px;
+.settings-github-group,
+.settings-group {
+  margin-left: 30px;
+  font-size: calc(var(--font-base-size) - 10%);
+}
+
+.github-repo {
+  border-color: var(--background1) !important;
+  border-width: 1px !important;
+  border: solid;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px;
+}
+
+.left-margin {
+  margin-left: 5px;
+}
+
+.small-check {
+  margin-left: -4px;
+}
+
+.repo-menu {
+  float: right;
 }

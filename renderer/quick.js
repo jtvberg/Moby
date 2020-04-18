@@ -68,6 +68,11 @@ ipcRenderer.on('quick-theme', (e, data) => {
   setTheme(data)
 })
 
+// IPC call to set quick menu glyph toggle
+ipcRenderer.on('quick-glyph', (e, data) => {
+  toggleColorGlyphs(data)
+})
+
 // Set theme
 function setTheme (themeId) {
   $('#default').prop('disabled', true)
@@ -75,4 +80,13 @@ function setTheme (themeId) {
   $('#light').prop('disabled', true)
   $('#steve').prop('disabled', true)
   $(`#${themeId}`).prop('disabled', false)
+}
+
+// Toggle color glyphs on tasks handler
+function toggleColorGlyphs (check) {
+  if (check === true) {
+    $('.color-glyph-edit').show()
+  } else {
+    $('.color-glyph-edit').hide()
+  }
 }

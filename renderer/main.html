@@ -6,10 +6,10 @@
     <link rel="stylesheet" href="../node_modules/@fortawesome/fontawesome-free/css/all.min.css">
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="var.css">
-    <link rel="stylesheet" href="default.css" id="default" title="Default">
-    <link rel="stylesheet" href="dark.css" id="dark" title="Dark">
-    <link rel="stylesheet" href="light.css" id="light" title="Light">
-    <link rel="stylesheet" href="steve.css" id="steve" title="Steve">
+    <link rel="stylesheet" class="css-theme" href="default.css" id="default" title="Default" data-img="default">
+    <link rel="stylesheet" class="css-theme" href="dark.css" id="dark" title="Dark" data-img="default">
+    <link rel="stylesheet" class="css-theme" href="light.css" id="light" title="Light" data-img="default">
+    <link rel="stylesheet" class="css-theme" href="steve.css" id="steve" title="Steve" data-img="happy">
     <link rel="stylesheet" href="main.css">
   </head>
   <body id="main-window">
@@ -21,16 +21,32 @@
         <span href="#schedule-modal" data-toggle="modal">
           <div class="menu-item fas fa-calendar fa-2x" data-toggle="tooltip" title="Scheduled Tasks"></div>
         </span>
-        <div class="menu-item fas fa-tags fa-2x" style="font-size: 150%;" data-toggle="tooltip" title="Toggle Tags" onclick="toggleTags(event)"></div>
+        <div class="menu-item fas fa-tags fa-2x" id="tags-button" style="font-size: 150%;" data-toggle="tooltip" title="Toggle Tags" onclick="toggleTags(event)"></div>
+        <div class="menu-item fab fa-github fa-2x" id="git-button" style="display: none;" data-toggle="tooltip" title="Toggle GitHub Issues" onclick="toggleIssues(event)"></div>
         <div class="menu-item fas fa-expand-arrows-alt fa-2x" data-toggle="tooltip" title="Expand All" onclick="expandAll(event)"></div>
         <div class="menu-item fas fa-compress-arrows-alt fa-2x" data-toggle="tooltip" title="Collapse All" onclick="collapseAll(event)"></div>
         <div class="menu-item fas fa-sign-out-alt fa-2x" data-toggle="tooltip" title="Exit" onclick="exit(event)"></div>
         <div class="color-toggle" data-toggle="tooltip" title="Filter Tasks">
-          <div class="color-item fas fa-square fa-2x color-pick-1" id="color-1-button" data-color-id="1" onclick="toggleColorClick(event)"></div>
-          <div class="color-item fas fa-square fa-2x color-pick-2" id="color-2-button" data-color-id="2" onclick="toggleColorClick(event)"></div>
-          <div class="color-item fas fa-square fa-2x color-pick-3" id="color-3-button" data-color-id="3" onclick="toggleColorClick(event)"></div>
-          <div class="color-item fas fa-square fa-2x color-pick-4" id="color-4-button" data-color-id="4" onclick="toggleColorClick(event)"></div>
-          <div class="color-item fas fa-square fa-2x color-pick-5" id="color-5-button" data-color-id="5" onclick="toggleColorClick(event)"></div>
+          <div class="color-item color-pick-1" id="color-1-button" data-color-id="1" onclick="toggleColorClick(event)">
+            <span class="color-box fas fa-square fa-2x"></span>
+            <span class="color-glyph fas fa-cloud fa-2x" style="display: none; font-size: calc(var(--font-base-size) + 40%);"></span>
+          </div>
+          <div class="color-item color-pick-2" id="color-2-button" data-color-id="2" onclick="toggleColorClick(event)">
+            <span class="color-box fas fa-square fa-2x"></span>
+            <span class="color-glyph fas fa-heart fa-2x" style="display: none; font-size: calc(var(--font-base-size) + 75%);"></span>
+          </div>
+          <div class="color-item color-pick-3" id="color-3-button" data-color-id="3" onclick="toggleColorClick(event)">
+            <span class="color-box fas fa-square fa-2x"></span>
+            <span class="color-glyph fas fa-crown fa-2x" style="display: none; font-size: calc(var(--font-base-size) + 40%);"></span>
+          </div>
+          <div class="color-item color-pick-4" id="color-4-button" data-color-id="4" onclick="toggleColorClick(event)">
+            <span class="color-box fas fa-square fa-2x"></span>
+            <span class="color-glyph fas fa-carrot fa-2x" style="display: none; font-size: calc(var(--font-base-size) + 75%);"></span>
+          </div>
+          <div class="color-item color-pick-5" id="color-5-button" data-color-id="5" onclick="toggleColorClick(event)">
+            <span class="color-box fas fa-square fa-2x"></span>
+            <span class="color-glyph fas fa-tree fa-2x" style="display: none; font-size: calc(var(--font-base-size) + 100%);"></span>
+          </div>
         </div>
       </div>
       <div class="tag-cloud" style="display: none;">
@@ -55,44 +71,49 @@
           <div class="modal-body">
             <form id="task-form">
               <div class="form-group">
-                <input class="form-control" id="task-title" placeholder="Title">
+                <input class="form-control text-box" id="task-title" placeholder="Title">
               </div>
               <div class="form-group">
-                <textarea class="form-control" id="task-detail" placeholder="Detail"></textarea>
+                <textarea class="form-control text-box" id="task-detail" placeholder="Detail"></textarea>
               </div>
               <div class="form-group">
-                <select class="form-control form-control-sm" id="task-stack">
+                <select class="form-control form-control-sm text-box" id="task-stack">
                 </select>
               </div>
               <div class="form-group">
                 <label for="choose-color">Color</label>
                 <div class="btn-group btn-group-toggle btn-group-lg color-btn-group" role="group" id="choose-color" data-toggle="buttons">
                   <label class="btn color-1">
+                    <span class="color-glyph-edit fas fa-cloud"></span>
                     <input type="radio" name="color-options" id="color-option-1" autocomplete="off" value="1"> 
                   </label>
                   <label class="btn color-2">
+                    <span class="color-glyph-edit fas fa-heart"></span>
                     <input type="radio" name="color-options" id="color-option-2" autocomplete="off" value="2"> 
                   </label>
                   <label class="btn color-3">
+                    <span class="color-glyph-edit fas fa-crown"></span>
                     <input type="radio" name="color-options" id="color-option-3" autocomplete="off" value="3">
                   </label>
                   <label class="btn color-4">
+                    <span class="color-glyph-edit fas fa-carrot"></span>
                     <input type="radio" name="color-options" id="color-option-4" autocomplete="off" value="4"> 
                   </label>
                   <label class="btn color-5">
+                    <span class="color-glyph-edit fas fa-tree"></span>
                     <input type="radio" name="color-options" id="color-option-5" autocomplete="off" value="5"> 
                   </label>
                 </div>
               </div>
               <div class="form-group" id="panel-subtasks">
                 <label for="subtask-edit-box">Subtasks</label>
-                <div class="fas fa-plus-square add-subtask" onclick="addNewSubtask(event)"></div>
+                <div class="fas fa-plus-square add-subtask" data-toggle="tooltip" title="Add Subtask" onclick="addNewSubtask(event)"></div>
                 <small class="text-muted" style="margin-left: 5px;">Right-click checkbox to delete</small>
                 <div class="subtask-box" id="subtask-edit-box"></div>
               </div>
               <div class="form-group" id="panel-tags">
                 <label for="tag-edit-box">Tags</label>
-                <div class="fas fa-plus-square add-tag" onclick="addNewTag(event)"></div>
+                <div class="fas fa-plus-square add-tag" data-toggle="tooltip" title="Add Tag" onclick="addNewTag(event)"></div>
                 <small class="text-muted" style="margin-left: 5px;">Right-click existing tag to delete</small>
                 <div class="tag-box" id="tag-edit-box"></div>
               </div>
@@ -109,7 +130,7 @@
                       <div class="form-group row">
                         <label class="col-sm-3 col-form-label col-form-label-sm" for="startDate">Start Date</label>
                         <div class="col-sm-4">
-                          <input class="form-control form-control-sm" id="start-date" placeholder="mm/dd/yyyy">
+                          <input class="form-control form-control-sm text-box" id="start-date" placeholder="mm/dd/yyyy">
                         </div>
                       </div>
                       <div class="form-group">
@@ -135,7 +156,7 @@
                             <label class="form-check-label" for="radio-Monthly">Monthly</label>
                           </div>
                         </div>
-                        <fieldset disabled hidden id="choose-days">
+                        <fieldset hidden id="choose-days">
                           <div class="form-check form-check-inline form-control-sm">
                             <input type="checkbox" class="form-check-input" id="check-sun">
                             <label class="form-check-label" for="check-sun">Sun</label>
@@ -167,9 +188,9 @@
                         </fieldset>
                       </div>
                       <div class="form-group row">
-                        <label class="col-sm-4 col-form-label col-form-label-sm disabled-form-label" for="count-select" id="recur-count">Recurrence Count</label>
+                        <label class="col-sm-4 col-form-label col-form-label-sm" for="count-select" id="recur-count">Recurrence Count</label>
                         <div class="col-sm-3">
-                          <select class="form-control form-control-sm" id="count-select" disabled>
+                          <select class="form-control form-control-sm text-box" id="count-select">
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -267,10 +288,120 @@
       </div>
     </div>
 
+    <div id="settings-modal" class="modal fade" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="settings-modal-title">Settings</h5>
+            <button type="button" class="close" data-dismiss="modal">
+              <span>&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form id="settings-form">
+              <div class="form-group">
+                <div class="panel-group" id="panel-general">
+                  <div class="panel">
+                    <div class="panel-header">
+                      <a class="collapsed" data-toggle="collapse" data-target="#collapse-general">
+                        <i class="fa fa-chevron-down"></i>
+                        General Settings
+                      </a>
+                    </div>
+                    <div class="panel-body">
+                      <div id="collapse-general" class="collapse settings-group" data-parent="#panel-general">
+                        <div class="check-modal-host">
+                          <div class="fas fa-square check-checkbox check-unchecked" id="settings-glyphs"></div>
+                          <label class="check-label">Card Color Glyphs</label>
+                          <small class="text-muted check-description">Adds glyphs to the task cards to delineate color</small>
+                        </div>
+                        <div class="check-modal-host">
+                          <div class="fas fa-square check-checkbox check-unchecked" id="settings-aging"></div>
+                          <label class="check-label">Aging Default On</label>
+                          <small class="text-muted check-description">Aging numbers will be shown by default</small>
+                        </div>
+                        <div class="check-modal-host">
+                          <div class="fas fa-square check-checkbox check-unchecked" id="settings-dblclick"></div>
+                          <label class="check-label">Open Task on Double-click</label>
+                          <small class="text-muted check-description">Opens the edit modal when double-clicking on a task card</small>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="panel-group" id="panel-github">
+                  <div class="panel">
+                    <div class="panel-header">
+                      <a class="collapsed" data-toggle="collapse" data-target="#collapse-github">
+                        <i class="fa fa-chevron-down"></i>
+                        GitHub Integration
+                      </a>
+                    </div>
+                    <div class="panel-body">
+                      <div id="collapse-github" class="collapse settings-github-group" data-parent="#panel-github">
+                        <div class="check-modal-host">
+                          <div class="fas fa-square check-checkbox check-unchecked" id="settings-github-toggle"></div>
+                          <label class="check-label">GitHub Toggle Button Behavior</label>
+                          <small class="text-muted check-description">Checked will show only GitHub issues when toggled on. Default behavior will add the stacks to the current view. </small>
+                        </div>
+                        <label>Repos</label>
+                        <div class="fas fa-plus-square add-github" data-toggle="tooltip" title="Add Repo" onclick="addNewGitHub(event)"></div>
+                        <div id="settings-github-repos"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div hidden class="form-group">
+                <div class="panel-group" id="panel-rally">
+                  <div class="panel">
+                    <div class="panel-header">
+                      <a class="collapsed" data-toggle="collapse" data-target="#collapse-rally">
+                        <i class="fa fa-chevron-down"></i>
+                        Rally Integration
+                      </a>
+                    </div>
+                    <div class="panel-body">
+                      <div id="collapse-rally" class="collapse" data-parent="#panel-rally">
+                        <label>Thing</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div hidden class="form-group">
+                <div class="panel-group" id="panel-serviceNow">
+                  <div class="panel">
+                    <div class="panel-header">
+                      <a class="collapsed" data-toggle="collapse" data-target="#collapse-serviceNow">
+                        <i class="fa fa-chevron-down"></i>
+                        ServiceNow Integration
+                      </a>
+                    </div>
+                    <div class="panel-body">
+                      <div id="collapse-serviceNow" class="collapse" data-parent="#panel-serviceNow">
+                        <label>Thing</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button id="settings-button" type="button" class="btn btn-primary">Save Changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script>
       window.$ = window.jQuery = require('jquery');
       window.Bootstrap = require('bootstrap');
-      var activeTask;
+      window.activeTask;
     </script>
     <script src="../node_modules/popper.js/dist/umd/popper.min.js"></script>
     <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>

@@ -19,18 +19,19 @@
   "author": "Vandenberg",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^7.1.14",
+    "electron": "^7.2.1",
     "electron-builder": "^22.4.1",
     "electron-reload": "^1.5.0",
     "eslint": "^6.8.0",
-    "eslint-config-standard": "^14.1.0",
-    "eslint-plugin-import": "^2.20.1",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.12.1",
+    "@fortawesome/fontawesome-free": "^5.13.0",
+    "@octokit/rest": "^17.1.4",
     "bootstrap": "^4.4.1",
     "custom-electron-titlebar": "^3.2.2",
     "jquery": "^3.4.1",

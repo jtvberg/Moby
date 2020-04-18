@@ -1,12 +1,7 @@
 :root {
-  --red: #e74c3c;
-  --blue: #2980b9;
-  --orange: #e67e22;
-  --purple: #9b59b6;
-  --green: #27ae60;
-  --dark: #000;
-  --light: #fff;
-  --card-text: #fff;
+  --dark: #383838;
+  --light: #e7e7e7;
+  --card-text: #e7e7e7;
   --gray: #7a7a7a;
   --trans: #00000000;
   --opaque: #2727271a;

@@ -1,12 +1,7 @@
 :root {
-  --red: #e74c3c;
-  --blue: #2980b9;
-  --orange: #e67e22;
-  --purple: #9b59b6;
-  --green: #27ae60;
-  --dark: #fff;
-  --light: #000;
-  --card-text: #fff;
+  --dark: #e7e7e7;
+  --light: #383838;
+  --card-text: #e7e7e7;
   --gray: #7a7a7a;
   --trans: #00000000;
   --opaque: #2727271a;
@@ -14,7 +9,7 @@
   --checked: #00ff00;
   --focused: #fff;
   --img-opacity: .1;
-  --background1: #cccccc;
+  --background1: #bebebe;
   --background2: #a1a1a1;
   --tag-background: #0000003d;
   --tag-color: #e0e0e0;

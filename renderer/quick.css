@@ -16,20 +16,36 @@ body {
 
 .quick-body {
   border-radius: 5px;
-  background-image: linear-gradient(to bottom right, var(--background1), var(--background2));
+  background-color: var(--background2);
   padding: 5px;
   color: var(--light);
   font-weight: 500;
 }
 
 .quick-detail {
-  min-height: 62px;
-  max-height: 62px;
+  min-height: 69px;
+  max-height: 69px;
   resize: none;
 }
 
 .form-group {
   margin-bottom: 5px;
+}
+
+.color-label {
+  margin-bottom: 0px;
+  vertical-align: middle;
+}
+
+.color-btn-group {
+  height: 24px;
+  width: -webkit-fill-available;
+  margin-left: -4px;
+}
+
+.color-glyph-edit {
+  position: relative;
+  top: -12px;
 }
 
 .quick-arrow {
@@ -48,6 +64,7 @@ body {
   text-align: right;
   display: flex;
   place-content: flex-end;
+  margin-top: 6px;
 }
 
 .btn {

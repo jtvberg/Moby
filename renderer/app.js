@@ -1,7 +1,9 @@
-/* global activeTask */
 // Modules and variable definition
-const { ipcRenderer } = require('electron')
+const { ipcRenderer, shell, remote } = require('electron')
+const settings = require('./settings')
 const tasks = require('./tasks')
+const git = require('./gitHub')
+const fs = require('fs')
 require('bootstrap/js/dist/modal')
 require('./menu.js')
 const customTitlebar = require('custom-electron-titlebar')
@@ -11,7 +13,12 @@ let winMax = false
 let updStack = false
 let newTagList = []
 let match = ''
+let desktopPath = ''
 
+// IPC event to get system desktop path
+ipcRenderer.on('desktop-path', (e, data) => {
+  desktopPath = data
+})
 // Custom titlebar instantiation
 const bg = getComputedStyle(document.documentElement).getPropertyValue('--background1').trim()
 // eslint-disable-next-line no-new
@@ -23,36 +30,70 @@ const ctb = new customTitlebar.Titlebar({
 // Load stacks
 getStacks()
 
+// Set intervals for scheduled tasks, update ageing, archive ageing and issue get
 // Evaluate for scheduled task
 addScheduledTasks()
-
-// Archive off tasks in 'Done' for more than a week
-archiveDoneTasks()
-
+window.setInterval(addScheduledTasks, 3600000)
 // Update task age in UI
 tasks.updateTaskAge()
-
-// Set intervals for scheduled tasks, update ageing, archive ageing
-window.setInterval(addScheduledTasks, 3600000)
 window.setInterval(tasks.updateTaskAge, 3600000)
+// Archive off tasks in 'Done' for more than a week
+archiveDoneTasks()
 window.setInterval(archiveDoneTasks, 3600000)
+// Get GitHub issues
+git.getIssues()
+window.setInterval(git.getIssues, 1000000)
 
-// Went and changed the model and need to fix it function
-function updateStackkListModel () {
-  const rl = localStorage.getItem('stackList') || null
-  if (rl) {
-    const tl = JSON.parse(rl.replace(/stackId/g, 'StackId').replace(/stackTitle/g, 'StackTitle')) || []
-    localStorage.setItem('stackList', JSON.stringify(tl))
-    return tl
+// IPC event when git issues returned; then add to stack
+ipcRenderer.on('send-issues', () => {
+  git.issueList.forEach(git.addIssue)
+  loadTagCloud()
+})
+
+// Import settings from local storate and apply
+function applySettings () {
+  if (settings.mobySettings) {
+    // Set theme
+    setTheme(settings.mobySettings.Theme)
+    // Toggle Aging
+    remote.Menu.getApplicationMenu().getMenuItemById('menu-task-age').checked = settings.mobySettings.Aging
+    toggleAge(settings.mobySettings.Aging)
+    // Toggle Color Glyphs
+    toggleColorGlyphs(settings.mobySettings.ColorGlyphs)
   }
-  return []
+}
+
+// Toggle aging on tasks handler
+function toggleAge (check) {
+  if (check === true) {
+    $('.aging').show()
+  } else if (check === false) {
+    $('.aging').hide()
+  } else {
+    ($('.aging').is(':visible')) ? $('.aging').hide() : $('.aging').show()
+  }
+}
+
+// Toggle color glyphs on tasks handler
+function toggleColorGlyphs (check) {
+  if (check === true) {
+    $('.color-box').hide()
+    $('.color-glyph-edit').show()
+    $('.color-glyph').show()
+  } else if (check === false) {
+    $('.color-glyph').hide()
+    $('.color-glyph-edit').hide()
+    $('.color-box').show()
+  } else {
+    ($('.color-glyph').is(':visible')) ? $('.color-glyph').hide() : $('.color-glyph').show()
+  }
+  ipcRenderer.send('glyph-toggle', check)
 }
 
 // Stack load; if non defined use default
 function getStacks () {
-  updateStackkListModel()
   const stacks = JSON.parse(localStorage.getItem('stackList')) || []
-  $('.stack-host').children('.stack').remove()
+  $('.stack-host').children('.stack, .git-stack').remove()
   let index = 0
   if (stacks.length > 1) {
     $('#task-stack').empty()
@@ -64,16 +105,26 @@ function getStacks () {
   } else {
     getDefaultStacks()
   }
-  // Add tasks to the stacks
+  if (git.repoList.length > 0) {
+    git.repoList.forEach((repo) => {
+      if (repo.Active) {
+        buildStack(`git-stack-${repo.Owner}-${repo.Repo}`, repo.Repo, index, repo.Url)
+        index++
+      }
+    })
+  }
+  // Add tasks, issues, tags to the stacks
   tasks.taskList.forEach(tasks.addTask)
+  git.issueList.forEach(git.addIssue)
   loadTagCloud()
+  applySettings()
 }
 
 // Load tag list UI
 function loadTagCloud () {
   $('#tag-cloud-box').children('.cloud-tags').remove()
-  if (tasks.tagList.length > 0) {
-    const utl = [...new Set(tasks.tagList)]
+  if (tasks.tagList.length > 0 || git.tagList.length > 0) {
+    const utl = [...new Set(tasks.tagList.concat(git.tagList))]
     utl.forEach((tag) => {
       $('#tag-cloud-box').append(`<div class="cloud-tags">${tag}</div>`)
     })
@@ -83,12 +134,9 @@ function loadTagCloud () {
 // Show tasks with tag
 $(document).on('click', '.cloud-tags', (e) => {
   $(e.currentTarget).addClass('cloud-tags-toggled')
-  tasks.taskList.forEach(task => {
-    if (task.Tags.includes($(e.currentTarget).text())) {
-      $(`#${task.TaskId}`).addClass('card-tagged')
-      $(`#${task.TaskId}`).find('.collapse').collapse('show')
-    }
-  })
+  $('.tags').filter(function () {
+    return $(this).text() === $(e.currentTarget).text()
+  }).closest('.card').addClass('card-tagged').find('.collapse').collapse('show')
 })
 
 // Show tasks with tag
@@ -116,11 +164,13 @@ function getDefaultStacks () {
 function saveStacks () {
   const stacks = []
   $('.stack-header').each(function () {
-    const stackData = {
-      StackId: $(this).closest('.stack').prop('id'),
-      StackTitle: $(this).text()
+    if ($(this).closest('.stack').prop('id') && $(this).closest('.stack').prop('id').substring(0, 6) === stackPrefix) {
+      const stackData = {
+        StackId: $(this).closest('.stack').prop('id'),
+        StackTitle: $(this).text()
+      }
+      stacks.push(stackData)
     }
-    stacks.push(stackData)
   })
   localStorage.setItem('stackList', JSON.stringify(stacks))
   $('#task-stack').empty()
@@ -130,18 +180,25 @@ function saveStacks () {
 }
 
 // Build out and insert stacks
-function buildStack (id, title, index) {
-  // TODO: Check if ID exists
-  const addStackBtn = id === 'stack-do' ? '' : '<div class="stack-add fas fa-caret-square-left" data-toggle="tooltip" title="Insert Stack" onclick="addNewStackClick(event)"></div>'
-  const removeStackBtn = id === 'stack-do' || id === 'stack-done' ? '' : `<div class="dropdown-menu dropdown-menu-sm ddcm" id="context-menu-${id}">
+function buildStack (id, title, index, url) {
+  const isDefault = id.substring(0, 6) === stackPrefix
+  const stackClass = isDefault ? 'stack' : 'git-stack'
+  const itemType = isDefault ? 'Task' : 'Issue'
+  const dragDrop = isDefault ? ' ondrop="drop(event)" ondragover="allowDrop(event)"' : ''
+  const addTaskBtn = isDefault ? `" href="#task-modal" data-toggle="modal" data-stack-id="${id}" data-type-id="new"` : ` add-issue" data-url="${url}"`
+  let addStackBtn = id === 'stack-do' ? '' : '<div class="stack-add fas fa-caret-square-left" data-toggle="tooltip" title="Insert Stack" onclick="addNewStackClick(event)"></div>'
+  addStackBtn = id.substring(0, 9) === 'git-stack' ? `<div class="git-stack-icon fab fa-github" data-toggle="tooltip" title="Source Link" data-url="${url}"></div>` : addStackBtn
+  const removeStackBtn = id === 'stack-do' || id === 'stack-done' || !isDefault ? '' : `<div class="dropdown-menu dropdown-menu-sm ddcm" id="context-menu-${id}">
                                                     <a class="dropdown-item" href="#remove-modal" data-toggle="modal">Remove Stack</a>
                                                   </div>`
-  const stackHtml = `<div class="stack" id="${id}" data-stack-index="${index}" ondrop="drop(event)" ondragover="allowDrop(event)">
+  const stackHtml = `<div class="${stackClass}" id="${id}" data-stack-index="${index}"${dragDrop}>
                       ${addStackBtn}
-                      <div class="header stack-header" contenteditable="true" onclick="document.execCommand('selectAll',false,null)" oncontextmenu="event.preventDefault(); event.stopPropagation();">${title}</div>
+                      <div class="header stack-header" contenteditable="${isDefault}" onclick="document.execCommand('selectAll',false,null)" oncontextmenu="event.preventDefault(); event.stopPropagation();">${title}</div>
                       ${removeStackBtn}
                       <div class="box"></div>
-                      <div class="footer fas fa-plus fa-2x" href="#task-modal" data-toggle="modal" data-stack-id="${id}" data-type-id="new"></div>
+                      <span data-toggle="tooltip" title="Add ${itemType}" style="justify-self: right;">
+                        <div class="footer fas fa-plus fa-2x${addTaskBtn}></div>
+                      <span>
                     </div>`
   $('.stack-host').append(stackHtml)
   $(`#${id}`).on('contextmenu', () => {
@@ -161,7 +218,27 @@ function buildStack (id, title, index) {
   $('.stack-host').on('mouseleave', () => {
     $(`#context-menu-${id}`).removeClass('show').hide().css({ width: '0px' })
   })
+  if (!isDefault) {
+    $('#git-button').show()
+    if (settings.mobySettings) {
+      if (settings.mobySettings.GhToggle === false) {
+        $('#git-button').addClass('menu-item-toggled')
+      } else {
+        $('.git-stack').hide(0)
+      }
+    }
+  }
 }
+
+// Stack add for git issues
+$(document).on('click', '.add-issue', (e) => {
+  shell.openExternal(`${$(e.currentTarget).data('url')}/issues/new`)
+})
+
+// Stack add for git issues
+$(document).on('click', '.git-stack-icon', (e) => {
+  shell.openExternal($(e.currentTarget).data('url'))
+})
 
 // Add new user defined stack
 function addNewStack (addIndex) {
@@ -177,6 +254,7 @@ function addNewStack (addIndex) {
   localStorage.setItem('stackList', JSON.stringify(stacks))
   getStacks()
   $(`#${stackData.StackId}`).find('.stack-header').focus()
+  document.execCommand('selectAll', false, null)
 }
 
 // Remove existing stack
@@ -279,7 +357,7 @@ function addScheduledTasks () {
         if (i === 0) {
           tasks.archiveTask(item.TaskId)
         } else {
-          const getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(item.TaskId))
+          const getTask = tasks.taskList.find(task => task.TaskId === item.TaskId)
           getTask.Count = i
           getTask.StartDate = getTask.StartDate + (86400000 * 7 * getTask.MonthDay)
           tasks.saveTasks()
@@ -295,7 +373,6 @@ function archiveDoneTasks () {
     tasks.taskList.forEach((item) => {
       if (item.TaskStack === 'stack-done' && item.StackDate < Date.now() - (86400000 * 7)) {
         tasks.archiveTask(item.TaskId)
-        // TODO: add flag for delete on archive
       }
     })
   }
@@ -325,17 +402,17 @@ window.openTaskMenu = (type) => {
 
 // Task menu commands; Archive selected task
 window.cloneTaskMenu = () => {
-  tasks.cloneTask(activeTask)
+  tasks.cloneTask(window.activeTask)
 }
 
 // Task menu commands; Archive selected task
 window.archiveTaskMenu = () => {
-  tasks.archiveTask(activeTask)
+  tasks.archiveTask(window.activeTask)
 }
 
 // Task menu commands; Restore selected task
 window.restoreTaskMenu = () => {
-  tasks.restoreTask(activeTask)
+  tasks.restoreTask(window.activeTask)
 }
 
 // Task menu commands; Expand all tasks
@@ -353,27 +430,141 @@ window.toggleAgeMenu = () => {
   toggleAge()
 }
 
-// Task menu commands; Export all tasks
-window.exportTasksMenu = () => {
-  tasks.exportTasks()
+// Task menu commands; Export all data
+window.exportDataMenu = () => {
+  exportData()
 }
 
-// Task menu commands; Import all tasks
-window.importTasksMenu = () => {
-  tasks.importTasks()
-  loadTagCloud() // TODO: this doesn't work
+// Task menu commands; Import all data
+window.importDataMenu = () => {
+  importData()
+}
+
+// Settings menu commands
+window.settingsMenu = () => {
+  loadSettingsModal()
 }
 
 // Theme menu commands
 window.setThemeMenu = (themeId) => {
   setTheme(themeId)
+  settings.saveSettings(themeId)
+}
+
+// Export all data
+function exportData () {
+  const JSONexport = {
+    ExportTs: Date.now(),
+    Stacks: JSON.parse(localStorage.getItem('stackList')) || [],
+    Tasks: JSON.parse(localStorage.getItem('taskList')) || [],
+    Settings: JSON.parse(localStorage.getItem('mobySettings')) || [],
+    Repos: JSON.parse(localStorage.getItem('repoList')) || []
+  }
+  fs.writeFile(`${desktopPath}/moby_export_${Date.now()}.txt`, JSON.stringify(JSONexport), err => {
+    if (err) {
+      alert('An error occured during the export ' + err.message)
+      return
+    }
+    alert('The export has completed succesfully and is located on your desktop')
+  })
+}
+
+// Import all data
+function importData () {
+  let latestExport = 0
+  const searchString = 'moby_export_'
+  // Find the latest export file by extenstion and suffix
+  fs.readdirSync(desktopPath).filter(file => (file.split('.').pop().toLowerCase() === 'txt') && (file.substring(0, searchString.length) === searchString)).forEach((file) => {
+    latestExport = file.substring(searchString.length, file.length - 4) > latestExport ? file.substring(searchString.length, file.length - 4) : latestExport
+  })
+  // Read in the latest file ignoring dupes by ID (not date or content)
+  fs.readFile(`${desktopPath}/${searchString}${latestExport}.txt`, (err, data) => {
+    let alertString = ''
+    if (err) {
+      alertString += 'An error occured during the import ' + err.message
+      return
+    }
+    try {
+      // Settings import
+      const JSONimport = JSON.parse(data).Settings
+      if (JSONimport) {
+        localStorage.setItem('mobySettings', JSON.stringify(JSONimport))
+        settings.refreshSettings()
+        alertString += 'Settings imported succesfully'
+      } else {
+        alertString += 'No settings found'
+      }
+    } catch (err) {
+      alert(err)
+    }
+    try {
+      // Task import
+      const JSONimport = JSON.parse(data).Tasks
+      if (JSONimport) {
+        let i = 0
+        JSONimport.forEach(task => {
+          if (!tasks.taskList.some(e => e.TaskId === task.TaskId)) {
+            tasks.taskList.push(task)
+            i++
+          }
+        })
+        tasks.saveTasks()
+        if (i > 1) {
+          alertString += `\n${i} tasks imported succesfully`
+        } else if (i === 1) {
+          alertString += '\n1 task imported succesfully'
+        } else {
+          alertString += '\nNo tasks found'
+        }
+      } else {
+        alert('\n No tasks found')
+      }
+    } catch (err) {
+      alert(err)
+    }
+    try {
+      // Stack import
+      const JSONimport = JSON.parse(data).Stacks
+      if (JSONimport) {
+        localStorage.setItem('stackList', JSON.stringify(JSONimport))
+        if (JSONimport.length > 1) {
+          alertString += `\n${JSONimport.length} stacks imported succesfully`
+        } else if (JSONimport.length === 1) {
+          alertString += '\n1 stack imported succesfully'
+        }
+      } else {
+        alertString += '\nNo stacks found'
+      }
+    } catch (err) {
+      alert(err)
+    }
+    try {
+      // Repo import
+      const JSONimport = JSON.parse(data).Repos
+      if (JSONimport) {
+        localStorage.setItem('repoList', JSON.stringify(JSONimport))
+        git.refreshRepos()
+        if (JSONimport.length > 1) {
+          alertString += `\n${JSONimport.length} repos imported succesfully`
+        } else if (JSONimport.length === 1) {
+          alertString += '\n1 repo imported succesfully'
+        }
+      } else {
+        alertString += '\nNo repos found'
+      }
+    } catch (err) {
+      alert(err)
+    }
+    alert(alertString)
+    getStacks()
+  })
 }
 
 // Set theme
 function setTheme (themeId) {
-  $('#default, #dark, #light, #steve').prop('disabled', true)
+  $('.css-theme').prop('disabled', true)
   $(`#${themeId}`).prop('disabled', false)
-  if (themeId === 'steve') {
+  if ($(`#${themeId}`).data('img') === 'happy') {
     $('#moby-bg-img').prop('src', 'res/moby_bg_steve.png')
   } else {
     $('#moby-bg-img').prop('src', 'res/moby_bg.png')
@@ -411,10 +602,12 @@ function loadTaskModal (type, stack) {
     $('#task-modal-title').html('New Task')
     $('form').get(0).reset()
     $('#task-stack').val(stack)
-    $('#choose-days').prop('disabled', true)
+    const dt = new Date(Date.now())
+    $('#start-date').val(dt.getMonth() + 1 + '/' + dt.getDate() + '/' + dt.getFullYear())
+    enableRecur()
   } else {
     $('#task-modal-title').html('Edit Task')
-    const getTask = tasks.taskList.find(task => parseInt(task.TaskId) === parseInt(activeTask))
+    const getTask = tasks.taskList.find(task => task.TaskId === window.activeTask)
     $('#task-title').val(getTask.TaskTitle)
     $('#task-detail').val(getTask.TaskDetail)
     if (getTask.TaskStack === 'stack-archive') {
@@ -435,10 +628,10 @@ function loadTaskModal (type, stack) {
     let subtaskHTML = ''
     if (getTask.Subtasks && getTask.Subtasks.length > 0) {
       getTask.Subtasks.forEach((subtask) => {
-        const checked = subtask.Checked === true ? 'checked' : 'unchecked'
-        subtaskHTML += `<div class="subtask-edit-host" id="${subtask.SubtaskId}">
-                          <div class="fas fa-square subtask-checkbox subtask-${checked}"></div>
-                          <label class="subtask-label" contenteditable="true">${subtask.Text}</label>
+        const checked = subtask.Checked === true ? 'fa-check-square check-checked' : 'fa-square check-unchecked'
+        subtaskHTML += `<div class="check-modal-host" id="${subtask.SubtaskId}">
+                          <div class="fas check-checkbox ${checked}"></div>
+                          <label class="check-label" contenteditable="true">${subtask.Text}</label>
                         </div>`
       })
     }
@@ -456,6 +649,7 @@ function loadTaskModal (type, stack) {
       $('#check-sat').prop('checked', getTask.WeekDay.includes(6))
     }
     $(`input[name=radio-recur][value=${getTask.MonthDay}]`).prop('checked', true)
+    enableRecur(!$('#radio-once').is(':checked'))
   }
 }
 
@@ -483,23 +677,34 @@ $('#task-detail').on('focus mouseenter', function () {
   }
 })
 
+// Double clikc on card opens edit modal
+$('.card').dblclick((e) => {
+  if (settings.mobySettings.DblClick) {
+    $(e.currentTarget).find('#edit-button').click()
+  }
+})
+
 // Recurrence elements enable logic
-function enableRecur () {
-  $('#choose-days').prop('disabled', false)
-  $('#count-select').prop('disabled', false)
-  $('#recur-count').removeClass('disabled-form-label')
+function enableRecur (enable) {
+  if (enable) {
+    $('#choose-days').show()
+    $('#count-select').show()
+    $('#recur-count').show()
+  } else {
+    $('#choose-days').hide()
+    $('#count-select').val(1).hide()
+    $(':checkbox').prop('checked', false)
+    $('#recur-count').hide()
+  }
 }
 
 // Active radio button change events
 $('#radio-weekly, #radio-biWeekly, #radio-triWeekly, #radio-monthly').click(() => {
-  enableRecur()
+  enableRecur(true)
 })
 
 $('#radio-once').click(() => {
-  $('#choose-days').prop('disabled', true)
-  $('#count-select').val(1).prop('disabled', true)
-  $(':checkbox').prop('checked', false)
-  $('#recur-count').addClass('disabled-form-label')
+  enableRecur()
 })
 
 // Task modal submit event
@@ -517,7 +722,7 @@ $('#task-modal').keypress((e) => {
 
 // Restore archived task to 'Do' column
 $('#restore-button').click(() => {
-  tasks.restoreTask(activeTask)
+  tasks.restoreTask(window.activeTask)
   $('#restore-modal').modal('hide')
 })
 
@@ -547,15 +752,6 @@ const expandAll = () => {
 // Collapse all tasks event
 const collapseAll = () => {
   $('.collapse').collapse('hide')
-}
-
-// Toggle aging on tasks event
-const toggleAge = () => {
-  if ($('.aging').is(':visible')) {
-    $('.aging').hide()
-  } else {
-    $('.aging').show()
-  }
 }
 
 // Autofill, autosize new tag
@@ -597,17 +793,42 @@ const toggleTags = () => {
     $('.tag-cloud').animate({ width: '0px' }, 'fast').hide(0)
     $('.card').removeClass('card-tagged')
     $('.cloud-tags').removeClass('cloud-tags-toggled')
+    $('#tags-button').removeClass('menu-item-toggled')
   } else {
     $('.tag-cloud').show().animate({ width: '105px' }, 'fast')
+    $('#tags-button').addClass('menu-item-toggled')
   }
 }
+
+// Toggle tag cloud
+// eslint-disable-next-line no-unused-vars
+const toggleIssues = () => {
+  if ($('.git-stack').is(':visible')) {
+    $('.stack').show()
+    $('.git-stack').hide(0)
+    $('#git-button').removeClass('menu-item-toggled')
+  } else {
+    if (settings.mobySettings && settings.mobySettings.GhToggle === true) {
+      $('.stack').hide(0)
+      $('#stack-archive').show()
+      $('#stack-schedule').show()
+    }
+    $('.git-stack').show()
+    $('#git-button').addClass('menu-item-toggled')
+  }
+}
+
+// IPC event to get update tag cloud on task delete
+ipcRenderer.on('update-tags', () => {
+  loadTagCloud()
+})
 
 // Add new subtask event
 // eslint-disable-next-line no-unused-vars
 const addNewSubtask = () => {
-  const newSubtask = `<div class="subtask-edit-host">
-                        <div class="fas fa-square subtask-checkbox subtask-unchecked"></div>
-                        <label class="subtask-label" contenteditable="true">New Subtask</label>
+  const newSubtask = `<div class="check-modal-host">
+                        <div class="fas fa-square check-unchecked check-checkbox"></div>
+                        <label class="check-label" contenteditable="true">New Subtask</label>
                       </div>`
   $('#subtask-edit-box').append(newSubtask)
   $('#subtask-edit-box').children().last().children('label').last().focus()
@@ -615,24 +836,43 @@ const addNewSubtask = () => {
 }
 
 // Subtask remove in edit modal
-$(document).on('contextmenu', '.subtask-checkbox', (e) => {
-  $(e.currentTarget).closest('.subtask-edit-host').remove()
+$(document).on('contextmenu', '.check-checkbox', (e) => {
+  $(e.currentTarget).closest('.check-modal-host').remove()
 })
 
 // Subtask css class and array update
 function setSubtaskCheck (element) {
-  element.hasClass('subtask-unchecked') ? element.removeClass('subtask-unchecked').addClass('subtask-checked') : element.removeClass('subtask-checked').addClass('subtask-unchecked')
-  tasks.updateSubtaskCheck(element.closest('.card').prop('id'), element.parent().prop('id'), element.hasClass('subtask-checked'))
+  tasks.updateSubtaskCheck(element.closest('.card').prop('id'), element.parent().prop('id'), element.hasClass('check-checked'))
 }
 
+function toggleCheck (element, check) {
+  if (check === true) {
+    element.removeClass('fa-square check-unchecked').addClass('fa-check-square check-checked')
+  } else if (check === false) {
+    element.removeClass('fa-check-square check-checked').addClass('fa-square check-unchecked')
+  } else {
+    element.hasClass('check-unchecked') ? element.removeClass('fa-square check-unchecked').addClass('fa-check-square check-checked') : element.removeClass('fa-check-square check-checked').addClass('fa-square check-unchecked')
+  }
+}
+
+// Checkbox click handler
+$(document).on('click', '.check-checkbox', (e) => {
+  toggleCheck($(e.currentTarget))
+})
+
+// Checkbox label click handler
+$(document).on('click', '.check-label', (e) => {
+  toggleCheck($(e.currentTarget).parent('.check-host, .repo-check').find('.check-checkbox'))
+})
+
 // Subtask checkbox click handler
-$(document).on('click', '.subtask-checkbox', (e) => {
+$(document).on('click', '.check-card-checkbox', (e) => {
   setSubtaskCheck($(e.currentTarget))
 })
 
-// Subtask label click handler
-$(document).on('click', '.subtask-label', (e) => {
-  setSubtaskCheck($(e.currentTarget).parent('.subtask-host').find('.subtask-checkbox'))
+// Subtask checkbox label click handler
+$(document).on('click', '.check-card-label', (e) => {
+  setSubtaskCheck($(e.currentTarget).parent('.check-host').find('.check-checkbox'))
 })
 
 // Add new stack event
@@ -640,6 +880,137 @@ $(document).on('click', '.subtask-label', (e) => {
 const addNewStackClick = (e) => {
   $(e.currentTarget).tooltip('hide')
   addNewStack($(e.currentTarget).closest('.stack').data('stack-index'))
+}
+
+const buildRepoItem = (repo) => {
+  const repoTitle = repo ? repo.Repo : 'New Repo'
+  const repoUrl = repo ? repo.Url : ''
+  const repoUser = repo ? repo.User : ''
+  const repoAuth = repo ? repo.Auth : ''
+  const repoId = repo ? repo.RepoId : Date.now()
+  const repoActive = repo ? repo.Active : true
+  const repoActiveCheck = repoActive ? 'fa-check-square check-checked' : 'fa-square check-unchecked'
+  const repoAssigned = repo && repo.AssignToMe === true ? 'fa-check-square check-checked' : 'fa-square check-unchecked'
+  const repoItem = `<div class="github-repo" data-repo-id="${repoId}">
+                      <div class="repo-menu">
+                        <div class="repo-menu-item-delete fas fa-minus-square" id="delete-button-${repoId}" data-toggle="tooltip" title="Delete Repo"></div>
+                        <div class="repo-menu-item-clone fas fa-clone" id="clone-button-${repoId}" data-toggle="tooltip" title="Clone Repo"></div>
+                      </div>
+                      <div class="check-modal-host repo-check">
+                        <div class="repo-menu-item-deactivate fas ${repoActiveCheck} check-checkbox" id="deactivate-button-${repoId}" data-toggle="tooltip" title="Active"></div>
+                        <div class="check-label">${repoTitle}</div>
+                      </div>
+                      <div>
+                        <small class="left-margin">GitHub URL</small>
+                        <input class="form-control form-control-sm text-box repo-edit" id="surl${repoId}" placeholder="Enter GitHub URL" value="${repoUrl}">
+                        <small class="text-muted left-margin">This is the home location of the repo</small>
+                      </div>
+                      <div class="form-row">
+                        <div class="form-group col-md-4">
+                          <small class="left-margin">User Name</small>
+                          <input class="form-control form-control-sm text-box repo-edit" id="sun${repoId}" placeholder="Enter User Name" value="${repoUser}">
+                          <small class="text-muted left-margin">Your user name on this GitHub instance</small>
+                        </div>
+                        <div class="form-group col-md-8">
+                          <small class="left-margin">Personal Access Token</small>
+                          <input class="form-control form-control-sm text-box repo-edit" id="sat${repoId}" placeholder="Enter Token" value="${repoAuth}">
+                          <small class="text-muted left-margin">Not required but you may be throttled. Click here to obtain one</small>
+                        </div>
+                      </div>
+                      <div class="form-row left-margin" style="margin-top: -10px;">
+                        <div class="check-modal-host repo-check">
+                          <small class="fas ${repoAssigned} check-checkbox" id="satm${repoId}"></small>
+                          <small class="check-label small-check">Assigned to or Opened by me</small>
+                          <small class="text-muted check-description">Checked will only show issues that have been assigned to or opened by you</small>
+                        </div>
+                      </div>
+                    </div>`
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip({ delay: { show: 1500, hide: 100 } })
+  })
+  return repoItem
+}
+
+// Clone repo
+$(document).on('click', '.repo-menu-item-clone', (e) => {
+  const newRepo = git.repoList.find(repo => repo.RepoId === $(e.currentTarget).closest('.github-repo').data('repo-id'))
+  newRepo.RepoId = Date.now()
+  $('#settings-github-repos').append(buildRepoItem(newRepo))
+  $('.modal-body').animate({ scrollTop: $(document).height() }, 'fast')
+})
+
+// Load Settings modal
+function loadSettingsModal () {
+  repoChange = false
+  // Set check states on settings modal
+  toggleCheck($('#settings-glyphs'), settings.mobySettings.ColorGlyphs)
+  toggleCheck($('#settings-dblclick'), settings.mobySettings.DblClick)
+  toggleCheck($('#settings-github-toggle'), settings.mobySettings.GhToggle)
+  toggleCheck($('#settings-aging'), settings.mobySettings.Aging)
+  // Reload repos
+  $('#settings-github-repos').children().remove()
+  $('#collapse-general, #collapse-github, #collapse-rally, #collapse-serviceNow').collapse('hide')
+  let gitHubRepo = ''
+  git.repoList.forEach((repo) => {
+    gitHubRepo += buildRepoItem(repo)
+  })
+  $('#settings-github-repos').append(gitHubRepo)
+  $('#settings-modal').modal('show')
+}
+
+// Track for changes in repo entries
+let repoChange = false
+$(document).on('change', '.repo-edit', (e) => {
+  repoChange = true
+  $(e.currentTarget).addClass('input-change')
+})
+$(document).on('click', '.repo-check', (e) => {
+  repoChange = true
+})
+
+// Assigned to me checkbox click handler
+$(document).on('click', '.check-card-checkbox', (e) => {
+  repoChange = true
+})
+
+// Assigned to me checkbox label click handler
+$(document).on('click', '.check-card-label', (e) => {
+  repoChange = true
+})
+
+// Deactivate repo
+$(document).on('click', '.repo-menu-item-deactivate', (e) => {
+  repoChange = true
+})
+
+// Deactivate repo
+$(document).on('click', '.repo-menu-item-delete', (e) => {
+  $(e.currentTarget).closest('.github-repo').remove()
+  repoChange = true
+})
+
+// Save changes button click handler
+$('#settings-button').click(() => {
+  $('#settings-modal').modal('hide')
+  // save general settings
+  settings.saveSettings()
+  // activate settings
+  toggleColorGlyphs(settings.mobySettings.ColorGlyphs)
+  // add/update repos
+  if (repoChange) {
+    git.repoList = []
+    $('.github-repo').each(function () {
+      git.submitRepo($(this).data('repo-id'))
+    })
+    getStacks()
+  }
+})
+
+// Add new GitHub repo
+// eslint-disable-next-line no-unused-vars
+const addNewGitHub = () => {
+  $('#settings-github-repos').append(buildRepoItem)
+  $('.modal-body').animate({ scrollTop: $(document).height() }, 'fast')
 }
 
 // Color toggle event

@@ -231,12 +231,12 @@ function buildStack (id, title, index, url) {
 }
 
 // Stack add for git issues
-$('.add-issue').click((e) => {
+$(document).on('click', '.add-issue', (e) => {
   shell.openExternal(`${$(e.currentTarget).data('url')}/issues/new`)
 })
 
 // Stack add for git issues
-$('.git-stack-icon').click((e) => {
+$(document).on('click', '.git-stack-icon', (e) => {
   shell.openExternal($(e.currentTarget).data('url'))
 })
 
@@ -679,7 +679,9 @@ $('#task-detail').on('focus mouseenter', function () {
 
 // Double clikc on card opens edit modal
 $('.card').dblclick((e) => {
-  $(e.currentTarget).find('#edit-button').click()
+  if (settings.mobySettings.DblClick) {
+    $(e.currentTarget).find('#edit-button').click()
+  }
 })
 
 // Recurrence elements enable logic

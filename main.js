@@ -21,7 +21,7 @@ const createWindow = () => {
   })
 
   // open DevTools remove for dist
-  win.webContents.openDevTools()
+  // win.webContents.openDevTools()
 
   // HTML to open
   win.loadURL(`file://${__dirname}/renderer/main.html`)

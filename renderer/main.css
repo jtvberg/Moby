@@ -465,6 +465,7 @@ body {
   margin-left: 5px;
 }
 
+.git-stack-icon:hover,
 .repo-menu-item-delete:hover,
 .repo-menu-item-clone:hover,
 .add-github:hover,

@@ -1,6 +1,33 @@
 // Modules and variable definition
 const { ipcRenderer, remote } = require('electron')
 
+// IPC event/channel to act on reset of form
+ipcRenderer.on('quick-reset', (e) => {
+  $('#quick-task-form').trigger('reset')
+  $('#quick-task-detail').height('48px')
+  $('#color-option-1').closest('.btn').button('toggle')
+  $('#submit-button-group').children('.submit-button').remove()
+  const stacks = JSON.parse(localStorage.getItem('stackList'))
+  let i = 1
+  stacks.forEach(stack => {
+    if (i < stacks.length) {
+      makeSubmitButton(stack.StackId, stack.StackTitle)
+      i++
+    }
+  })
+  $('#quick-task-title').focus()
+})
+
+// IPC call to set quick menu theme
+ipcRenderer.on('quick-theme', (e, data) => {
+  setTheme(data)
+})
+
+// IPC call to set quick menu glyph toggle
+ipcRenderer.on('quick-glyph', (e, data) => {
+  toggleColorGlyphs(data)
+})
+
 // Task creation from tray window; takes type as parameter from submit by type buttons
 function quickTask (type) {
   const taskId = Date.now()
@@ -22,23 +49,6 @@ function quickTask (type) {
   remote.getCurrentWindow().hide()
 }
 
-// IPC event/channel to act on reset of form
-ipcRenderer.on('quick-reset', (e) => {
-  $('#quick-task-form').trigger('reset')
-  $('#quick-task-detail').height('48px')
-  $('#color-option-1').closest('.btn').button('toggle')
-  $('#submit-button-group').children('.submit-button').remove()
-  const stacks = JSON.parse(localStorage.getItem('stackList'))
-  let i = 1
-  stacks.forEach(stack => {
-    if (i < stacks.length) {
-      makeSubmitButton(stack.StackId, stack.StackTitle)
-      i++
-    }
-  })
-  $('#quick-task-title').focus()
-})
-
 // Make quick submit buttons against available stacks
 function makeSubmitButton (stackId, stackTitle) {
   const btnHtml = `<button id="${stackId}" type="button" class="btn btn-primary btn-sm submit-button">${stackTitle}</button>`
@@ -48,30 +58,6 @@ function makeSubmitButton (stackId, stackTitle) {
     quickTask(e.currentTarget.id)
   })
 }
-
-// Size task detail on input
-$('#quick-task-detail').on('input keydown', function () {
-  if (this.scrollHeight > $('#quick-task-detail').height() + 12) {
-    $('#quick-task-detail').height(this.scrollHeight + 'px')
-  }
-})
-
-// Ignore enter on title
-$('#quick-task-title').keypress(function (e) {
-  if (e.which === 13) {
-    e.preventDefault()
-  }
-})
-
-// IPC call to set quick menu theme
-ipcRenderer.on('quick-theme', (e, data) => {
-  setTheme(data)
-})
-
-// IPC call to set quick menu glyph toggle
-ipcRenderer.on('quick-glyph', (e, data) => {
-  toggleColorGlyphs(data)
-})
 
 // Set theme
 function setTheme (themeId) {
@@ -90,3 +76,17 @@ function toggleColorGlyphs (check) {
     $('.color-glyph-edit').hide()
   }
 }
+
+// Size task detail on input
+$('#quick-task-detail').on('input keydown', function () {
+  if (this.scrollHeight > $('#quick-task-detail').height() + 12) {
+    $('#quick-task-detail').height(this.scrollHeight + 'px')
+  }
+})
+
+// Ignore enter on title
+$('#quick-task-title').keypress(function (e) {
+  if (e.which === 13) {
+    e.preventDefault()
+  }
+})

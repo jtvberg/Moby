@@ -5,6 +5,7 @@ const { Octokit } = require('@octokit/rest')
 // Track repo list
 exports.repoList = JSON.parse(localStorage.getItem('repoList')) || []
 
+// Refresh repo list
 exports.refreshRepos = () => {
   this.repoList = JSON.parse(localStorage.getItem('repoList'))
 }

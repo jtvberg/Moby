@@ -2,9 +2,6 @@
 const { ipcRenderer } = require('electron')
 let updTaskId = null
 
-// Track taskList with array
-exports.taskList = updateTaskListModel() // JSON.parse(localStorage.getItem('taskList')) || []
-
 // Function for when I change something about the data model
 function updateTaskListModel () {
   const rl = localStorage.getItem('taskList') || null
@@ -19,6 +16,9 @@ function updateTaskListModel () {
   }
   return []
 }
+
+// Track taskList with array
+exports.taskList = updateTaskListModel() // JSON.parse(localStorage.getItem('taskList')) || []
 
 // Track tag list
 exports.tagList = []

@@ -1,10 +1,12 @@
-
+// Track app settings list
 exports.mobySettings = JSON.parse(localStorage.getItem('mobySettings'))
 
+// Refresh app settings list
 exports.refreshSettings = () => {
   this.mobySettings = JSON.parse(localStorage.getItem('mobySettings'))
 }
 
+// Apply default settings
 exports.defaultSettings = () => {
   const settings = {
     Theme: 'default',
@@ -16,6 +18,7 @@ exports.defaultSettings = () => {
   localStorage.setItem('mobySettings', JSON.stringify(settings))
 }
 
+// Save settings to local storage
 exports.saveSettings = (themeId) => {
   const theme = themeId || this.mobySettings.Theme
   const settings = {

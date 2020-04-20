@@ -692,6 +692,9 @@ function exportData () {
 
 // Import all data
 function importData () {
+  if (!confirm('Import will replace all stacks, settings and repos and add tasks that are not present.\nFurther, any tasks not assigned an existing stack will be moved into your first stack.\nAre you sure?')) {
+    return
+  }
   let latestExport = 0
   const searchString = 'moby_export_'
   // Find the latest export file by extenstion and suffix
@@ -702,7 +705,7 @@ function importData () {
   fs.readFile(`${desktopPath}/${searchString}${latestExport}.txt`, (err, data) => {
     let alertString = ''
     if (err) {
-      alertString += 'An error occured during the import ' + err.message
+      alert('An error occured during the import ' + err.message)
       return
     }
     try {
@@ -735,7 +738,7 @@ function importData () {
         } else if (i === 1) {
           alertString += '\n1 task imported succesfully'
         } else {
-          alertString += '\nNo tasks found'
+          alertString += '\nNo new tasks found'
         }
       } else {
         alert('\n No tasks found')
@@ -777,7 +780,18 @@ function importData () {
       alert(err)
     }
     alert(alertString)
+    moveOrphanedTasks()
     getStacks()
+  })
+}
+
+function moveOrphanedTasks () {
+  const stacks = JSON.parse(localStorage.getItem('stackList'))
+  tasks.taskList.forEach(task => {
+    if (!stacks.some(e => e.StackId === task.TaskStack) && task.TaskStack !== 'stack-archive' && task.TaskStack !== 'stack-schedule') {
+      task.TaskStack = 'stack-do'
+    }
+    tasks.saveTasks()
   })
 }
 // #endregion

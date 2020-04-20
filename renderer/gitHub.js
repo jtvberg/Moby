@@ -5,13 +5,16 @@ const { Octokit } = require('@octokit/rest')
 // Track repo list
 exports.repoList = JSON.parse(localStorage.getItem('repoList')) || []
 
+// Track issue list
+exports.issueList = []
+
+// Track tag list
+exports.tagList = ['Issue']
+
 // Refresh repo list
 exports.refreshRepos = () => {
   this.repoList = JSON.parse(localStorage.getItem('repoList'))
 }
-
-// Track issue list
-exports.issueList = []
 
 // Get issues from repo
 exports.getIssues = () => {
@@ -46,9 +49,6 @@ exports.getIssues = () => {
     })
   }
 }
-
-// Track tag list
-exports.tagList = ['Issue']
 
 // Add issue(s) to UI
 exports.addIssue = (issue) => {

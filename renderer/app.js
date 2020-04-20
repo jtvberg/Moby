@@ -1015,16 +1015,6 @@ const addNewSubtask = () => {
 $(document).on('contextmenu', '.check-checkbox', (e) => {
   $(e.currentTarget).closest('.check-modal-host').remove()
 })
-
-// Subtask checkbox click handler
-$(document).on('click', '.check-card-checkbox', (e) => {
-  setSubtaskCheck($(e.currentTarget))
-})
-
-// Subtask checkbox label click handler
-$(document).on('click', '.check-card-label', (e) => {
-  setSubtaskCheck($(e.currentTarget).parent('.check-host').find('.check-checkbox'))
-})
 // #endregion
 
 // #region App functions
@@ -1065,10 +1055,16 @@ $('.titlebar-drag-region').dblclick(() => {
 // Checkbox click handler
 $(document).on('click', '.check-checkbox', (e) => {
   toggleCheck($(e.currentTarget))
+  if ($(e.currentTarget).hasClass('check-card-checkbox')) {
+    setSubtaskCheck($(e.currentTarget))
+  }
 })
 
 // Checkbox label click handler
 $(document).on('click', '.check-label', (e) => {
   toggleCheck($(e.currentTarget).parent('.check-host, .repo-check').find('.check-checkbox'))
+  if ($(e.currentTarget).parent('.check-host, .repo-check').find('.check-checkbox').hasClass('check-card-checkbox')) {
+    setSubtaskCheck($(e.currentTarget))
+  }
 })
 // #endregion

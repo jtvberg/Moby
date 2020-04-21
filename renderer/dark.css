@@ -1,8 +1,8 @@
 :root {
-  --dark: #383838;
-  --light: #e7e7e7;
+  --secondary: #383838;
+  --primary: #e7e7e7;
   --card-text: #e7e7e7;
-  --gray: #b9b9b9;
+  --muted: #b9b9b9;
   --trans: #00000000;
   --opaque: #ffffff2c;
   --highlight: #32b3d3;
@@ -11,7 +11,9 @@
   --img-opacity: .02;
   --background1: #333333;
   --background2: #111111;
-  --tag-background: #818181b6;
-  --tag-color: #e0e0e0;
+  --tag-card-color: #e0e0e0;
+  --tag-card-background: #0000003d;
+  --tag-cloud-color: #e0e0e0;
+  --tag-cloud-background: #9797973d;
   --font-base-size: 100%;
 }

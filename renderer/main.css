@@ -1,5 +1,5 @@
 body {
-  background-color: var(--dark);
+  background-color: var(--secondary);
   -webkit-user-select: none;
   -webkit-app-region: drag;
 }
@@ -59,7 +59,7 @@ body {
 }
 
 .header {
-  color: var(--light);
+  color: var(--primary);
   font-size: calc(var(--font-base-size) + 20%);
   font-weight: 500;
   justify-self: center;
@@ -78,7 +78,7 @@ body {
 }
 
 .git-stack-icon {
-  color: var(--light);
+  color: var(--primary);
   display: table;
   top: 5px;
   left: 5px;
@@ -87,7 +87,7 @@ body {
 }
 
 .stack-add:hover {
-  color: var(--light);
+  color: var(--primary);
 }
 
 .box {
@@ -151,11 +151,11 @@ body {
 }
 
 .close {
-  color: var(--gray);
+  color: var(--muted);
 }
 
 .close:hover {
-  color: var(--light);
+  color: var(--primary);
 }
 
 .modal {
@@ -173,7 +173,7 @@ body {
 .modal-content {
   border-color: var(--background1);
   background-color: var(--background2);
-  color: var(--light);
+  color: var(--primary);
   max-height: calc(100vh - 57px);
 }
 
@@ -186,7 +186,7 @@ body {
   padding: 2px;
   min-width: 0px;
   line-height: 1;
-  background-color: var(--light);
+  background-color: var(--primary);
   border: none;
   border-radius: 2px;
 }
@@ -277,7 +277,7 @@ body {
 
 .panel {
   border-width: 1px;
-  border-color: var(--gray);
+  border-color: var(--muted);
   padding: 2px;
 }
 
@@ -302,7 +302,7 @@ body {
 }
 
 .disabled-form-label {
-  color: var(--gray);
+  color: var(--muted);
 }
 
 .card-menu,
@@ -325,7 +325,7 @@ body {
 }
 
 .menu-item-toggled {
-  color: var(--light)
+  color: var(--primary)
 }
 
 .color-item {
@@ -336,7 +336,7 @@ body {
 }
 
 .color-item:hover {
-  color: var(--gray);
+  color: var(--muted);
 }
 
 .color-pick-1 {
@@ -367,7 +367,7 @@ body {
 .footer:hover,
 .menu-item:hover,
 .title-bar-btns:hover {
-  color: var(--light);
+  color: var(--primary);
 }
 
 .card-menu-item-del:hover,
@@ -409,8 +409,8 @@ body {
   margin: 1px;
   padding: 2px 5px;
   -webkit-app-region: no-drag;
-  background-color: var(--tag-background);
-  color: var(--tag-color);
+  background-color: var(--tag-card-background);
+  color: var(--tag-card-color);
 }
 
 .tags:hover {
@@ -431,8 +431,8 @@ body {
   margin: 2px;
   padding: 1px 5px;
   -webkit-app-region: no-drag;
-  background-color: var(--tag-background);
-  color: var(--tag-color);
+  background-color: var(--tag-cloud-background);
+  color: var(--tag-cloud-color);
   font-size: calc(var(--font-base-size) - 10%);
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -442,8 +442,8 @@ body {
 }
 
 .cloud-tags:hover {
-  background-color: var(--light);
-  color: var(--dark);
+  background-color: var(--primary);
+  color: var(--secondary);
 }
 
 .cloud-tags:focus {
@@ -451,8 +451,8 @@ body {
 }
 
 .cloud-tags-toggled {
-  background-color: var(--light);
-  color: var(--dark);
+  background-color: var(--primary);
+  color: var(--secondary);
 }
 
 .color-btn-group {
@@ -517,7 +517,7 @@ body {
 }
 
 .check-unchecked {
-  color: var(--gray);
+  color: var(--muted);
 }
 
 a {

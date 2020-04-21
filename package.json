@@ -19,8 +19,8 @@
   "author": "Vandenberg",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^7.2.1",
-    "electron-builder": "^22.4.1",
+    "electron": "^7.2.3",
+    "electron-builder": "^22.5.1",
     "electron-reload": "^1.5.0",
     "eslint": "^6.8.0",
     "eslint-config-standard": "^14.1.1",
@@ -31,10 +31,10 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.13.0",
-    "@octokit/rest": "^17.1.4",
+    "@octokit/rest": "^17.5.1",
     "bootstrap": "^4.4.1",
     "custom-electron-titlebar": "^3.2.2",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "popper.js": "^1.16.1"
   },
   "build": {

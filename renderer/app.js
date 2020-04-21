@@ -307,13 +307,26 @@ function getStacks () {
   } else {
     getDefaultStacks()
   }
+  $('#git-button').hide()
   if (gitHub.repoList.length > 0) {
+    let showBtn = false
     gitHub.repoList.forEach((repo) => {
       if (repo.Active) {
         buildStack(`git-stack-${repo.Owner}-${repo.Repo}`, repo.Repo, index, repo.Url)
+        showBtn = true
         index++
       }
     })
+    if (showBtn) {
+      $('#git-button').show()
+      if (settings.mobySettings) {
+        if (settings.mobySettings.GhToggle === false) {
+          $('#git-button').addClass('menu-item-toggled')
+        } else {
+          $('.git-stack').hide(0)
+        }
+      }
+    }
   }
   // Add tasks, issues, tags to the stacks
   tasks.taskList.forEach(tasks.addTask)
@@ -394,16 +407,6 @@ function buildStack (id, title, index, url) {
   $('.stack-host').on('mouseleave', () => {
     $(`#context-menu-${id}`).removeClass('show').hide().css({ width: '0px' })
   })
-  if (!isDefault) {
-    $('#git-button').show()
-    if (settings.mobySettings) {
-      if (settings.mobySettings.GhToggle === false) {
-        $('#git-button').addClass('menu-item-toggled')
-      } else {
-        $('.git-stack').hide(0)
-      }
-    }
-  }
 }
 
 // Add new user defined stack

@@ -96,7 +96,7 @@ exports.addIssue = (issue) => {
     // Check if age is toggled
     const showAge = $('.aging').is(':visible') ? 'style' : 'style="display: none;"'
     // Generate issue card html
-    const issueHtml = `<div class="card color-${color}" id="${id}">
+    const issueHtml = `<div class="card color-${color}" id="${id}" data-github-url="${issue.issueOjb.html_url}">
                         <div style="clear: both" id="b${id}" data-toggle="collapse" data-target="#c${id}">
                           <span class="color-glyph fas fa-${colorGlyph}" ${showColorGlyphs}></span>
                           <span class="title">#${issue.issueOjb.number} ${issue.issueOjb.title}</span>

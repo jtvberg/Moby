@@ -993,9 +993,13 @@ const collapseAll = () => {
 }
 
 // Double clikc on card opens edit modal
-$('.card').dblclick((e) => {
+$(document).on('dblclick', '.card', (e) => {
   if (settings.mobySettings.DblClick) {
-    $(e.currentTarget).find('#edit-button').click()
+    if ($(e.currentTarget).parent().parent().hasClass('git-stack')) {
+      shell.openExternal($(e.currentTarget).data('github-url'))
+    } else {
+      $(e.currentTarget).find('#edit-button').click()
+    }
   }
 })
 

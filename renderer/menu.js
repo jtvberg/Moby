@@ -106,6 +106,10 @@ if (process.platform === 'darwin') {
                 click () { window.setThemeMenu('light') }
               },
               {
+                label: 'Cyber',
+                click () { window.setThemeMenu('cyber') }
+              },
+              {
                 label: 'Steve',
                 click () { window.setThemeMenu('steve') }
               }

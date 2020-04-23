@@ -16,7 +16,7 @@ body {
 
 .quick-body {
   border-radius: 5px;
-  background-color: var(--background2);
+  background-color: var(--main-background-dark);
   padding: 5px;
   color: var(--primary);
   font-weight: 500;
@@ -55,7 +55,7 @@ body {
   height: 0;
   border-left: 15px solid var(--trans);
   border-right: 15px solid var(--trans);
-  border-bottom: 15px solid var(--background1);
+  border-bottom: 15px solid var(--main-background-light);
   left: 45%;
   position: relative;
 }

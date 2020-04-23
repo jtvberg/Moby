@@ -1,0 +1,28 @@
+:root {
+  --red: #ff1900;
+  --blue: #2957b9;
+  --orange: #ff8800;
+  --purple: #8c00c4;
+  --green: #00b13b;
+  --secondary: #383838;
+  --primary: #ffffff;
+  --menu-primary: #272626;
+  --card-primary: #e7e7e7;
+  --muted: #b9b9b9;
+  --trans: #00000000;
+  --opaque: #ffffff10;
+  --opaque-card: #00000071;
+  --highlight: #00ccff;
+  --checked: #00ff00;
+  --focused: #fff;
+  --img-opacity: .02;
+  --main-background-light: #202020;
+  --main-background-dark: #050505;
+  --menu-background-light: #fbff00;
+  --menu-background-dark: #e7eb00;
+  --tag-card-color: #e0e0e0;
+  --tag-card-background: #0000003d;
+  --tag-cloud-color: #e0e0e0;
+  --tag-cloud-background: #9797973d;
+  --font-base-size: 100%;
+}

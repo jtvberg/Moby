@@ -10,7 +10,7 @@ body {
   grid-template-rows: 0px 1fr;
   grid-gap: 2px;
   height: 100%;
-  background-image: linear-gradient(to bottom, var(--background1), var(--background2));
+  background-image: linear-gradient(to bottom, var(--main-background-light), var(--main-background-dark));
 }
 
 .stack-host {
@@ -108,7 +108,7 @@ body {
 }
 
 .inactive {
-  background-color: var(--background1) !important;
+  background-color: var(--main-background-light) !important;
   color: var(--opaque) !important;
 }
 
@@ -122,7 +122,7 @@ body {
   grid-row-start: 2;
   grid-row-end: 4;
   text-align: center;
-  background-color: var(--background1);
+  background-image: linear-gradient(to bottom, var(--menu-background-dark), var(--menu-background-light));
   border-radius: 3px;
   height: inherit;
   z-index: 1300;
@@ -140,6 +140,7 @@ body {
   padding: 6px;
   bottom: 0px;
   align-items: center;
+  padding-bottom: 2px;
 }
 
 .logo {
@@ -167,12 +168,12 @@ body {
 }
 
 .modal-header {
-  border-bottom: 1px solid var(--background1);
+  border-bottom: 1px solid var(--main-background-light);
 }
 
 .modal-content {
-  border-color: var(--background1);
-  background-color: var(--background2);
+  border-color: var(--main-background-light);
+  background-color: var(--main-background-dark);
   color: var(--primary);
   max-height: calc(100vh - 57px);
 }
@@ -192,7 +193,7 @@ body {
 }
 
 .ddcm>a {
-  color: var(--background1);
+  color: var(--main-background-light);
   width: 0px;
   font-size: calc(var(--font-base-size) - 15%);
   font-weight: 600;
@@ -214,20 +215,45 @@ body {
 }
 
 .modal-footer {
-  border-top: 1px solid var(--background1);
+  border-top: 1px solid var(--main-background-light);
 }
 
 .card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto 1fr;
   transition: 0.3s;
   border-radius: 3px;
   margin: 5px;
   padding: 2px;
   font-size: var(--font-base-size);
   -webkit-app-region: no-drag;
+  color: var(--card-primary);
+  font-weight: 500;
 }
 
 .card:hover {
   box-shadow: 0 4px 8px 0 rgba(82, 82, 82, 0.6);
+}
+
+.card-bar {
+  grid-column: 1;
+  grid-row-start: 1;
+  grid-row-end: 3;
+  width: 6px;
+}
+
+.card-content {
+  grid-column: 2;
+  padding: 0px 0px 0px 2px;
+}
+
+.card-header {
+  grid-column: 2;
+  grid-row: 1;
+  padding: 0px 0px 0px 2px;
+  border: none;
+  background-color: var(--trans);
 }
 
 .card-selected {
@@ -306,7 +332,6 @@ body {
 }
 
 .card-menu,
-.menu-item,
 .footer {
   color: var(--opaque);
 }
@@ -320,6 +345,7 @@ body {
 }
 
 .menu-item {
+  color: var(--menu-primary);
   padding: 4px;
   -webkit-app-region: no-drag;
 }
@@ -337,6 +363,10 @@ body {
 
 .color-item:hover {
   color: var(--muted);
+}
+
+.color-trans {
+  background-color: var(--opaque-card);
 }
 
 .color-pick-1 {
@@ -531,7 +561,7 @@ a {
 }
 
 .github-repo {
-  border-color: var(--background1) !important;
+  border-color: var(--main-background-light) !important;
   border-width: 1px !important;
   border: solid;
   border-radius: 5px;

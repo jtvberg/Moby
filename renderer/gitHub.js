@@ -95,14 +95,18 @@ exports.addIssue = (issue) => {
     const showColorGlyphs = $('.color-glyph').is(':visible') ? '' : 'style="display: none;"'
     // Check if age is toggled
     const showAge = $('.aging').is(':visible') ? 'style' : 'style="display: none;"'
+    // Show banded cards $('.card-bar').is(':visible')
+    const bandedCards = $('.card-bar').is(':visible') ? '' : 'style="display: none;"'
+    const colorCards = $('.card-bar').is(':visible') ? ' color-trans' : ''
     // Generate issue card html
-    const issueHtml = `<div class="card color-${color}" id="${id}" data-github-url="${issue.issueOjb.html_url}">
-                        <div style="clear: both" id="b${id}" data-toggle="collapse" data-target="#c${id}">
+    const issueHtml = `<div class="card color-${color}${colorCards}" id="${id}" data-github-url="${issue.issueOjb.html_url}">
+                        <div class="card-bar color-${color}"${bandedCards}></div>  
+                        <div class="card-header" style="clear: both" id="b${id}" data-toggle="collapse" data-target="#c${id}">
                           <span class="color-glyph fas fa-${colorGlyph}" ${showColorGlyphs}></span>
                           <span class="title">#${issue.issueOjb.number} ${issue.issueOjb.title}</span>
                           <span class="aging" id="a${id}" ${showAge}>${age}</span>
                         </div>
-                        <div class="collapse collapse-content" id="c${id}">
+                        <div class="card-content collapse collapse-content" id="c${id}">
                           <div class="detail" id="d${id}" contenteditable="true" style="white-space: pre-wrap;" draggable="true" ondragstart="event.preventDefault(); event.stopPropagation();">Created: ${cd.toLocaleDateString()}<br>Updated: ${ud.toLocaleDateString()}<br>Opened by: ${issue.issueOjb.user.login}<br>Assigned to: ${assigned}<br><a style="color: white" id="l${id}" href="${issue.issueOjb.html_url}">GitHub Link</a><br>${issue.issueOjb.body}</div>
                           <div class="tag-box" id="t${id}">${tagHTML}</div>
                           <div class="card-menu">

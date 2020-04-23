@@ -4,3 +4,4 @@ dist/
 private/
 export.txt
 *.xlsx
+test.*

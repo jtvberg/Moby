@@ -43,7 +43,7 @@ ipcRenderer.on('update-tags', () => {
 // #endregion
 
 // #region Custom titlebar instantiation
-const bg = getComputedStyle(document.documentElement).getPropertyValue('--background1').trim()
+const bg = getComputedStyle(document.documentElement).getPropertyValue('--main-background-light').trim()
 // eslint-disable-next-line no-new
 const ctb = new customTitlebar.Titlebar({
   backgroundColor: customTitlebar.Color.fromHex(bg),
@@ -108,6 +108,19 @@ function applySettings () {
     toggleAge(settings.mobySettings.Aging)
     // Toggle Color Glyphs
     toggleColorGlyphs(settings.mobySettings.ColorGlyphs)
+    // Toggle Banded Cards
+    toggleBandedCards(settings.mobySettings.BandedCards)
+  }
+}
+
+// Toggle banded cards
+function toggleBandedCards (check) {
+  if (check === true) {
+    $('.card-bar').show().width('6px')
+    $('.card').addClass('color-trans')
+  } else if (check === false) {
+    $('.card-bar').hide().width('0px')
+    $('.card').removeClass('color-trans')
   }
 }
 
@@ -153,7 +166,7 @@ function setTheme (themeId) {
 
 // Update TitleBar bakground color on theme change
 function updateTitileBar () {
-  const nbg = getComputedStyle(document.documentElement).getPropertyValue('--background1').trim()
+  const nbg = getComputedStyle(document.documentElement).getPropertyValue('--main-background-light').trim()
   ctb.updateBackground(customTitlebar.Color.fromHex(nbg))
 }
 
@@ -161,6 +174,7 @@ function updateTitileBar () {
 function loadSettingsModal () {
   repoChange = false
   // Set check states on settings modal
+  toggleCheck($('#settings-bands'), settings.mobySettings.BandedCards)
   toggleCheck($('#settings-glyphs'), settings.mobySettings.ColorGlyphs)
   toggleCheck($('#settings-dblclick'), settings.mobySettings.DblClick)
   toggleCheck($('#settings-github-toggle'), settings.mobySettings.GhToggle)
@@ -240,6 +254,7 @@ $('#settings-button').click(() => {
   settings.saveSettings()
   // activate settings
   toggleColorGlyphs(settings.mobySettings.ColorGlyphs)
+  toggleBandedCards(settings.mobySettings.BandedCards)
   // add/update repos
   if (repoChange) {
     gitHub.repoList = []

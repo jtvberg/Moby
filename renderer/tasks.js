@@ -242,15 +242,19 @@ exports.addTask = (task, highlight) => {
   // Check if archived and update archive tooltip to delete
   const archDelete = task.TaskStack === 'stack-archive' ? 'Delete' : 'Archive'
   // Check if clone to highlight
-  const taskHighlight = highlight === true ? 'card-highlighted' : ''
+  const taskHighlight = highlight === true ? ' card-highlighted' : ''
+  // Show banded cards $('.card-bar').is(':visible')
+  const bandedCards = $('.card-bar').is(':visible') ? '' : 'style="display: none;"'
+  const colorCards = $('.card-bar').is(':visible') ? ' color-trans' : ''
   // Generate task card html
-  const taskHtml = `<div class="card ${taskHighlight} color-${task.TaskColor}" id="${task.TaskId}" draggable="true" ondragstart="drag(event)">
-                      <div style="clear: both" id="b${task.TaskId}" data-toggle="collapse" data-target="#c${task.TaskId}">
+  const taskHtml = `<div class="card${taskHighlight} color-${task.TaskColor}${colorCards}" id="${task.TaskId}" draggable="true" ondragstart="drag(event)">
+                      <div class="card-bar color-${task.TaskColor}"${bandedCards}></div>                    
+                      <div class="card-header" style="clear: both" id="b${task.TaskId}" data-toggle="collapse" data-target="#c${task.TaskId}">
                         <span class="color-glyph fas fa-${colorGlyph}" ${showColorGlyphs}></span>
                         <span class="title">${task.TaskTitle}</span>
                         <span class="aging" id="a${task.TaskId}" ${showAge}></span>
                       </div>
-                      <div class="collapse collapse-content" id="c${task.TaskId}">
+                      <div class="card-content collapse collapse-content" id="c${task.TaskId}">
                         <div class="detail" id="d${task.TaskId}" contenteditable="true" style="white-space: pre-wrap;" draggable="true" ondragstart="event.preventDefault(); event.stopPropagation();">${task.TaskDetail}</div>
                         <div class="subtask-box">${subtaskHTML}</div>
                         <div class="tag-box" id="t${task.TaskId}">${tagHTML}</div>

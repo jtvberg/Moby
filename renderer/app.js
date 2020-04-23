@@ -1098,8 +1098,8 @@ $(document).on('click', '.check-checkbox', (e) => {
 
 // Checkbox label click handler
 $(document).on('click', '.check-label', (e) => {
-  toggleCheck($(e.currentTarget).parent('.check-host, .repo-check').find('.check-checkbox'))
-  if ($(e.currentTarget).parent('.check-host, .repo-check').find('.check-checkbox').hasClass('check-card-checkbox')) {
+  toggleCheck($(e.currentTarget).parent('.check-host, .repo-check, .check-modal-host').find('.check-checkbox'))
+  if ($(e.currentTarget).parent('.check-host').find('.check-checkbox').hasClass('check-card-checkbox')) {
     setSubtaskCheck($(e.currentTarget))
   }
 })

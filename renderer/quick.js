@@ -61,10 +61,7 @@ function makeSubmitButton (stackId, stackTitle) {
 
 // Set theme
 function setTheme (themeId) {
-  $('#default').prop('disabled', true)
-  $('#dark').prop('disabled', true)
-  $('#light').prop('disabled', true)
-  $('#steve').prop('disabled', true)
+  $('.css-theme').prop('disabled', true)
   $(`#${themeId}`).prop('disabled', false)
 }
 

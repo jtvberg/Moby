@@ -699,7 +699,7 @@ function exportData () {
     Settings: JSON.parse(localStorage.getItem('mobySettings')) || [],
     Repos: JSON.parse(localStorage.getItem('repoList')) || []
   }
-  fs.writeFile(`${desktopPath}/moby_export_${Date.now()}.txt`, JSON.stringify(JSONexport), err => {
+  fs.writeFile(`${desktopPath}/moby_export_${Date.now()}.txt`, JSON.stringify(JSONexport, null, 4), err => {
     if (err) {
       alert('An error occured during the export ' + err.message)
       return
@@ -803,6 +803,7 @@ function importData () {
   })
 }
 
+// If existing tasks do not align to the imported stacks, move them to the first stack
 function moveOrphanedTasks () {
   const stacks = JSON.parse(localStorage.getItem('stackList'))
   tasks.taskList.forEach(task => {

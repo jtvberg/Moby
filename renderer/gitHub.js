@@ -107,7 +107,7 @@ exports.addIssue = (issue) => {
                           <span class="aging" id="a${id}" ${showAge}>${age}</span>
                         </div>
                         <div class="card-content collapse collapse-content" id="c${id}">
-                          <div class="detail" id="d${id}" contenteditable="true" style="white-space: pre-wrap;" draggable="true" ondragstart="event.preventDefault(); event.stopPropagation();">Created: ${cd.toLocaleDateString()}<br>Updated: ${ud.toLocaleDateString()}<br>Opened by: ${issue.issueOjb.user.login}<br>Assigned to: ${assigned}<br><a style="color: white" id="l${id}" href="${issue.issueOjb.html_url}">GitHub Link</a><br>${issue.issueOjb.body}</div>
+                          <div class="detail" id="d${id}" contenteditable="true" style="white-space: pre-wrap;" draggable="true" ondragstart="event.preventDefault(); event.stopPropagation();"><a style="color: var(--highlight)" id="l${id}" href="${issue.issueOjb.html_url}">GitHub Link</a><br><b>Created:</b> ${cd.toLocaleDateString()}<br><b>Updated:</b> ${ud.toLocaleDateString()}<br><b>Opened by:</b> ${issue.issueOjb.user.login}<br><b>Assigned to:</b> ${assigned}<br><b>Detail:</b> ${issue.issueOjb.body}</div>
                           <div class="tag-box" id="t${id}">${tagHTML}</div>
                           <div class="card-menu">
                           </div>

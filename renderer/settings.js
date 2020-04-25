@@ -14,6 +14,7 @@ exports.defaultSettings = () => {
     BandedCards: false,
     Aging: false,
     DblClick: false,
+    ArchivePrune: 120,
     GhToggle: false
   }
   localStorage.setItem('mobySettings', JSON.stringify(settings))
@@ -26,6 +27,7 @@ exports.saveSettings = (themeId) => {
   const bandedCards = themeId ? this.mobySettings.BandedCards : $('#settings-bands').hasClass('check-checked')
   const aging = themeId ? this.mobySettings.Aging : $('#settings-aging').hasClass('check-checked')
   const dblClick = themeId ? this.mobySettings.DblClick : $('#settings-dblclick').hasClass('check-checked')
+  const archivePrune = themeId ? this.mobySettings.ArchivePrune : parseInt($('#choose-prune input:radio:checked').val()) || 0
   const ghToggle = themeId ? this.mobySettings.GhToggle : $('#settings-github-toggle').hasClass('check-checked')
 
   const settings = {
@@ -34,6 +36,7 @@ exports.saveSettings = (themeId) => {
     BandedCards: bandedCards,
     Aging: aging,
     DblClick: dblClick,
+    ArchivePrune: archivePrune,
     GhToggle: ghToggle
   }
   localStorage.setItem('mobySettings', JSON.stringify(settings))

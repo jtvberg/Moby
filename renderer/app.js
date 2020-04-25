@@ -56,6 +56,7 @@ const ctb = new customTitlebar.Titlebar({
 getStacks()
 addScheduledTasks()
 archiveDoneTasks()
+// pruneArchive(settings.mobySettings.PruneDays)
 tasks.updateTaskAge()
 gitHub.getIssues()
 
@@ -63,6 +64,7 @@ gitHub.getIssues()
 window.setInterval(addScheduledTasks, 3600000)
 window.setInterval(tasks.updateTaskAge, 3600000)
 window.setInterval(archiveDoneTasks, 3600000)
+window.setInterval(pruneArchive(settings.mobySettings.ArchivePrune || 0), 3600000)
 window.setInterval(gitHub.getIssues, 1000000)
 
 // Scheduled tasks method
@@ -88,9 +90,20 @@ function addScheduledTasks () {
 // Move tasks to Archive from Done after 1 week
 function archiveDoneTasks () {
   if (tasks.taskList.length) {
-    tasks.taskList.forEach((item) => {
-      if (item.TaskStack === 'stack-done' && item.StackDate < Date.now() - (86400000 * 7)) {
-        tasks.archiveTask(item.TaskId)
+    tasks.taskList.forEach((task) => {
+      if (task.TaskStack === 'stack-done' && task.StackDate < Date.now() - (86400000 * 7)) {
+        tasks.archiveTask(task.TaskId)
+      }
+    })
+  }
+}
+
+// Prune archived tasks back number of days passed in
+function pruneArchive (days) {
+  if (days && days !== 0) {
+    tasks.taskList.forEach((task) => {
+      if (task.TaskStack === 'stack-archive' && task.UpdateTimestamp < Date.now() - (86400000 * days)) {
+        tasks.deleteTask(task.TaskId)
       }
     })
   }
@@ -179,9 +192,11 @@ function loadSettingsModal () {
   toggleCheck($('#settings-dblclick'), settings.mobySettings.DblClick)
   toggleCheck($('#settings-github-toggle'), settings.mobySettings.GhToggle)
   toggleCheck($('#settings-aging'), settings.mobySettings.Aging)
+  $(`input[name=radio-prune][value=${settings.mobySettings.ArchivePrune}]`).prop('checked', true)
   // Reload repos
   $('#settings-github-repos').children().remove()
-  $('#collapse-general, #collapse-github, #collapse-rally, #collapse-serviceNow').collapse('hide')
+  $('#collapse-github, #collapse-rally, #collapse-serviceNow').collapse('hide')
+  $('#collapse-general').collapse('show')
   let gitHubRepo = ''
   gitHub.repoList.forEach((repo) => {
     gitHubRepo += buildRepoItem(repo)

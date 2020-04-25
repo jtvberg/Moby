@@ -522,7 +522,7 @@ body {
 .check-checkbox {
   grid-column: 1;
   grid-row: 1;
-  margin-top: 3px;
+  margin-top: 4px;
 }
 
 .check-checkbox:hover {
@@ -532,7 +532,11 @@ body {
 .check-label {
   grid-column: 2;
   grid-row: 1;
-  margin-bottom: 1px;
+  margin-bottom: 2px;
+}
+
+.check-card-label {
+  padding-top: 1px;
 }
 
 .check-description {
@@ -557,7 +561,15 @@ a {
 .settings-github-group,
 .settings-group {
   margin-left: 30px;
-  font-size: calc(var(--font-base-size) - 10%);
+  font-size: calc(var(--font-base-size) - 10%) !important;
+}
+
+.settings-radio {
+  margin-right: 10px;
+}
+
+.settings-radio-check:checked {
+  color: var(--checked);
 }
 
 .github-repo {
@@ -575,6 +587,7 @@ a {
 
 .small-check {
   margin-left: -4px;
+  padding-top: 1px;
 }
 
 .repo-menu {

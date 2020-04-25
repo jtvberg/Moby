@@ -331,6 +331,34 @@
                           <label class="check-label">Open Task on Double-click</label>
                           <small class="text-muted check-description">Opens the edit modal when double-clicking on a task card</small>
                         </div>
+                        <div class="form-group">
+                          <div class="check-label">Archive Pruning</div>
+                          <div id="choose-prune">
+                            <div class="form-check form-check-inline settings-radio">
+                              <input type="radio" class="form-check-input" name="radio-prune" id="radio-never" value="0">
+                              <label class="form-check-label" for="radio-never">Never</label>
+                            </div>
+                            <div class="form-check form-check-inline settings-radio">
+                              <input type="radio" class="form-check-input" name="radio-prune" id="radio-onetwenty" value="120">
+                              <label class="form-check-label" for="radio-onetwenty">120 Days</label>
+                            </div>
+                            <div class="form-check form-check-inline settings-radio">
+                              <input type="radio" class="form-check-input" name="radio-prune" id="radio-ninety" value="90">
+                              <label class="form-check-label" for="radio-ninety">90 Days</label>
+                            </div>
+                            <div class="form-check form-check-inline settings-radio">
+                              <input type="radio" class="form-check-input" name="radio-prune" id="radio-sixty" value="60">
+                              <label class="form-check-label" for="radio-sixty">60 Days</label>
+                            </div>
+                            <div class="form-check form-check-inline settings-radio">
+                              <input type="radio" class="form-check-input" name="radio-prune" id="radio-thirty" value="30">
+                              <label class="form-check-label" for="radio-thirty">30 Days</label>
+                            </div>
+                          </div>
+                          <div style="margin-top: -2px;">
+                            <small class="text-muted check-description">Sets how many days back to delete archived items</small>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>

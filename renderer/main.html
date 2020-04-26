@@ -331,12 +331,40 @@
                           <label class="check-label">Open Task on Double-click</label>
                           <small class="text-muted check-description">Opens the edit modal when double-clicking on a task card</small>
                         </div>
+                        <div class="form-group" style="margin-bottom: 5px;">
+                          <div class="check-label">Archive Completed Tasks</div>
+                          <div id="choose-archive">
+                            <div class="form-check form-check-inline settings-radio">
+                              <input type="radio" class="form-check-input" name="radio-archive" id="radio-never-archive" value="0">
+                              <label class="form-check-label" for="radio-never-archive">Never</label>
+                            </div>
+                            <div class="form-check form-check-inline settings-radio">
+                              <input type="radio" class="form-check-input" name="radio-archive" id="radio-fourteen" value="14">
+                              <label class="form-check-label" for="radio-fourteen">14 Days</label>
+                            </div>
+                            <div class="form-check form-check-inline settings-radio">
+                              <input type="radio" class="form-check-input" name="radio-archive" id="radio-seven" value="7">
+                              <label class="form-check-label" for="radio-seven">7 Days</label>
+                            </div>
+                            <div class="form-check form-check-inline settings-radio">
+                              <input type="radio" class="form-check-input" name="radio-archive" id="radio-three" value="3">
+                              <label class="form-check-label" for="radio-three">3 Days</label>
+                            </div>
+                            <div class="form-check form-check-inline settings-radio">
+                              <input type="radio" class="form-check-input" name="radio-archive" id="radio-one" value="1">
+                              <label class="form-check-label" for="radio-one">1 Day</label>
+                            </div>
+                          </div>
+                          <div style="margin-top: -2px;">
+                            <small class="text-muted check-description">Sets how many days until completed tasks are automatically archived</small>
+                          </div>
+                        </div>
                         <div class="form-group">
                           <div class="check-label">Archive Pruning</div>
                           <div id="choose-prune">
                             <div class="form-check form-check-inline settings-radio">
-                              <input type="radio" class="form-check-input" name="radio-prune" id="radio-never" value="0">
-                              <label class="form-check-label" for="radio-never">Never</label>
+                              <input type="radio" class="form-check-input" name="radio-prune" id="radio-never-prune" value="0">
+                              <label class="form-check-label" for="radio-never-prune">Never</label>
                             </div>
                             <div class="form-check form-check-inline settings-radio">
                               <input type="radio" class="form-check-input" name="radio-prune" id="radio-onetwenty" value="120">
@@ -356,7 +384,7 @@
                             </div>
                           </div>
                           <div style="margin-top: -2px;">
-                            <small class="text-muted check-description">Sets how many days back to delete archived items</small>
+                            <small class="text-muted check-description">Sets how many days until archived tasks are deleted</small>
                           </div>
                         </div>
                       </div>

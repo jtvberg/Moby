@@ -55,16 +55,16 @@ const ctb = new customTitlebar.Titlebar({
 // Initial Load
 getStacks()
 addScheduledTasks()
-archiveDoneTasks()
-// pruneArchive(settings.mobySettings.PruneDays)
+archiveDoneTasks(settings.mobySettings.ArchiveDone)
+pruneArchive(settings.mobySettings.ArchivePrune)
 tasks.updateTaskAge()
 gitHub.getIssues()
 
 // Set intervals for data refresh
 window.setInterval(addScheduledTasks, 3600000)
-window.setInterval(tasks.updateTaskAge, 3600000)
-window.setInterval(archiveDoneTasks, 3600000)
+window.setInterval(archiveDoneTasks(settings.mobySettings.ArchiveDone || 7), 3600000)
 window.setInterval(pruneArchive(settings.mobySettings.ArchivePrune || 0), 3600000)
+window.setInterval(tasks.updateTaskAge, 3600000)
 window.setInterval(gitHub.getIssues, 1000000)
 
 // Scheduled tasks method
@@ -88,10 +88,10 @@ function addScheduledTasks () {
 }
 
 // Move tasks to Archive from Done after 1 week
-function archiveDoneTasks () {
+function archiveDoneTasks (days) {
   if (tasks.taskList.length) {
     tasks.taskList.forEach((task) => {
-      if (task.TaskStack === 'stack-done' && task.StackDate < Date.now() - (86400000 * 7)) {
+      if (task.TaskStack === 'stack-done' && task.StackDate < Date.now() - (86400000 * days)) {
         tasks.archiveTask(task.TaskId)
       }
     })
@@ -192,7 +192,8 @@ function loadSettingsModal () {
   toggleCheck($('#settings-dblclick'), settings.mobySettings.DblClick)
   toggleCheck($('#settings-github-toggle'), settings.mobySettings.GhToggle)
   toggleCheck($('#settings-aging'), settings.mobySettings.Aging)
-  $(`input[name=radio-prune][value=${settings.mobySettings.ArchivePrune}]`).prop('checked', true)
+  $(`input[name=radio-archive][value=${settings.mobySettings.ArchiveDone || 7}]`).prop('checked', true)
+  $(`input[name=radio-prune][value=${settings.mobySettings.ArchivePrune || 0}]`).prop('checked', true)
   // Reload repos
   $('#settings-github-repos').children().remove()
   $('#collapse-github, #collapse-rally, #collapse-serviceNow').collapse('hide')
@@ -725,7 +726,7 @@ function exportData () {
 
 // Import all data
 function importData () {
-  if (!confirm('Import will replace all stacks, settings and repos and add tasks that are not present.\nFurther, any tasks not assigned an existing stack will be moved into your first stack.\nAre you sure?')) {
+  if (!confirm('Import will replace all stacks and settings and add tasks and repos that are not present.\nFurther, any tasks not assigned an existing stack will be moved into your first stack.\nAre you sure?')) {
     return
   }
   let latestExport = 0
@@ -796,18 +797,26 @@ function importData () {
       alert(err)
     }
     try {
-      // Repo import
+      // Task import
       const JSONimport = JSON.parse(data).Repos
       if (JSONimport) {
-        localStorage.setItem('repoList', JSON.stringify(JSONimport))
-        gitHub.refreshRepos()
-        if (JSONimport.length > 1) {
-          alertString += `\n${JSONimport.length} repos imported succesfully`
-        } else if (JSONimport.length === 1) {
+        let i = 0
+        JSONimport.forEach(repo => {
+          if (!gitHub.repoList.some(e => e.RepoId === repo.RepoId)) {
+            gitHub.repoList.push(repo)
+            i++
+          }
+        })
+        gitHub.saveRepos()
+        if (i > 1) {
+          alertString += `\n${i} repos imported succesfully`
+        } else if (i === 1) {
           alertString += '\n1 repo imported succesfully'
+        } else {
+          alertString += '\nNo new repos found'
         }
       } else {
-        alertString += '\nNo repos found'
+        alert('\n No repos found')
       }
     } catch (err) {
       alert(err)

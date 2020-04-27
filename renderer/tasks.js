@@ -99,13 +99,15 @@ exports.submitTask = (taskType) => {
   const subtasks = []
   let offset = 1
   $('#subtask-edit-box > .check-modal-host').each(function () {
-    const newSubtaskData = {
-      SubtaskId: now + offset,
-      Checked: $(this).find('.check-checkbox').hasClass('check-checked'),
-      Text: $(this).find('.check-label').text()
+    if ($(this).find('.check-label').text() !== 'New Subtask' && $(this).find('.check-label').text().trim() !== '') {
+      const newSubtaskData = {
+        SubtaskId: now + offset,
+        Checked: $(this).find('.check-checkbox').hasClass('check-checked'),
+        Text: $(this).find('.check-label').text().trim()
+      }
+      subtasks.push(newSubtaskData)
+      offset++
     }
-    subtasks.push(newSubtaskData)
-    offset++
   })
   $('#check-sun').prop('checked') && weekDay.push(0)
   $('#check-mon').prop('checked') && weekDay.push(1)

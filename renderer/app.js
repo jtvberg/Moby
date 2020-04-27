@@ -281,6 +281,11 @@ $('#settings-button').click(() => {
   }
 })
 
+// Scroll down when expanding headers in settings modal
+$('.panel-header').click(function () {
+  $('.modal-body').animate({ scrollTop: parseInt($(this).offset().top - 100) }, 'fast')
+})
+
 // Track for changes in repo entries on input
 $(document).on('change', '.repo-edit', (e) => {
   repoChange = true

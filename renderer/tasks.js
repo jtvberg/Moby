@@ -259,7 +259,7 @@ exports.addTask = (task, highlight) => {
                         <span class="aging" id="a${task.TaskId}" ${showAge}></span>
                       </div>
                       <div class="card-content collapse collapse-content" id="c${task.TaskId}">
-                        <div class="detail" id="d${task.TaskId}" contenteditable="true" style="white-space: pre-wrap;" draggable="true" ondragstart="event.preventDefault(); event.stopPropagation();">${task.TaskDetail}</div>
+                        <div class="card-detail" id="d${task.TaskId}" contenteditable="true" style="white-space: pre-wrap;" draggable="true" ondragstart="event.preventDefault(); event.stopPropagation();">${task.TaskDetail}</div>
                         <div class="subtask-box">${subtaskHTML}</div>
                         <div class="tag-box" id="t${task.TaskId}">${tagHTML}</div>
                         <div class="card-menu">

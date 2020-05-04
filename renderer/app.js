@@ -360,7 +360,7 @@ $(document).on('click', '.repo-menu-item-delete', (e) => {
 function getStacks () {
   // Moby Task Stacks
   const stacks = JSON.parse(localStorage.getItem('stackList')) || []
-  $('.stack-host').children('.stack, .git-stack').remove()
+  $('.stack-host').children('.stack, .serv-stack').remove()
   let index = 0
   if (stacks.length > 1) {
     $('#task-stack').empty()
@@ -398,14 +398,14 @@ function getStacks () {
       if (settings.mobySettings.GhToggle === false) {
         $('#si-button').addClass('menu-item-toggled')
       } else {
-        $('.git-stack, .sn-stack').hide(0)
+        $('.serv-stack').hide(0)
       }
     }
   }
   // Add tasks, issues, incidents, tags to the stacks
   tasks.taskList.forEach(tasks.addTask)
   gitHub.issueList.forEach(gitHub.addIssue)
-  // serviceNow.snIncidentList.forEach(serviceNow.addSnIncident)
+  serviceNow.snIncidentList.forEach(serviceNow.addSnIncident)
   loadTagCloud()
   applySettings()
 }
@@ -446,16 +446,26 @@ function saveStacks () {
 // Build out and insert stacks
 function buildStack (id, title, index, url) {
   const isDefault = id.substring(0, 6) === stackPrefix
-  const stackClass = isDefault ? 'stack' : 'git-stack'
-  const itemType = isDefault ? 'Task' : 'Issue'
+  const stackClass = isDefault ? 'stack' : 'serv-stack'
   const dragDrop = isDefault ? ' ondrop="drop(event)" ondragover="allowDrop(event)"' : ''
-  const addTaskBtn = isDefault ? `" href="#task-modal" data-toggle="modal" data-stack-id="${id}" data-type-id="new"` : ` add-issue" data-url="${url}"`
+  let addTaskBtn = `" href="#task-modal" data-toggle="modal" data-stack-id="${id}" data-type-id="new"`
+  let refreshBtn = 'hidden'
+  let refreshDataSource = ''
+  let itemType = 'Task'
   let addStackBtn = ''
-  if (id.substring(0, 5) === 'stack' && id !== 'stack-do') {
+  if (isDefault && id !== 'stack-do') {
     addStackBtn = '<div class="stack-add fas fa-caret-square-left" data-toggle="tooltip" title="Insert Stack" onclick="addNewStackClick(event)"></div>'
   } else if (id.substring(0, 3) === 'git') {
+    addTaskBtn = ` add-issue" data-url="${url}"`
+    refreshBtn = ''
+    refreshDataSource = 'data-source="git"'
+    itemType = 'Issue'
     addStackBtn = `<div class="git-stack-icon stack-icon fab fa-github" data-toggle="tooltip" title="Repo Link" data-url="${url}"></div>`
   } else if (id.substring(0, 2) === 'sn') {
+    addTaskBtn = ` add-incident" data-url="${url}"`
+    refreshBtn = ''
+    refreshDataSource = 'data-source="sn"'
+    itemType = 'Incident'
     addStackBtn = `<div class="sn-stack-icon stack-icon fas fa-exclamation-triangle" data-toggle="tooltip" title="ServiceNow Link" data-url="${url}"></div>`
   }
   const removeStackBtn = id === 'stack-do' || id === 'stack-done' || !isDefault ? '' : `<div class="dropdown-menu dropdown-menu-sm ddcm" id="context-menu-${id}">
@@ -466,9 +476,14 @@ function buildStack (id, title, index, url) {
                       <div class="header stack-header" contenteditable="${isDefault}" onclick="document.execCommand('selectAll',false,null)" oncontextmenu="event.preventDefault(); event.stopPropagation();">${title}</div>
                       ${removeStackBtn}
                       <div class="box"></div>
-                      <span data-toggle="tooltip" title="Add ${itemType}" style="justify-self: right;">
-                        <div class="footer fas fa-plus fa-2x${addTaskBtn}></div>
-                      <span>
+                      <div>
+                        <span data-toggle="tooltip" title="Add ${itemType}" style="float: right;">
+                          <div class="footer fas fa-plus fa-2x${addTaskBtn}></div>
+                        </span>
+                        <span ${refreshBtn} data-toggle="tooltip" title="Refresh from Source" style="float: right;">
+                          <div class="footer fas fa-sync-alt fa-2x refresh-data" ${refreshDataSource}></div>
+                        </span>
+                      </div>
                     </div>`
   $('.stack-host').append(stackHtml)
   $(`#${id}`).on('contextmenu', () => {
@@ -572,14 +587,24 @@ $('.stack-header').on('paste', (e) => {
   e.preventDefault()
 })
 
-// Stack add for git issues
+// Stack icon click
+$(document).on('click', '.stack-icon', (e) => {
+  shell.openExternal($(e.currentTarget).data('url'))
+})
+
+// GitHub stack add issue click
 $(document).on('click', '.add-issue', (e) => {
   shell.openExternal(`${$(e.currentTarget).data('url')}/issues/new`)
 })
 
-// Stack add for git issues
-$(document).on('click', '.stack-icon', (e) => {
+// ServiceNow add incident click
+$(document).on('click', '.add-incident', (e) => {
   shell.openExternal($(e.currentTarget).data('url'))
+})
+
+// Refresh data click
+$(document).on('click', '.refresh-data', (e) => {
+  console.log($(e.currentTarget).data('source'))
 })
 
 // In-line stack title update event
@@ -638,12 +663,12 @@ const toggleTags = () => {
   }
 }
 
-// Toggle GitHub stacks
+// Toggle Service stacks
 // eslint-disable-next-line no-unused-vars
 const toggleIssues = () => {
-  if ($('.git-stack').is(':visible')) {
+  if ($('.serv-stack').is(':visible')) {
     $('.stack').show()
-    $('.git-stack').hide(0)
+    $('.serv-stack').hide(0)
     $('#si-button').removeClass('menu-item-toggled')
   } else {
     if (settings.mobySettings && settings.mobySettings.GhToggle === true) {
@@ -651,7 +676,7 @@ const toggleIssues = () => {
       $('#stack-archive').show()
       $('#stack-schedule').show()
     }
-    $('.git-stack').show()
+    $('.serv-stack').show()
     $('#si-button').addClass('menu-item-toggled')
   }
 }
@@ -1089,7 +1114,7 @@ const collapseAll = () => {
 // Double clikc on card opens edit modal
 $(document).on('dblclick', '.card', (e) => {
   if (settings.mobySettings.DblClick) {
-    if ($(e.currentTarget).parent().parent().hasClass('git-stack', 'sn-stack')) {
+    if ($(e.currentTarget).parent().parent().hasClass('serv-stack', 'sn-stack')) {
       shell.openExternal($(e.currentTarget).data('url'))
     } else {
       $(e.currentTarget).find('#edit-button').click()
@@ -1097,9 +1122,9 @@ $(document).on('dblclick', '.card', (e) => {
   }
 })
 
-// 
+// Open links in external browser (otherwise it will try to open them in the renderer)
 $(document).on('click', 'a[href^="http"]', function (e) {
-  e.preventDefault();
+  e.preventDefault()
   shell.openExternal(this.href)
 })
 

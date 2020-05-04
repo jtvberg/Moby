@@ -109,7 +109,7 @@ exports.addIssue = (issue) => {
                           <span class="aging" id="a${id}" ${showAge}>${age}</span>
                         </div>
                         <div class="card-content collapse collapse-content" id="c${id}">
-                          <div class="detail" id="d${id}" style="white-space: pre-wrap;" draggable="true" ondragstart="event.preventDefault(); event.stopPropagation();"><a style="color: var(--highlight)" id="l${id}" href="${issue.issueOjb.html_url}">GitHub Link</a><br><b>Created:</b> ${cd.toLocaleDateString()}<br><b>Updated:</b> ${ud.toLocaleDateString()}<br><b>Opened by:</b> ${issue.issueOjb.user.login}<br><b>Assigned to:</b> ${assigned}<br><b>Detail:</b> ${issue.issueOjb.body}</div>
+                          <div class="card-detail" id="d${id}" style="white-space: pre-wrap;" draggable="true" ondragstart="event.preventDefault(); event.stopPropagation();"><a style="color: var(--highlight)" id="l${id}" href="${issue.issueOjb.html_url}">GitHub Link</a><br><b>Created:</b> ${cd.toLocaleDateString()}<br><b>Updated:</b> ${ud.toLocaleDateString()}<br><b>Opened by:</b> ${issue.issueOjb.user.login}<br><b>Assigned to:</b> ${assigned}<br><b>Detail:</b> ${issue.issueOjb.body}</div>
                           <div class="tag-box" id="t${id}">${tagHTML}</div>
                           <div class="card-menu">
                             <div class="card-menu-item fas fa-clipboard" id="copy-button-${id}" data-toggle="tooltip" title="Copy To Clipboard"></div>
@@ -131,7 +131,7 @@ exports.addIssue = (issue) => {
     })
     // Copy issue details to clipboard
     $(`#copy-button-${id}`).click(() => {
-      const cbs = `#${issue.issueOjb.number} ${issue.issueOjb.title}\n${issue.issueOjb.html_url}\nCreated: ${cd.toLocaleDateString()}\nUpdated: ${ud.toLocaleDateString()}\nOpened by: ${issue.issueOjb.user.login}\nAssigned to: ${assigned}\nDetail: ${issue.issueOjb.body}`
+      const cbs = `#${issue.issueOjb.number} ${issue.issueOjb.title}\nLink: ${issue.issueOjb.html_url}\nCreated: ${cd.toLocaleDateString()}\nUpdated: ${ud.toLocaleDateString()}\nOpened by: ${issue.issueOjb.user.login}\nAssigned to: ${assigned}\nDetail: ${issue.issueOjb.body}`
       clipboard.writeText(cbs)
     })
     // Initialize tooltips

@@ -3,16 +3,16 @@ const { ipcRenderer, clipboard } = require('electron')
 const ServiceNow = require('servicenow-rest-api')
 const os = require('os')
 const username = os.userInfo().username
-
+const creds = require('./creds')
 // ServiceNow Prod connection
-const sn = new ServiceNow('optum.service-now.com', '', '')
+const sn = new ServiceNow('optum.service-now.com', creds.snUser, creds.snPass)
 sn.Authenticate()
 
 exports.snGroupsList = JSON.parse(localStorage.getItem('snGroupList')) || []
 
 exports.snIncidentList = []
 
-exports.snTagList = ['Incident', 'Problem']
+exports.snTagList = ['Incident', 'Problem'] // TODO: check for count before adding tag
 
 const groups = []
 
@@ -141,7 +141,7 @@ exports.addSnIncident = (incident) => {
                         <span class="aging" id="a${id}" ${showAge}>${age}</span>
                       </div>
                       <div class="card-content collapse collapse-content" id="c${id}">
-                        <div class="detail" id="d${id}" style="white-space: pre-wrap;" draggable="true" ondragstart="event.preventDefault(); event.stopPropagation();"><a style="color: var(--highlight)" id="l${id}" href="${url}">ServiceNow Link</a><br><b>Priority:</b> ${incident.priority}<br><b>State:</b> ${incident.state}<br><b>Created:</b> ${incident.opened_at}<br><b>Updated:</b> ${incident.sys_updated_on}<br><b>Opened by:</b> ${incident.opened_by.display_value}<br><b>Assigned to:</b> ${incident.assignment_group.display_value}<br><b>Detail:</b> ${incident.short_description.trim()}</div>
+                        <div class="card-detail" id="d${id}" style="white-space: pre-wrap;" draggable="true" ondragstart="event.preventDefault(); event.stopPropagation();"><a style="color: var(--highlight)" id="l${id}" href="${url}">ServiceNow Link</a><br><b>Priority:</b> ${incident.priority}<br><b>State:</b> ${incident.state}<br><b>Created:</b> ${incident.opened_at}<br><b>Updated:</b> ${incident.sys_updated_on}<br><b>Opened by:</b> ${incident.opened_by.display_value}<br><b>Assigned to:</b> ${incident.assignment_group.display_value}<br><b>Detail:</b> ${incident.short_description.trim()}</div>
                         <div class="tag-box" id="t${id}">${tagHTML}</div>
                         <div class="card-menu">
                           <div class="card-menu-item fas fa-clipboard" id="copy-button-${id}" data-toggle="tooltip" title="Copy To Clipboard"></div>
@@ -164,7 +164,7 @@ exports.addSnIncident = (incident) => {
   })
   // Copy issue details to clipboard
   $(`#copy-button-${id}`).click(() => {
-    const cbs = `${id}\nPriority: ${incident.priority}\nState: ${incident.state}\nCreated: ${incident.opened_at}\nUpdated: ${incident.sys_updated_on}\nOpened by: ${incident.opened_by.display_value}\nAssigned to: ${incident.assignment_group.display_value}\nDetail: ${incident.short_description.trim()}`
+    const cbs = `${id}\nLink: ${url}\nPriority: ${incident.priority}\nState: ${incident.state}\nCreated: ${incident.opened_at}\nUpdated: ${incident.sys_updated_on}\nOpened by: ${incident.opened_by.display_value}\nAssigned to: ${incident.assignment_group.display_value}\nDetail: ${incident.short_description.trim()}`
     clipboard.writeText(cbs)
   })
   // Initialize tooltips

@@ -3,6 +3,7 @@ const { ipcRenderer, shell, remote } = require('electron')
 const settings = require('./settings')
 const tasks = require('./tasks')
 const gitHub = require('./gitHub')
+const serviceNow = require('./serviceNow')
 const fs = require('fs')
 require('bootstrap/js/dist/modal')
 require('./menu.js')
@@ -27,6 +28,19 @@ ipcRenderer.on('desktop-path', (e, data) => {
 ipcRenderer.on('send-issues', () => {
   gitHub.issueList.forEach(gitHub.addIssue)
   loadTagCloud()
+})
+
+// IPC event when sn groups returned
+ipcRenderer.on('send-groups', () => {
+  serviceNow.updateSnGroupList()
+  serviceNow.saveSnGroups()
+  serviceNow.getSnIncidents()
+})
+
+// IPC event when sn groups returned
+ipcRenderer.on('send-incidents', () => {
+  serviceNow.updateSnIncidentList()
+  serviceNow.snIncidentList.forEach(serviceNow.addSnIncident)
 })
 
 // IPC event to get task data from tray window
@@ -59,6 +73,7 @@ archiveDoneTasks(settings.mobySettings.ArchiveDone)
 pruneArchive(settings.mobySettings.ArchivePrune)
 tasks.updateTaskAge()
 gitHub.getIssues()
+serviceNow.getSnIncidents()
 
 // Set intervals for data refresh
 window.setInterval(addScheduledTasks, 3600000)
@@ -196,14 +211,27 @@ function loadSettingsModal () {
   $(`input[name=radio-prune][value=${settings.mobySettings.ArchivePrune || 0}]`).prop('checked', true)
   // Reload repos
   $('#settings-github-repos').children().remove()
-  $('#collapse-github, #collapse-rally, #collapse-serviceNow').collapse('hide')
+  $('#collapse-github, #collapse-rally, #collapse-servicenow').collapse('hide')
   $('#collapse-general').collapse('show')
   let gitHubRepo = ''
   gitHub.repoList.forEach((repo) => {
     gitHubRepo += buildRepoItem(repo)
   })
   $('#settings-github-repos').append(gitHubRepo)
+  // Load SN groups
+  loadSnGroups()
   $('#settings-modal').modal('show')
+}
+
+// Load SN groups in settings modal
+function loadSnGroups () {
+  serviceNow.snGroupsList.forEach(group => {
+    const snGroup = `<div class="check-modal-host">
+                      <div class="fas fa-square check-unchecked check-checkbox"></div>
+                      <label class="check-label">${group.GroupName}</label>
+                    </div>`
+    $('#servicenow-group-box').append(snGroup)
+  })
 }
 
 // Settings modal repo builder
@@ -281,9 +309,9 @@ $('#settings-button').click(() => {
   }
 })
 
-// Scroll down when expanding headers in settings modal
+// Collapse other panels when clicking on headers in settings modal
 $('.panel-header').click(function () {
-  $('.modal-body').animate({ scrollTop: parseInt($(this).offset().top - 100) }, 'fast')
+  $('.panel-header').parent().find('.collapse').collapse('hide')
 })
 
 // Track for changes in repo entries on input
@@ -330,6 +358,7 @@ $(document).on('click', '.repo-menu-item-delete', (e) => {
 // #region Stack code
 // Stack load; if non defined use default
 function getStacks () {
+  // Moby Task Stacks
   const stacks = JSON.parse(localStorage.getItem('stackList')) || []
   $('.stack-host').children('.stack, .git-stack').remove()
   let index = 0
@@ -343,9 +372,10 @@ function getStacks () {
   } else {
     getDefaultStacks()
   }
-  $('#git-button').hide()
+  // GitHub stacks
+  $('#si-button').hide()
+  let showBtn = false
   if (gitHub.repoList.length > 0) {
-    let showBtn = false
     gitHub.repoList.forEach((repo) => {
       if (repo.Active) {
         buildStack(`git-stack-${repo.Owner}-${repo.Repo}`, repo.Repo, index, repo.Url)
@@ -353,20 +383,29 @@ function getStacks () {
         index++
       }
     })
-    if (showBtn) {
-      $('#git-button').show()
-      if (settings.mobySettings) {
-        if (settings.mobySettings.GhToggle === false) {
-          $('#git-button').addClass('menu-item-toggled')
-        } else {
-          $('.git-stack').hide(0)
-        }
+  }
+  // ServiceNow stacks
+  $('#servicenow-button').hide()
+  if (serviceNow.snGroupsList && serviceNow.snGroupsList.filter(group => group.GroupActive === true).length > 0) {
+    buildStack('sn-stack', 'ServiceNow', index, 'https://optum.service-now.com/')
+    showBtn = true
+    index++
+  }
+  // Check if there are stacks to show button and check settings for toggle behavior
+  if (showBtn) {
+    $('#si-button').show()
+    if (settings.mobySettings) {
+      if (settings.mobySettings.GhToggle === false) {
+        $('#si-button').addClass('menu-item-toggled')
+      } else {
+        $('.git-stack, .sn-stack').hide(0)
       }
     }
   }
-  // Add tasks, issues, tags to the stacks
+  // Add tasks, issues, incidents, tags to the stacks
   tasks.taskList.forEach(tasks.addTask)
   gitHub.issueList.forEach(gitHub.addIssue)
+  // serviceNow.snIncidentList.forEach(serviceNow.addSnIncident)
   loadTagCloud()
   applySettings()
 }
@@ -411,8 +450,14 @@ function buildStack (id, title, index, url) {
   const itemType = isDefault ? 'Task' : 'Issue'
   const dragDrop = isDefault ? ' ondrop="drop(event)" ondragover="allowDrop(event)"' : ''
   const addTaskBtn = isDefault ? `" href="#task-modal" data-toggle="modal" data-stack-id="${id}" data-type-id="new"` : ` add-issue" data-url="${url}"`
-  let addStackBtn = id === 'stack-do' ? '' : '<div class="stack-add fas fa-caret-square-left" data-toggle="tooltip" title="Insert Stack" onclick="addNewStackClick(event)"></div>'
-  addStackBtn = id.substring(0, 9) === 'git-stack' ? `<div class="git-stack-icon fab fa-github" data-toggle="tooltip" title="Source Link" data-url="${url}"></div>` : addStackBtn
+  let addStackBtn = ''
+  if (id.substring(0, 5) === 'stack' && id !== 'stack-do') {
+    addStackBtn = '<div class="stack-add fas fa-caret-square-left" data-toggle="tooltip" title="Insert Stack" onclick="addNewStackClick(event)"></div>'
+  } else if (id.substring(0, 3) === 'git') {
+    addStackBtn = `<div class="git-stack-icon stack-icon fab fa-github" data-toggle="tooltip" title="Repo Link" data-url="${url}"></div>`
+  } else if (id.substring(0, 2) === 'sn') {
+    addStackBtn = `<div class="sn-stack-icon stack-icon fas fa-exclamation-triangle" data-toggle="tooltip" title="ServiceNow Link" data-url="${url}"></div>`
+  }
   const removeStackBtn = id === 'stack-do' || id === 'stack-done' || !isDefault ? '' : `<div class="dropdown-menu dropdown-menu-sm ddcm" id="context-menu-${id}">
                                                     <a class="dropdown-item" href="#remove-modal" data-toggle="modal">Remove Stack</a>
                                                   </div>`
@@ -533,7 +578,7 @@ $(document).on('click', '.add-issue', (e) => {
 })
 
 // Stack add for git issues
-$(document).on('click', '.git-stack-icon', (e) => {
+$(document).on('click', '.stack-icon', (e) => {
   shell.openExternal($(e.currentTarget).data('url'))
 })
 
@@ -564,7 +609,8 @@ $(document).on('blur', '.stack-header', function () {
 function loadTagCloud () {
   $('#tag-cloud-box').children('.cloud-tags').remove()
   if (tasks.tagList.length > 0 || gitHub.tagList.length > 0) {
-    const utl = [...new Set(tasks.tagList.concat(gitHub.tagList))]
+    const utl = [...new Set(tasks.tagList.concat(gitHub.tagList).concat(serviceNow.snTagList))]
+    utl.sort()
     utl.forEach((tag) => {
       $('#tag-cloud-box').append(`<div class="cloud-tags">${tag}</div>`)
     })
@@ -592,13 +638,13 @@ const toggleTags = () => {
   }
 }
 
-// Toggle tag cloud
+// Toggle GitHub stacks
 // eslint-disable-next-line no-unused-vars
 const toggleIssues = () => {
   if ($('.git-stack').is(':visible')) {
     $('.stack').show()
     $('.git-stack').hide(0)
-    $('#git-button').removeClass('menu-item-toggled')
+    $('#si-button').removeClass('menu-item-toggled')
   } else {
     if (settings.mobySettings && settings.mobySettings.GhToggle === true) {
       $('.stack').hide(0)
@@ -606,7 +652,7 @@ const toggleIssues = () => {
       $('#stack-schedule').show()
     }
     $('.git-stack').show()
-    $('#git-button').addClass('menu-item-toggled')
+    $('#si-button').addClass('menu-item-toggled')
   }
 }
 
@@ -623,10 +669,10 @@ $(document).on('click', '.cloud-tags', (e) => {
   $(e.currentTarget).addClass('cloud-tags-toggled')
   $('.tags').filter(function () {
     return $(this).text() === $(e.currentTarget).text()
-  }).closest('.card').addClass('card-tagged').find('.collapse').collapse('show')
+  }).closest('.card').addClass('card-tagged') // .find('.collapse').collapse('show')
 })
 
-// Show tasks with tag
+// Remove tag from task card
 $(document).on('contextmenu', '.tags', (e) => {
   $(e.currentTarget).remove()
   tasks.tagList.splice(tasks.tagList.indexOf($(e.currentTarget).text()), 1)
@@ -1043,12 +1089,18 @@ const collapseAll = () => {
 // Double clikc on card opens edit modal
 $(document).on('dblclick', '.card', (e) => {
   if (settings.mobySettings.DblClick) {
-    if ($(e.currentTarget).parent().parent().hasClass('git-stack')) {
-      shell.openExternal($(e.currentTarget).data('github-url'))
+    if ($(e.currentTarget).parent().parent().hasClass('git-stack', 'sn-stack')) {
+      shell.openExternal($(e.currentTarget).data('url'))
     } else {
       $(e.currentTarget).find('#edit-button').click()
     }
   }
+})
+
+// 
+$(document).on('click', 'a[href^="http"]', function (e) {
+  e.preventDefault();
+  shell.openExternal(this.href)
 })
 
 // Deselect task

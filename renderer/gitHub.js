@@ -1,5 +1,5 @@
 // Modules and variable definition
-const { ipcRenderer, shell } = require('electron')
+const { ipcRenderer, clipboard } = require('electron')
 const { Octokit } = require('@octokit/rest')
 
 // Track repo list
@@ -57,9 +57,11 @@ exports.addIssue = (issue) => {
   // Remove existing card instance
   $(`#${id}`).remove()
   if (!mine || (mine && (issue.assigned || issue.owned))) {
+    // Get issue dates and calc age
     const cd = new Date(issue.issueOjb.created_at)
     const ud = new Date(issue.issueOjb.updated_at)
     const age = Math.floor((Date.now() - ud) / 86400000) + '/' + Math.floor((Date.now() - cd) / 86400000)
+    // Get issue assigne=ment
     const assigned = issue.issueOjb.assignee ? issue.issueOjb.assignee.login : 'NA'
     // Set card color
     let color = issue.owned ? 3 : 1
@@ -99,7 +101,7 @@ exports.addIssue = (issue) => {
     const bandedCards = $('.card-bar').is(':visible') ? '' : 'style="display: none;"'
     const colorCards = $('.card-bar').is(':visible') ? ' color-trans' : ''
     // Generate issue card html
-    const issueHtml = `<div class="card color-${color}${colorCards}" id="${id}" data-github-url="${issue.issueOjb.html_url}">
+    const issueHtml = `<div class="card color-${color}${colorCards}" id="${id}" data-url="${issue.issueOjb.html_url}">
                         <div class="card-bar color-${color}"${bandedCards}></div>  
                         <div class="card-header" style="clear: both" id="b${id}" data-toggle="collapse" data-target="#c${id}">
                           <span class="color-glyph fas fa-${colorGlyph}" ${showColorGlyphs}></span>
@@ -107,9 +109,10 @@ exports.addIssue = (issue) => {
                           <span class="aging" id="a${id}" ${showAge}>${age}</span>
                         </div>
                         <div class="card-content collapse collapse-content" id="c${id}">
-                          <div class="detail" id="d${id}" contenteditable="true" style="white-space: pre-wrap;" draggable="true" ondragstart="event.preventDefault(); event.stopPropagation();"><a style="color: var(--highlight)" id="l${id}" href="${issue.issueOjb.html_url}">GitHub Link</a><br><b>Created:</b> ${cd.toLocaleDateString()}<br><b>Updated:</b> ${ud.toLocaleDateString()}<br><b>Opened by:</b> ${issue.issueOjb.user.login}<br><b>Assigned to:</b> ${assigned}<br><b>Detail:</b> ${issue.issueOjb.body}</div>
+                          <div class="detail" id="d${id}" style="white-space: pre-wrap;" draggable="true" ondragstart="event.preventDefault(); event.stopPropagation();"><a style="color: var(--highlight)" id="l${id}" href="${issue.issueOjb.html_url}">GitHub Link</a><br><b>Created:</b> ${cd.toLocaleDateString()}<br><b>Updated:</b> ${ud.toLocaleDateString()}<br><b>Opened by:</b> ${issue.issueOjb.user.login}<br><b>Assigned to:</b> ${assigned}<br><b>Detail:</b> ${issue.issueOjb.body}</div>
                           <div class="tag-box" id="t${id}">${tagHTML}</div>
                           <div class="card-menu">
+                            <div class="card-menu-item fas fa-clipboard" id="copy-button-${id}" data-toggle="tooltip" title="Copy To Clipboard"></div>
                           </div>
                         </div>
                       </div>`
@@ -126,8 +129,10 @@ exports.addIssue = (issue) => {
     $(`#${id}`).contextmenu((e) => {
       e.stopPropagation()
     })
-    $(`#l${id}`).on('click', () => {
-      shell.openExternal(`${issue.issueOjb.html_url}`)
+    // Copy issue details to clipboard
+    $(`#copy-button-${id}`).click(() => {
+      const cbs = `#${issue.issueOjb.number} ${issue.issueOjb.title}\n${issue.issueOjb.html_url}\nCreated: ${cd.toLocaleDateString()}\nUpdated: ${ud.toLocaleDateString()}\nOpened by: ${issue.issueOjb.user.login}\nAssigned to: ${assigned}\nDetail: ${issue.issueOjb.body}`
+      clipboard.writeText(cbs)
     })
     // Initialize tooltips
     $(function () {

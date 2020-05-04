@@ -86,6 +86,15 @@ body {
   position: absolute;
 }
 
+.sn-stack-icon {
+  color: var(--primary);
+  display: table;
+  top: 8px;
+  left: 5px;
+  font-size: calc(var(--font-base-size) + 30%);
+  position: absolute;
+}
+
 .stack-add:hover {
   color: var(--primary);
 }
@@ -400,9 +409,7 @@ body {
   color: var(--primary);
 }
 
-.card-menu-item-del:hover,
-.card-menu-item-clone:hover,
-.card-menu-item-edit:hover {
+.card-menu-item:hover {
   color: var(--focused);
 }
 
@@ -495,7 +502,7 @@ body {
   margin-left: 5px;
 }
 
-.git-stack-icon:hover,
+.stack-icon:hover,
 .repo-menu-item-delete:hover,
 .repo-menu-item-clone:hover,
 .add-github:hover,
@@ -592,4 +599,13 @@ a {
 
 .repo-menu {
   float: right;
+}
+
+#servicenow-group-box {
+  border-color: var(--main-background-light) !important;
+  border-width: 1px !important;
+  border: solid;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px;
 }

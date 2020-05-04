@@ -23,7 +23,7 @@
           <div class="menu-item fas fa-calendar fa-2x" data-toggle="tooltip" title="Scheduled Tasks"></div>
         </span>
         <div class="menu-item fas fa-tags fa-2x" id="tags-button" style="font-size: 150%;" data-toggle="tooltip" title="Toggle Tags" onclick="toggleTags(event)"></div>
-        <div class="menu-item fab fa-github fa-2x" id="git-button" style="display: none;" data-toggle="tooltip" title="Toggle GitHub Issues" onclick="toggleIssues(event)"></div>
+        <div class="menu-item fas fa-exclamation-circle fa-2x" id="si-button" style="display: none;" data-toggle="tooltip" title="Toggle Service Stacks" onclick="toggleIssues(event)"></div>
         <div class="menu-item fas fa-expand-arrows-alt fa-2x" data-toggle="tooltip" title="Expand All" onclick="expandAll(event)"></div>
         <div class="menu-item fas fa-compress-arrows-alt fa-2x" data-toggle="tooltip" title="Collapse All" onclick="collapseAll(event)"></div>
         <div class="menu-item fas fa-sign-out-alt fa-2x" data-toggle="tooltip" title="Exit" onclick="exit(event)"></div>
@@ -331,6 +331,11 @@
                           <label class="check-label">Open Task on Double-click</label>
                           <small class="text-muted check-description">Opens the edit modal when double-clicking on a task card</small>
                         </div>
+                        <div class="check-modal-host">
+                          <div class="fas fa-square check-checkbox check-unchecked" id="settings-github-toggle"></div>
+                          <label class="check-label">Integrated Systems Toggle Button Behavior</label>
+                          <small class="text-muted check-description">Checked will show only GitHub issues or ServiceNow incidents when toggled on. Default behavior will add the stacks to the current view. </small>
+                        </div>
                         <div class="form-group" style="margin-bottom: 5px;">
                           <div class="check-label">Archive Completed Tasks</div>
                           <div id="choose-archive">
@@ -403,11 +408,6 @@
                     </div>
                     <div class="panel-body">
                       <div id="collapse-github" class="collapse settings-github-group" data-parent="#panel-github">
-                        <div class="check-modal-host">
-                          <div class="fas fa-square check-checkbox check-unchecked" id="settings-github-toggle"></div>
-                          <label class="check-label">GitHub Toggle Button Behavior</label>
-                          <small class="text-muted check-description">Checked will show only GitHub issues when toggled on. Default behavior will add the stacks to the current view. </small>
-                        </div>
                         <label>Repos</label>
                         <div class="fas fa-plus-square add-github" data-toggle="tooltip" title="Add Repo" onclick="addNewGitHub(event)"></div>
                         <div id="settings-github-repos"></div>
@@ -433,18 +433,29 @@
                   </div>
                 </div>
               </div>
-              <div hidden class="form-group">
-                <div class="panel-group" id="panel-serviceNow">
+              <div class="form-group">
+                <div class="panel-group" id="panel-servicenow">
                   <div class="panel">
                     <div class="panel-header">
-                      <a class="collapsed" data-toggle="collapse" data-target="#collapse-serviceNow">
+                      <a class="collapsed" data-toggle="collapse" data-target="#collapse-servicenow">
                         <i class="fa fa-chevron-down"></i>
                         ServiceNow Integration
                       </a>
                     </div>
                     <div class="panel-body">
-                      <div id="collapse-serviceNow" class="collapse" data-parent="#panel-serviceNow">
-                        <label>Thing</label>
+                      <div id="collapse-servicenow" class="collapse settings-group" data-parent="#panel-servicenow">
+                        <div class="check-modal-host">
+                          <div class="fas fa-square check-checkbox check-unchecked" id="settings-servicenow-toggle"></div>
+                          <label class="check-label">Load ServiceNow Incidents Stack</label>
+                          <small class="text-muted check-description">Checked will load incidents fron ServiceNow in the selected groups. </small>
+                        </div>
+                        <div>
+                          <label>ServiceNow Groups</label>
+                        </div>
+                        <div style="margin: -10px 0px 7px 0px">
+                          <small class="text-muted check-description">Incidents from checked groups only will be displayed.</small>
+                        </div>
+                        <div id="servicenow-group-box"></div>
                       </div>
                     </div>
                   </div>

@@ -19,6 +19,7 @@ const groups = []
 const incidents = []
 
 exports.updateSnGroupList = () => {
+  //JSON.parse(localStorage.getItem('snGroupList')).find(item => item.GroupName === item.group.display_value).GroupActive
   this.snGroupsList = groups.sort((a, b) => (a.GroupName > b.GroupName) ? 1 : -1)
 }
 
@@ -69,9 +70,11 @@ exports.getSnIncidents = () => {
     'priority<=3',
     'active=true'
   ]
-  filters.push(`assignment_group.sys_id=${this.snGroupsList[0].GroupId}`)
+  filters.push('assignment_group.sys_id=non-existant-group')
   this.snGroupsList.forEach(group => {
-    filters.push(`ORassignment_group.sys_id=${group.GroupId}`)
+    if (group.GroupActive) {
+      filters.push(`ORassignment_group.sys_id=${group.GroupId}`)
+    }
   })
   let type = 'problem'
   sn.getTableData(fields, filters, type, function (res) {

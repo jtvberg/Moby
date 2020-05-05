@@ -16,7 +16,9 @@ exports.defaultSettings = () => {
     DblClick: false,
     ArchiveDone: 7,
     ArchivePrune: 120,
-    GhToggle: false
+    ServToggle: false,
+    GhToggle: false,
+    SnToggle: false
   }
   localStorage.setItem('mobySettings', JSON.stringify(settings))
 }
@@ -30,7 +32,9 @@ exports.saveSettings = (themeId) => {
   const dblClick = themeId ? this.mobySettings.DblClick : $('#settings-dblclick').hasClass('check-checked')
   const archiveDone = themeId ? this.mobySettings.ArchiveDone : parseInt($('#choose-archive input:radio:checked').val()) || 7
   const archivePrune = themeId ? this.mobySettings.ArchivePrune : parseInt($('#choose-prune input:radio:checked').val()) || 0
+  const servToggle = themeId ? this.mobySettings.ServToggle : $('#settings-serv-toggle').hasClass('check-checked')
   const ghToggle = themeId ? this.mobySettings.GhToggle : $('#settings-github-toggle').hasClass('check-checked')
+  const snToggle = themeId ? this.mobySettings.SnToggle : $('#settings-servicenow-toggle').hasClass('check-checked')
 
   const settings = {
     Theme: theme,
@@ -40,7 +44,9 @@ exports.saveSettings = (themeId) => {
     DblClick: dblClick,
     ArchiveDone: archiveDone,
     ArchivePrune: archivePrune,
-    GhToggle: ghToggle
+    ServToggle: servToggle,
+    GhToggle: ghToggle,
+    SnToggle: snToggle
   }
   localStorage.setItem('mobySettings', JSON.stringify(settings))
   this.mobySettings = JSON.parse(localStorage.getItem('mobySettings'))

@@ -38,6 +38,7 @@ ipcRenderer.on('send-issues', (e, data) => {
 ipcRenderer.on('send-groups', () => {
   serviceNow.updateSnGroupList()
   serviceNow.saveSnGroups()
+  loadSnGroups()
   serviceNow.getSnIncidents()
 })
 
@@ -76,8 +77,12 @@ addScheduledTasks()
 archiveDoneTasks(settings.mobySettings.ArchiveDone)
 pruneArchive(settings.mobySettings.ArchivePrune)
 tasks.updateTaskAge()
-gitHub.getIssues()
-serviceNow.getSnIncidents()
+if (settings.mobySettings.GhToggle) {
+  gitHub.getIssues()
+}
+if (settings.mobySettings.SnToggle) {
+  serviceNow.getSnIncidents()
+}
 
 // Set intervals for data refresh
 window.setInterval(addScheduledTasks, 3600000)
@@ -133,7 +138,7 @@ function pruneArchive (days) {
 // Import settings from local storate and apply
 function applySettings () {
   if (settings.mobySettings) {
-    // Set theme
+    // Set Theme
     setTheme(settings.mobySettings.Theme)
     // Toggle Aging
     remote.Menu.getApplicationMenu().getMenuItemById('menu-task-age').checked = settings.mobySettings.Aging
@@ -209,8 +214,10 @@ function loadSettingsModal () {
   toggleCheck($('#settings-bands'), settings.mobySettings.BandedCards)
   toggleCheck($('#settings-glyphs'), settings.mobySettings.ColorGlyphs)
   toggleCheck($('#settings-dblclick'), settings.mobySettings.DblClick)
-  toggleCheck($('#settings-github-toggle'), settings.mobySettings.GhToggle)
   toggleCheck($('#settings-aging'), settings.mobySettings.Aging)
+  toggleCheck($('#settings-serv-toggle'), settings.mobySettings.ServToggle)
+  toggleCheck($('#settings-github-toggle'), settings.mobySettings.GhToggle)
+  toggleCheck($('#settings-servicenow-toggle'), settings.mobySettings.SnToggle)
   $(`input[name=radio-archive][value=${settings.mobySettings.ArchiveDone || 7}]`).prop('checked', true)
   $(`input[name=radio-prune][value=${settings.mobySettings.ArchivePrune || 0}]`).prop('checked', true)
   // Reload repos
@@ -229,9 +236,11 @@ function loadSettingsModal () {
 
 // Load SN groups in settings modal
 function loadSnGroups () {
+  $('#servicenow-group-box').children().remove()
   serviceNow.snGroupsList.forEach(group => {
+    const checked = group.GroupActive ? 'fa-check-square check-checked' : 'fa-square check-unchecked'
     const snGroup = `<div class="check-modal-host">
-                      <div class="fas fa-square check-unchecked check-checkbox"></div>
+                      <div class="fas ${checked} check-checkbox"></div>
                       <label class="check-label">${group.GroupName}</label>
                     </div>`
     $('#servicenow-group-box').append(snGroup)
@@ -300,6 +309,7 @@ $('#settings-button').click(() => {
   $('#settings-modal').modal('hide')
   // save general settings
   settings.saveSettings()
+  serviceNow.saveSnGroups()
   // activate settings
   toggleColorGlyphs(settings.mobySettings.ColorGlyphs)
   toggleBandedCards(settings.mobySettings.BandedCards)
@@ -316,6 +326,12 @@ $('#settings-button').click(() => {
 // Collapse other panels when clicking on headers in settings modal
 $('.panel-header').click(function () {
   $('.panel-header').parent().find('.collapse').collapse('hide')
+})
+
+// Refresh available ServiceNow groups
+$('#settings-sngroups-refresh-button').click(() => {
+  $('#servicenow-group-box').children().remove()
+  serviceNow.getSnGroups()
 })
 
 // Track for changes in repo entries on input
@@ -376,10 +392,10 @@ function getStacks () {
   } else {
     getDefaultStacks()
   }
-  // GitHub stacks
   $('#si-button').hide()
+  // GitHub stacks
   let showBtn = false
-  if (gitHub.repoList.length > 0) {
+  if (settings.mobySettings.GhToggle && gitHub.repoList.length > 0) {
     gitHub.repoList.forEach((repo) => {
       if (repo.Active) {
         buildStack(`git-stack-${repo.Owner}-${repo.Repo}`, repo.Repo, index, repo.Url)
@@ -389,8 +405,7 @@ function getStacks () {
     })
   }
   // ServiceNow stacks
-  $('#servicenow-button').hide()
-  if (serviceNow.snGroupsList && serviceNow.snGroupsList.filter(group => group.GroupActive === true).length > 0) {
+  if (settings.mobySettings.SnToggle && serviceNow.snGroupsList && serviceNow.snGroupsList.filter(group => group.GroupActive === true).length > 0) {
     buildStack('sn-stack', 'ServiceNow', index, 'https://optum.service-now.com/')
     showBtn = true
     index++
@@ -399,7 +414,7 @@ function getStacks () {
   if (showBtn) {
     $('#si-button').show()
     if (settings.mobySettings) {
-      if (settings.mobySettings.GhToggle === false) {
+      if (settings.mobySettings.ServToggle === false) {
         $('#si-button').addClass('menu-item-toggled')
       } else {
         $('.serv-stack').hide(0)
@@ -679,7 +694,7 @@ const toggleIssues = () => {
     $('.serv-stack').hide(0)
     $('#si-button').removeClass('menu-item-toggled')
   } else {
-    if (settings.mobySettings && settings.mobySettings.GhToggle === true) {
+    if (settings.mobySettings && settings.mobySettings.ServToggle === true) {
       $('.stack').hide(0)
       $('#stack-archive').show()
       $('#stack-schedule').show()

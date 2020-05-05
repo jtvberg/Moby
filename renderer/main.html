@@ -277,7 +277,7 @@
           <div class="modal-body">
             <div class="form-group">
               <label>Push Tasks To</label>
-              <select class="form-control form-control-sm" id="task-stack-new">
+              <select class="form-control form-control-sm text-box" id="task-stack-new">
               </select>
             </div>
           </div>
@@ -332,7 +332,7 @@
                           <small class="text-muted check-description">Opens the edit modal when double-clicking on a task card</small>
                         </div>
                         <div class="check-modal-host">
-                          <div class="fas fa-square check-checkbox check-unchecked" id="settings-github-toggle"></div>
+                          <div class="fas fa-square check-checkbox check-unchecked" id="settings-serv-toggle"></div>
                           <label class="check-label">Integrated Systems Toggle Button Behavior</label>
                           <small class="text-muted check-description">Checked will show only GitHub issues or ServiceNow incidents when toggled on. Default behavior will add the stacks to the current view. </small>
                         </div>
@@ -408,6 +408,11 @@
                     </div>
                     <div class="panel-body">
                       <div id="collapse-github" class="collapse settings-github-group" data-parent="#panel-github">
+                        <div class="check-modal-host">
+                          <div class="fas fa-square check-checkbox check-unchecked" id="settings-github-toggle"></div>
+                          <label class="check-label">Load GitHub Issues Stacks</label>
+                          <small class="text-muted check-description">Checked will load issues fron GitHub from the selected repos. </small>
+                        </div>
                         <label>Repos</label>
                         <div class="fas fa-plus-square add-github" data-toggle="tooltip" title="Add Repo" onclick="addNewGitHub(event)"></div>
                         <div id="settings-github-repos"></div>
@@ -447,13 +452,14 @@
                         <div class="check-modal-host">
                           <div class="fas fa-square check-checkbox check-unchecked" id="settings-servicenow-toggle"></div>
                           <label class="check-label">Load ServiceNow Incidents Stack</label>
-                          <small class="text-muted check-description">Checked will load incidents fron ServiceNow in the selected groups. </small>
+                          <small class="text-muted check-description">Checked will load incidents fron ServiceNow assigned to selected groups. </small>
                         </div>
                         <div>
                           <label>ServiceNow Groups</label>
                         </div>
                         <div style="margin: -10px 0px 7px 0px">
                           <small class="text-muted check-description">Incidents from checked groups only will be displayed.</small>
+                          <div class="footer fas fa-sync-alt" id="settings-sngroups-refresh-button" style="float: right;"></div>
                         </div>
                         <div id="servicenow-group-box"></div>
                       </div>

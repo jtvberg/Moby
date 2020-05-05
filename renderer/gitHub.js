@@ -17,35 +17,45 @@ exports.refreshRepos = () => {
 }
 
 // Get issues from repo
-exports.getIssues = () => {
-  if (this.repoList.length > 0) {
+exports.getIssues = (repoId) => {
+  if (repoId) {
+    const repo = this.repoList.find(repo => `git-stack-${repo.Owner}-${repo.Repo}` === repoId)
+    callIssueService(repo)
+  } else if (this.repoList.length > 0) {
     this.repoList.forEach((repo) => {
-      if (repo.Active) {
-        const octokit = new Octokit({ auth: repo.Auth })
-        octokit.paginate('GET /repos/:owner/:repo/issues', {
-          baseUrl: repo.BaseUrl,
-          owner: repo.Owner,
-          repo: repo.Repo
-        }).then(issues => {
-          issues.forEach((issue) => {
-            const owned = issue.user.login === repo.User
-            let assigned = false
-            assigned = issue.assignee && issue.assignee.login === repo.User ? true : assigned
-            issue.assignees.forEach((assignee) => {
-              if (assignee.login === repo.User) { assigned = true }
-            })
-            this.issueList.push({
-              stack: `#git-stack-${repo.Owner}-${repo.Repo}`,
-              user: repo.User,
-              assigned: assigned,
-              owned: owned,
-              repoId: repo.RepoId,
-              issueOjb: issue
-            })
-          })
-          ipcRenderer.send('get-issues')
+      callIssueService(repo)
+    })
+  }
+}
+
+const callIssueService = (repo) => {
+  if (repo.Active) {
+    const repoStack = `git-stack-${repo.Owner}-${repo.Repo}`
+    const octokit = new Octokit({ auth: repo.Auth })
+    octokit.paginate('GET /repos/:owner/:repo/issues', {
+      baseUrl: repo.BaseUrl,
+      owner: repo.Owner,
+      repo: repo.Repo
+    }).then(issues => {
+      $(`#${repoStack}`).find('.box').children().remove()
+      this.issueList = this.issueList.filter(val => val.stack !== repoStack)
+      issues.forEach((issue) => {
+        const owned = issue.user.login === repo.User
+        let assigned = false
+        assigned = issue.assignee && issue.assignee.login === repo.User ? true : assigned
+        issue.assignees.forEach((assignee) => {
+          if (assignee.login === repo.User) { assigned = true }
         })
-      }
+        this.issueList.push({
+          stack: `git-stack-${repo.Owner}-${repo.Repo}`,
+          user: repo.User,
+          assigned: assigned,
+          owned: owned,
+          repoId: repo.RepoId,
+          issueOjb: issue
+        })
+      })
+      ipcRenderer.send('get-issues', repoStack)
     })
   }
 }
@@ -54,8 +64,6 @@ exports.getIssues = () => {
 exports.addIssue = (issue) => {
   const mine = this.repoList.find(repo => repo.RepoId === issue.repoId).AssignToMe
   const id = issue.issueOjb.node_id.replace('=', '')
-  // Remove existing card instance
-  $(`#${id}`).remove()
   if (!mine || (mine && (issue.assigned || issue.owned))) {
     // Get issue dates and calc age
     const cd = new Date(issue.issueOjb.created_at)
@@ -117,7 +125,7 @@ exports.addIssue = (issue) => {
                         </div>
                       </div>`
     // Add issue html to host
-    $(issue.stack).find('.box').append(issueHtml)
+    $(`#${issue.stack}`).find('.box').append(issueHtml)
     // Active issue setting event
     $(`#${id}`).on('click', () => {
       window.activeTask = id

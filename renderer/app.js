@@ -25,8 +25,12 @@ ipcRenderer.on('desktop-path', (e, data) => {
 })
 
 // IPC event when git issues returned; then add to stack
-ipcRenderer.on('send-issues', () => {
-  gitHub.issueList.forEach(gitHub.addIssue)
+ipcRenderer.on('send-issues', (e, data) => {
+  gitHub.issueList.forEach((issue) => {
+    if (issue.stack === data) {
+      gitHub.addIssue(issue)
+    }
+  })
   loadTagCloud()
 })
 
@@ -604,7 +608,11 @@ $(document).on('click', '.add-incident', (e) => {
 
 // Refresh data click
 $(document).on('click', '.refresh-data', (e) => {
-  console.log($(e.currentTarget).data('source'))
+  if ($(e.currentTarget).data('source') === 'git') {
+    gitHub.getIssues($(e.currentTarget).closest('.serv-stack').prop('id'))
+  } else if ($(e.currentTarget).data('source') === 'sn') {
+    serviceNow.getSnIncidents()
+  }
 })
 
 // In-line stack title update event

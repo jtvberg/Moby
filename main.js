@@ -151,8 +151,8 @@ ipcMain.on('delete-task', () => {
 })
 
 // IPC channel for getting GitHub Issues
-ipcMain.on('get-issues', () => {
-  win.webContents.send('send-issues')
+ipcMain.on('get-issues', (e, data) => {
+  win.webContents.send('send-issues', data)
 })
 
 // IPC channel for getting SN Groups

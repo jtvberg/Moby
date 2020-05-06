@@ -39,13 +39,11 @@ ipcRenderer.on('send-groups', () => {
   serviceNow.updateSnGroupList()
   serviceNow.saveSnGroups()
   loadSnGroups()
-  serviceNow.getSnIncidents()
 })
 
 // IPC event when sn groups returned
-ipcRenderer.on('send-incidents', () => {
-  serviceNow.updateSnIncidentList()
-  serviceNow.snIncidentList.forEach(serviceNow.addSnIncident)
+ipcRenderer.on('send-incidents', (e, data) => {
+  loadSnIncidents(data)
 })
 
 // IPC event to get task data from tray window
@@ -131,6 +129,17 @@ function pruneArchive (days) {
       }
     })
   }
+}
+
+// Load ServiceNow incidents
+function loadSnIncidents (type) {
+  serviceNow.snTagList.push(type)
+  serviceNow.updateSnIncidentList()
+  serviceNow.snIncidentList.forEach(inc => {
+    if (inc.number.substring(0, 3).toLowerCase() === type.substring(0, 3).toLowerCase()) {
+      serviceNow.addSnIncident(inc)
+    }
+  })
 }
 // #endregion
 
@@ -237,14 +246,18 @@ function loadSettingsModal () {
 // Load SN groups in settings modal
 function loadSnGroups () {
   $('#servicenow-group-box').children().remove()
-  serviceNow.snGroupsList.forEach(group => {
-    const checked = group.GroupActive ? 'fa-check-square check-checked' : 'fa-square check-unchecked'
-    const snGroup = `<div class="check-modal-host">
-                      <div class="fas ${checked} check-checkbox"></div>
-                      <label class="check-label">${group.GroupName}</label>
-                    </div>`
-    $('#servicenow-group-box').append(snGroup)
-  })
+  if (serviceNow.snGroupsList && serviceNow.snGroupsList.length > 0) {
+    serviceNow.snGroupsList.forEach(group => {
+      const checked = group.GroupActive ? 'fa-check-square check-checked' : 'fa-square check-unchecked'
+      const snGroup = `<div class="check-modal-host">
+                        <div class="fas ${checked} check-checkbox settings-servicenow-group-check" data-sngroup-id="${group.GroupId}"></div>
+                        <label class="check-label">${group.GroupName}</label>
+                      </div>`
+      $('#servicenow-group-box').append(snGroup)
+    })
+  } else {
+    $('#servicenow-group-box').append('<div>No Groups Found</div>')
+  }
 }
 
 // Settings modal repo builder
@@ -309,7 +322,6 @@ $('#settings-button').click(() => {
   $('#settings-modal').modal('hide')
   // save general settings
   settings.saveSettings()
-  serviceNow.saveSnGroups()
   // activate settings
   toggleColorGlyphs(settings.mobySettings.ColorGlyphs)
   toggleBandedCards(settings.mobySettings.BandedCards)
@@ -321,6 +333,12 @@ $('#settings-button').click(() => {
     })
     getStacks()
   }
+  // update SN groups
+  $('.settings-servicenow-group-check').each(function () {
+    serviceNow.updateSnGroupActive($(this).data('sngroup-id'), $(this).hasClass('check-checked'))
+  })
+  serviceNow.saveSnGroups()
+  serviceNow.getSnIncidents()
 })
 
 // Collapse other panels when clicking on headers in settings modal

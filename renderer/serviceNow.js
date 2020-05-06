@@ -12,19 +12,25 @@ exports.snGroupsList = JSON.parse(localStorage.getItem('snGroupList')) || []
 
 exports.snIncidentList = []
 
-exports.snTagList = ['Incident', 'Problem'] // TODO: check for count before adding tag
+exports.snTagList = []
 
 const groups = []
 
 const incidents = []
 
 exports.updateSnGroupList = () => {
-  //JSON.parse(localStorage.getItem('snGroupList')).find(item => item.GroupName === item.group.display_value).GroupActive
+  groups.forEach(group => {
+    group.GroupActive = this.snGroupsList.find(g => g.GroupId === group.GroupId).GroupActive || group.GroupActive
+  })
   this.snGroupsList = groups.sort((a, b) => (a.GroupName > b.GroupName) ? 1 : -1)
 }
 
 exports.updateSnIncidentList = () => {
   this.snIncidentList = incidents.sort()
+}
+
+exports.updateSnGroupActive = (groupId, groupActive) => {
+  this.snGroupsList.find(group => group.GroupId === groupId).GroupActive = groupActive
 }
 
 exports.getSnGroups = () => {
@@ -42,7 +48,7 @@ exports.getSnGroups = () => {
       const newGroup = {
         GroupName: r.group.display_value,
         GroupId: url.pathname.split('/')[url.pathname.split('/').length - 1],
-        GroupActive: true
+        GroupActive: false
       }
       groups.push(newGroup)
     })
@@ -76,27 +82,25 @@ exports.getSnIncidents = () => {
       filters.push(`ORassignment_group.sys_id=${group.GroupId}`)
     }
   })
-  let type = 'problem'
-  sn.getTableData(fields, filters, type, function (res) {
-    res.forEach(r => {
-      incidents.push(r)
+  $('#sn-stack').find('.box').children().remove()
+  this.snTagList.length = 0
+  incidents.length = 0
+  const types = ['Incident', 'Problem']
+  types.forEach(type => {
+    sn.getTableData(fields, filters, type.toLowerCase(), function (res) {
+      res.forEach(r => {
+        incidents.push(r)
+      })
+      if (res.length > 0) {
+        ipcRenderer.send('get-incidents', type)
+      }
     })
-    ipcRenderer.send('get-incidents')
-  })
-  type = 'incident'
-  sn.getTableData(fields, filters, type, function (res) {
-    res.forEach(r => {
-      incidents.push(r)
-    })
-    ipcRenderer.send('get-incidents')
   })
 }
 
 // Add incidents to UI
 exports.addSnIncident = (incident) => {
   const id = incident.number
-  // Remove existing card instance
-  $(`#${id}`).remove()
   // Get incident dates and calc age
   const cd = new Date(incident.opened_at)
   const ud = new Date(incident.sys_updated_on)

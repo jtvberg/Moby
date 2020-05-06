@@ -161,6 +161,6 @@ ipcMain.on('get-groups', () => {
 })
 
 // IPC channel for getting SN Incidents
-ipcMain.on('get-incidents', () => {
-  win.webContents.send('send-incidents')
+ipcMain.on('get-incidents', (e, data) => {
+  win.webContents.send('send-incidents', data)
 })

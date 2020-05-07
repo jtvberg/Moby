@@ -5,8 +5,12 @@ const os = require('os')
 const username = os.userInfo().username
 const creds = require('./creds')
 // ServiceNow Prod connection
-const sn = new ServiceNow('optum.service-now.com', creds.snUser, creds.snPass)
-sn.Authenticate()
+try {
+  const sn = new ServiceNow(creds.snDomain, creds.snUser, creds.snPass)
+  sn.Authenticate()
+} catch (err) {
+  alert(err)
+}
 
 exports.snGroupsList = JSON.parse(localStorage.getItem('snGroupList')) || []
 
@@ -42,18 +46,22 @@ exports.getSnGroups = () => {
     `user.u_ms_id=${username}`
   ]
   const type = 'sys_user_grmember'
-  sn.getTableData(fields, filters, type, function (res) {
-    res.forEach(r => {
-      const url = new URL(r.group.link)
-      const newGroup = {
-        GroupName: r.group.display_value,
-        GroupId: url.pathname.split('/')[url.pathname.split('/').length - 1],
-        GroupActive: false
-      }
-      groups.push(newGroup)
+  try {
+    sn.getTableData(fields, filters, type, function (res) {
+      res.forEach(r => {
+        const url = new URL(r.group.link)
+        const newGroup = {
+          GroupName: r.group.display_value,
+          GroupId: url.pathname.split('/')[url.pathname.split('/').length - 1],
+          GroupActive: false
+        }
+        groups.push(newGroup)
+      })
+      ipcRenderer.send('get-groups')
     })
-    ipcRenderer.send('get-groups')
-  })
+  } catch (err) {
+    // alert(err)
+  }
 }
 
 exports.saveSnGroups = () => {
@@ -87,14 +95,18 @@ exports.getSnIncidents = () => {
   incidents.length = 0
   const types = ['Incident', 'Problem']
   types.forEach(type => {
-    sn.getTableData(fields, filters, type.toLowerCase(), function (res) {
-      res.forEach(r => {
-        incidents.push(r)
+    try {
+      sn.getTableData(fields, filters, type.toLowerCase(), function (res) {
+        res.forEach(r => {
+          incidents.push(r)
+        })
+        if (res.length > 0) {
+          ipcRenderer.send('get-incidents', type)
+        }
       })
-      if (res.length > 0) {
-        ipcRenderer.send('get-incidents', type)
-      }
-    })
+    } catch (err) {
+      // alert(err)
+    }
   })
 }
 

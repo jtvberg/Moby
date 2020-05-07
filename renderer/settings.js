@@ -1,5 +1,5 @@
 // Track app settings list
-exports.mobySettings = JSON.parse(localStorage.getItem('mobySettings'))
+exports.mobySettings = JSON.parse(localStorage.getItem('mobySettings')) || []
 
 // Refresh app settings list
 exports.refreshSettings = () => {
@@ -21,6 +21,7 @@ exports.defaultSettings = () => {
     SnToggle: false
   }
   localStorage.setItem('mobySettings', JSON.stringify(settings))
+  this.mobySettings = JSON.parse(localStorage.getItem('mobySettings'))
 }
 
 // Save settings to local storage

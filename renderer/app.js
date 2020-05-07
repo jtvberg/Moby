@@ -75,6 +75,11 @@ addScheduledTasks()
 archiveDoneTasks(settings.mobySettings.ArchiveDone)
 pruneArchive(settings.mobySettings.ArchivePrune)
 tasks.updateTaskAge()
+if (settings.mobySettings.length === 0) {
+  settings.defaultSettings()
+  applySettings()
+  setTheme(settings.mobySettings.Theme)
+}
 if (settings.mobySettings.GhToggle) {
   gitHub.getIssues()
 }
@@ -260,6 +265,28 @@ function loadSnGroups () {
   }
 }
 
+// Save settings
+function saveSetting () {
+  $('#settings-modal').modal('hide')
+  // save general settings
+  settings.saveSettings()
+  // activate settings
+  applySettings()
+  // add/update repos
+  if (repoChange) {
+    gitHub.repoList = []
+    $('.github-repo').each(function () {
+      gitHub.submitRepo($(this).data('repo-id'))
+    })
+    getStacks()
+  }
+  // update SN groups
+  $('.settings-servicenow-group-check').each(function () {
+    serviceNow.updateSnGroupActive($(this).data('sngroup-id'), $(this).hasClass('check-checked'))
+  })
+  serviceNow.saveSnGroups()
+  serviceNow.getSnIncidents()
+}
 // Settings modal repo builder
 const buildRepoItem = (repo) => {
   const repoTitle = repo ? repo.Repo : 'New Repo'
@@ -319,26 +346,7 @@ const addNewGitHub = () => {
 
 // Save changes button click handler
 $('#settings-button').click(() => {
-  $('#settings-modal').modal('hide')
-  // save general settings
-  settings.saveSettings()
-  // activate settings
-  toggleColorGlyphs(settings.mobySettings.ColorGlyphs)
-  toggleBandedCards(settings.mobySettings.BandedCards)
-  // add/update repos
-  if (repoChange) {
-    gitHub.repoList = []
-    $('.github-repo').each(function () {
-      gitHub.submitRepo($(this).data('repo-id'))
-    })
-    getStacks()
-  }
-  // update SN groups
-  $('.settings-servicenow-group-check').each(function () {
-    serviceNow.updateSnGroupActive($(this).data('sngroup-id'), $(this).hasClass('check-checked'))
-  })
-  serviceNow.saveSnGroups()
-  serviceNow.getSnIncidents()
+  saveSetting()
 })
 
 // Collapse other panels when clicking on headers in settings modal
@@ -350,6 +358,11 @@ $('.panel-header').click(function () {
 $('#settings-sngroups-refresh-button').click(() => {
   $('#servicenow-group-box').children().remove()
   serviceNow.getSnGroups()
+})
+
+// Track change to repo show status
+$('#settings-github-toggle').click(() => {
+  repoChange = true
 })
 
 // Track for changes in repo entries on input

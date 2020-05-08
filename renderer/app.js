@@ -16,6 +16,8 @@ let newTagList = []
 let match = ''
 let desktopPath = ''
 let repoChange = false
+let groupChange = false
+let servChange = false
 // #endregion
 
 // #region IPC handlers
@@ -26,12 +28,7 @@ ipcRenderer.on('desktop-path', (e, data) => {
 
 // IPC event when git issues returned; then add to stack
 ipcRenderer.on('send-issues', (e, data) => {
-  gitHub.issueList.forEach((issue) => {
-    if (issue.stack === data) {
-      gitHub.addIssue(issue)
-    }
-  })
-  loadTagCloud()
+  loadIssues(data)
 })
 
 // IPC event when sn groups returned
@@ -75,17 +72,7 @@ addScheduledTasks()
 archiveDoneTasks(settings.mobySettings.ArchiveDone)
 pruneArchive(settings.mobySettings.ArchivePrune)
 tasks.updateTaskAge()
-if (settings.mobySettings.length === 0) {
-  settings.defaultSettings()
-  applySettings()
-  setTheme(settings.mobySettings.Theme)
-}
-if (settings.mobySettings.GhToggle) {
-  gitHub.getIssues()
-}
-if (settings.mobySettings.SnToggle) {
-  serviceNow.getSnIncidents()
-}
+checkSettings()
 
 // Set intervals for data refresh
 window.setInterval(addScheduledTasks, 3600000)
@@ -136,6 +123,16 @@ function pruneArchive (days) {
   }
 }
 
+// Load GitHub issues
+function loadIssues (stack) {
+  gitHub.issueList.forEach((issue) => {
+    if (issue.stack === stack) {
+      gitHub.addIssue(issue)
+    }
+  })
+  loadTagCloud()
+}
+
 // Load ServiceNow incidents
 function loadSnIncidents (type) {
   serviceNow.snTagList.push(type)
@@ -149,6 +146,21 @@ function loadSnIncidents (type) {
 // #endregion
 
 // #region Settings
+// Check settings to make sure they are present and complete
+function checkSettings () {
+// If no setting found
+  if (settings.mobySettings.length === 0) {
+    // Set Defaults
+    settings.defaultSettings()
+  } else {
+    // TODO: fill in defaults where missing
+  }
+  // Apply them
+  applySettings()
+  // Set theme
+  setTheme(settings.mobySettings.Theme)
+}
+
 // Import settings from local storate and apply
 function applySettings () {
   if (settings.mobySettings) {
@@ -224,6 +236,7 @@ function updateTitileBar () {
 // Load Settings modal
 function loadSettingsModal () {
   repoChange = false
+  groupChange = false
   // Set check states on settings modal
   toggleCheck($('#settings-bands'), settings.mobySettings.BandedCards)
   toggleCheck($('#settings-glyphs'), settings.mobySettings.ColorGlyphs)
@@ -237,7 +250,7 @@ function loadSettingsModal () {
   // Reload repos
   $('#settings-github-repos').children().remove()
   $('#collapse-github, #collapse-rally, #collapse-servicenow').collapse('hide')
-  $('#collapse-general').collapse('show')
+  // $('#collapse-general').collapse('show')
   let gitHubRepo = ''
   gitHub.repoList.forEach((repo) => {
     gitHubRepo += buildRepoItem(repo)
@@ -255,7 +268,7 @@ function loadSnGroups () {
     serviceNow.snGroupsList.forEach(group => {
       const checked = group.GroupActive ? 'fa-check-square check-checked' : 'fa-square check-unchecked'
       const snGroup = `<div class="check-modal-host">
-                        <div class="fas ${checked} check-checkbox settings-servicenow-group-check" data-sngroup-id="${group.GroupId}"></div>
+                        <div class="fas ${checked} check-checkbox servicenow-group-check" data-sngroup-id="${group.GroupId}"></div>
                         <label class="check-label">${group.GroupName}</label>
                       </div>`
       $('#servicenow-group-box').append(snGroup)
@@ -278,15 +291,20 @@ function saveSetting () {
     $('.github-repo').each(function () {
       gitHub.submitRepo($(this).data('repo-id'))
     })
-    getStacks()
   }
   // update SN groups
-  $('.settings-servicenow-group-check').each(function () {
-    serviceNow.updateSnGroupActive($(this).data('sngroup-id'), $(this).hasClass('check-checked'))
-  })
+  if (groupChange) {
+    $('.servicenow-group-check').each(function () {
+      serviceNow.updateSnGroupActive($(this).data('sngroup-id'), $(this).hasClass('check-checked'))
+    })
+  }
   serviceNow.saveSnGroups()
-  serviceNow.getSnIncidents()
+
+  if (servChange || groupChange || repoChange) {
+    getStacks()
+  }
 }
+
 // Settings modal repo builder
 const buildRepoItem = (repo) => {
   const repoTitle = repo ? repo.Repo : 'New Repo'
@@ -299,11 +317,11 @@ const buildRepoItem = (repo) => {
   const repoAssigned = repo && repo.AssignToMe === true ? 'fa-check-square check-checked' : 'fa-square check-unchecked'
   const repoItem = `<div class="github-repo" data-repo-id="${repoId}">
                       <div class="repo-menu">
-                        <div class="repo-menu-item-delete fas fa-minus-square" id="delete-button-${repoId}" data-toggle="tooltip" title="Delete Repo"></div>
-                        <div class="repo-menu-item-clone fas fa-clone" id="clone-button-${repoId}" data-toggle="tooltip" title="Clone Repo"></div>
+                        <div class="repo-menu-item-delete fas fa-minus-square" data-toggle="tooltip" title="Delete Repo"></div>
+                        <div class="repo-menu-item-clone fas fa-clone" data-toggle="tooltip" title="Clone Repo"></div>
                       </div>
-                      <div class="check-modal-host repo-check">
-                        <div class="repo-menu-item-deactivate fas ${repoActiveCheck} check-checkbox" id="deactivate-button-${repoId}" data-toggle="tooltip" title="Active"></div>
+                      <div class="check-modal-host">
+                        <div class="fas ${repoActiveCheck} check-checkbox repo-check" id="dar${repoId}" data-toggle="tooltip" title="Active"></div>
                         <div class="check-label">${repoTitle}</div>
                       </div>
                       <div>
@@ -324,8 +342,8 @@ const buildRepoItem = (repo) => {
                         </div>
                       </div>
                       <div class="form-row left-margin" style="margin-top: -10px;">
-                        <div class="check-modal-host repo-check">
-                          <small class="fas ${repoAssigned} check-checkbox" id="satm${repoId}"></small>
+                        <div class="check-modal-host">
+                          <small class="fas ${repoAssigned} check-checkbox repo-check" id="satm${repoId}"></small>
                           <small class="check-label small-check">Assigned to or Opened by me</small>
                           <small class="text-muted check-description">Checked will only show issues that have been assigned to or opened by you</small>
                         </div>
@@ -360,19 +378,35 @@ $('#settings-sngroups-refresh-button').click(() => {
   serviceNow.getSnGroups()
 })
 
-// Track change to repo show status
+// Track change to SN group selection
+$('#settings-servicenow-toggle').click(() => {
+  groupChange = true
+})
+
+// Track for changes in group entries selection on click of checks or labels (through check-host)
+$(document).on('click', '.servicenow-group-check', (e) => {
+  groupChange = true
+})
+
+// Track change to repo show status-
 $('#settings-github-toggle').click(() => {
   repoChange = true
 })
 
-// Track for changes in repo entries on input
+// Track for changes in repo entries on input and hightlight
 $(document).on('change', '.repo-edit', (e) => {
   repoChange = true
   $(e.currentTarget).addClass('input-change')
 })
 
-// Track for changes in repo entries on click
+// Track for changes in repo entries on click of checks or labels (through check-host)
 $(document).on('click', '.repo-check', (e) => {
+  repoChange = true
+})
+
+// Delete repo
+$(document).on('click', '.repo-menu-item-delete', (e) => {
+  $(e.currentTarget).closest('.github-repo').remove()
   repoChange = true
 })
 
@@ -382,27 +416,6 @@ $(document).on('click', '.repo-menu-item-clone', (e) => {
   newRepo.RepoId = Date.now()
   $('#settings-github-repos').append(buildRepoItem(newRepo))
   $('.modal-body').animate({ scrollTop: $(document).height() }, 'fast')
-})
-
-// Assigned to me checkbox click handler
-$(document).on('click', '.check-card-checkbox', (e) => {
-  repoChange = true
-})
-
-// Assigned to me checkbox label click handler
-$(document).on('click', '.check-card-label', (e) => {
-  repoChange = true
-})
-
-// Deactivate repo
-$(document).on('click', '.repo-menu-item-deactivate', (e) => {
-  repoChange = true
-})
-
-// Deactivate repo
-$(document).on('click', '.repo-menu-item-delete', (e) => {
-  $(e.currentTarget).closest('.github-repo').remove()
-  repoChange = true
 })
 // #endregion
 
@@ -454,10 +467,13 @@ function getStacks () {
   }
   // Add tasks, issues, incidents, tags to the stacks
   tasks.taskList.forEach(tasks.addTask)
-  gitHub.issueList.forEach(gitHub.addIssue)
-  serviceNow.snIncidentList.forEach(serviceNow.addSnIncident)
+  if (settings.mobySettings.GhToggle) {
+    gitHub.getIssues()
+  }
+  if (settings.mobySettings.SnToggle) {
+    serviceNow.getSnIncidents()
+  }
   loadTagCloud()
-  applySettings()
 }
 
 // Default stack setup
@@ -748,7 +764,7 @@ $(document).on('click', '.cloud-tags', (e) => {
   $(e.currentTarget).addClass('cloud-tags-toggled')
   $('.tags').filter(function () {
     return $(this).text() === $(e.currentTarget).text()
-  }).closest('.card').addClass('card-tagged') // .find('.collapse').collapse('show')
+  }).closest('.card').addClass('card-tagged') // .find('.collapse').collapse('show') // TODO: open on tag select
 })
 
 // Remove tag from task card
@@ -1142,6 +1158,8 @@ const drop = (e) => {
     $(e.target).append($(`#${data}`))
   } else if ($(e.target).hasClass('stack')) {
     $(e.target).find('.box').append($(`#${data}`))
+  } else if ($(e.target).parent().hasClass('stack')) {
+    $(e.target).parent().find('.box').append($(`#${data}`))
   } else {
     $(e.target).closest('.box').append($(`#${data}`))
   }
@@ -1259,9 +1277,6 @@ $(document).on('click', '.check-checkbox', (e) => {
 
 // Checkbox label click handler
 $(document).on('click', '.check-label', (e) => {
-  toggleCheck($(e.currentTarget).parent('.check-host, .repo-check, .check-modal-host').find('.check-checkbox'))
-  if ($(e.currentTarget).parent('.check-host').find('.check-checkbox').hasClass('check-card-checkbox')) {
-    setSubtaskCheck($(e.currentTarget))
-  }
+  $(e.currentTarget).parent('.check-host, .check-modal-host').find('.check-checkbox').click()
 })
 // #endregion

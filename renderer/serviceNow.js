@@ -5,8 +5,8 @@ const os = require('os')
 const username = os.userInfo().username
 const creds = require('./creds')
 // ServiceNow Prod connection
+const sn = new ServiceNow(creds.snDomain, creds.snUser, creds.snPass)
 try {
-  const sn = new ServiceNow(creds.snDomain, creds.snUser, creds.snPass)
   sn.Authenticate()
 } catch (err) {
   alert(err)

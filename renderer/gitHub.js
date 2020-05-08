@@ -158,7 +158,7 @@ exports.saveRepos = () => {
 exports.submitRepo = (repoId) => {
   const url = new URL($(`#surl${repoId}`).val())
   const newRepo = {
-    Active: $(`#deactivate-button-${repoId}`).hasClass('check-checked'),
+    Active: $(`#dar${repoId}`).hasClass('check-checked'),
     RepoId: repoId,
     AssignToMe: $(`#satm${repoId}`).hasClass('check-checked'),
     Auth: $(`#sat${repoId}`).val(),

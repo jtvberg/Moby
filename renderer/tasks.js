@@ -198,7 +198,7 @@ exports.cloneTask = (taskId, taskStack) => {
 }
 
 // Add task(s) to UI
-exports.addTask = (task, highlight) => {
+exports.addTask = (task, highlight, settings) => {
   // Add task tags
   let tagHTML = ''
   if (task.Tags && task.Tags.length > 0) {

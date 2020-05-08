@@ -4,8 +4,6 @@ const ServiceNow = require('servicenow-rest-api')
 const os = require('os')
 const username = os.userInfo().username
 const creds = require('./creds')
-// ServiceNow Connection
-const sn = new ServiceNow(creds.snDomain, creds.snUser, creds.snPass).Authenticate()
 
 // Import ServiceNow groups from local storage
 exports.snGroupsList = JSON.parse(localStorage.getItem('snGroupList')) || []
@@ -50,6 +48,8 @@ exports.getSnGroups = () => {
     `user.u_ms_id=${username}`
   ]
   const type = 'sys_user_grmember'
+  const sn = new ServiceNow(creds.snDomain, creds.snUser, creds.snPass)
+  sn.Authenticate()
   sn.getTableData(fields, filters, type, function (res) {
     try {
       res.forEach(r => {
@@ -100,6 +100,8 @@ exports.getSnIncidents = () => {
   this.snTagList.length = 0
   incidents.length = 0
   const types = ['Incident', 'Problem']
+  const sn = new ServiceNow(creds.snDomain, creds.snUser, creds.snPass)
+  sn.Authenticate()
   types.forEach(type => {
     sn.getTableData(fields, filters, type.toLowerCase(), function (res) {
       res.forEach(r => {
@@ -108,8 +110,6 @@ exports.getSnIncidents = () => {
       if (res.length > 0) {
         ipcRenderer.send('get-incidents', type)
       }
-    }).catch(error => {
-      console.log(error)
     })
   })
 }

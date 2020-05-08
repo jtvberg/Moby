@@ -299,7 +299,7 @@ function saveSetting () {
   }
   serviceNow.saveSnGroups()
 
-  if (servChange || groupChange || repoChange) {
+  if (groupChange || repoChange) {
     getStacks()
   }
 }
@@ -473,6 +473,7 @@ function getStacks () {
     serviceNow.getSnIncidents()
   }
   loadTagCloud()
+  applySettings()
 }
 
 // Default stack setup

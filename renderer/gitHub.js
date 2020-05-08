@@ -56,6 +56,8 @@ const callIssueService = (repo) => {
         })
       })
       ipcRenderer.send('get-issues', repoStack)
+    }).catch(error => {
+      console.log(error)
     })
   }
 }

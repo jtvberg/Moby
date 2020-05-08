@@ -17,7 +17,6 @@ let match = ''
 let desktopPath = ''
 let repoChange = false
 let groupChange = false
-let servChange = false
 // #endregion
 
 // #region IPC handlers

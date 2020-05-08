@@ -4,24 +4,25 @@ const ServiceNow = require('servicenow-rest-api')
 const os = require('os')
 const username = os.userInfo().username
 const creds = require('./creds')
-// ServiceNow Prod connection
-const sn = new ServiceNow(creds.snDomain, creds.snUser, creds.snPass)
-try {
-  sn.Authenticate()
-} catch (err) {
-  alert(err)
-}
+// ServiceNow Connection
+const sn = new ServiceNow(creds.snDomain, creds.snUser, creds.snPass).Authenticate()
 
+// Import ServiceNow groups from local storage
 exports.snGroupsList = JSON.parse(localStorage.getItem('snGroupList')) || []
 
+// Track incidents list
 exports.snIncidentList = []
 
+// Track tag list
 exports.snTagList = []
 
+// Temp group array
 const groups = []
 
+// Temp incident array
 const incidents = []
 
+// Update local list of available ServiceNow groups from temp array
 exports.updateSnGroupList = () => {
   groups.forEach(group => {
     group.GroupActive = this.snGroupsList.find(g => g.GroupId === group.GroupId).GroupActive || group.GroupActive
@@ -29,14 +30,17 @@ exports.updateSnGroupList = () => {
   this.snGroupsList = groups.sort((a, b) => (a.GroupName > b.GroupName) ? 1 : -1)
 }
 
+// Update local list of incidents from temp array
 exports.updateSnIncidentList = () => {
   this.snIncidentList = incidents.sort()
 }
 
+// Update group bool that denotes active and shown in stack
 exports.updateSnGroupActive = (groupId, groupActive) => {
   this.snGroupsList.find(group => group.GroupId === groupId).GroupActive = groupActive
 }
 
+// Query for available groups based on user
 exports.getSnGroups = () => {
   const fields = [
     'sys_id',
@@ -46,8 +50,8 @@ exports.getSnGroups = () => {
     `user.u_ms_id=${username}`
   ]
   const type = 'sys_user_grmember'
-  try {
-    sn.getTableData(fields, filters, type, function (res) {
+  sn.getTableData(fields, filters, type, function (res) {
+    try {
       res.forEach(r => {
         const url = new URL(r.group.link)
         const newGroup = {
@@ -57,17 +61,19 @@ exports.getSnGroups = () => {
         }
         groups.push(newGroup)
       })
-      ipcRenderer.send('get-groups')
-    })
-  } catch (err) {
-    // alert(err)
-  }
+    } catch (err) {
+      alert('Unable to connect to ServiceNow')
+    }
+    ipcRenderer.send('get-groups')
+  })
 }
 
+// Save groups to local storage
 exports.saveSnGroups = () => {
   localStorage.setItem('snGroupList', JSON.stringify(this.snGroupsList))
 }
 
+// Query for incidents within active groups
 exports.getSnIncidents = () => {
   const fields = [
     'number',
@@ -95,18 +101,16 @@ exports.getSnIncidents = () => {
   incidents.length = 0
   const types = ['Incident', 'Problem']
   types.forEach(type => {
-    try {
-      sn.getTableData(fields, filters, type.toLowerCase(), function (res) {
-        res.forEach(r => {
-          incidents.push(r)
-        })
-        if (res.length > 0) {
-          ipcRenderer.send('get-incidents', type)
-        }
+    sn.getTableData(fields, filters, type.toLowerCase(), function (res) {
+      res.forEach(r => {
+        incidents.push(r)
       })
-    } catch (err) {
-      // alert(err)
-    }
+      if (res.length > 0) {
+        ipcRenderer.send('get-incidents', type)
+      }
+    }).catch(error => {
+      console.log(error)
+    })
   })
 }
 

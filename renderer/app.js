@@ -325,19 +325,19 @@ const buildRepoItem = (repo) => {
                       </div>
                       <div>
                         <small class="left-margin">GitHub URL</small>
-                        <input class="form-control form-control-sm text-box repo-edit" id="surl${repoId}" placeholder="Enter GitHub URL" value="${repoUrl}">
+                        <input class="form-control form-control-sm text-box repo-edit" id="surl${repoId}" placeholder="https://github.com/owner/repo" value="${repoUrl}">
                         <small class="text-muted left-margin">This is the home location of the repo</small>
                       </div>
                       <div class="form-row">
                         <div class="form-group col-md-4">
                           <small class="left-margin">User Name</small>
-                          <input class="form-control form-control-sm text-box repo-edit" id="sun${repoId}" placeholder="Enter User Name" value="${repoUser}">
+                          <input class="form-control form-control-sm text-box repo-edit" id="sun${repoId}" placeholder="l33tcoder" value="${repoUser}">
                           <small class="text-muted left-margin">Your user name on this GitHub instance</small>
                         </div>
                         <div class="form-group col-md-8">
                           <small class="left-margin">Personal Access Token</small>
                           <input class="form-control form-control-sm text-box repo-edit" id="sat${repoId}" placeholder="Enter Token" value="${repoAuth}">
-                          <small class="text-muted left-margin">Not required but you may be throttled. Click here to obtain one</small>
+                          <small class="text-muted left-margin">Not required but you may be throttled. Click <a style="color: var(--highlight)" href="https://github.com/settings/tokens">here</a> to obtain one</small>
                         </div>
                       </div>
                       <div class="form-row left-margin" style="margin-top: -10px;">

@@ -102,13 +102,22 @@ exports.getSnIncidents = () => {
   const types = ['Incident', 'Problem']
   const sn = new ServiceNow(creds.snDomain, creds.snUser, creds.snPass)
   sn.Authenticate()
+  let isError = false
   types.forEach(type => {
     sn.getTableData(fields, filters, type.toLowerCase(), function (res) {
-      res.forEach(r => {
-        incidents.push(r)
-      })
-      if (res.length > 0) {
-        ipcRenderer.send('get-incidents', type)
+      try {
+        res.forEach(r => { // TODO: handle error
+          incidents.push(r)
+        })
+        if (res.length > 0) {
+          ipcRenderer.send('get-incidents', type)
+        }
+      } catch (err) {
+        if (isError) {
+          alert('Unable to connect to ServiceNow')
+          isError = false
+        }
+        isError = true
       }
     })
   })

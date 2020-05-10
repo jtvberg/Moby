@@ -454,14 +454,26 @@
                           <label class="check-label">Load ServiceNow Incidents Stack</label>
                           <small class="text-muted check-description">Checked will load incidents fron ServiceNow assigned to selected groups. </small>
                         </div>
+                        <div class="form-row" style="margin-bottom: -8px;">
+                          <div class="form-group col-md-6">
+                            <label class="left-margin" style="margin-bottom: 2px;">Domain</label>
+                            <input class="form-control form-control-sm text-box sn-edit" id="sn-domain" placeholder="companyname.service-now.com">
+                            <small class="text-muted left-margin">Domain of your ServiceNow instance</small>
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label class="left-margin" style="margin-bottom: 2px;">Access Token</label>
+                            <input class="form-control form-control-sm text-box sn-edit" id="sn-token" placeholder="Enter Token">
+                            <small class="text-muted left-margin">Access Token supplied by your company</small>
+                          </div>
+                        </div>
                         <div>
-                          <label>ServiceNow Groups</label>
+                          <label class="left-margin">Assignment Groups</label>
                         </div>
-                        <div style="margin: -10px 0px 7px 0px">
+                        <div style="margin: -10px 0px -2px 5px">
                           <small class="text-muted check-description">Incidents from checked groups only will be displayed.</small>
-                          <div class="footer fas fa-sync-alt" id="settings-sngroups-refresh-button" style="float: right;"></div>
+                          <div class="footer fas fa-sync-alt" id="settings-sngroups-refresh-button" style="float: right; font-size: calc(var(--font-base-size) + 30%);" data-toggle="tooltip" title="Refresh Group List"></div>
                         </div>
-                        <div id="servicenow-group-box"></div>
+                        <div id="servicenow-group-box" style="margin-left: 0px;"></div>
                       </div>
                     </div>
                   </div>

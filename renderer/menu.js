@@ -76,7 +76,7 @@ const template = [
 
 // Mac specific
 if (process.platform === 'darwin') {
-  // Add first menu item
+  // Add first menu item for Mac
   template.unshift({
     label: remote.app.name,
     submenu: [
@@ -146,6 +146,66 @@ if (process.platform === 'darwin') {
       },
       {
         role: 'unhide'
+      },
+      {
+        type: 'separator'
+      },
+      {
+        role: 'quit'
+      }
+    ]
+  })
+} else {
+  template.unshift({
+    label: remote.app.name,
+    submenu: [
+      {
+        role: 'about'
+      },
+      {
+        label: 'Preferences',
+        submenu: [
+          {
+            label: 'Settings',
+            click () { window.settingsMenu() }
+          },
+          {
+            label: 'Theme',
+            submenu: [
+              {
+                label: 'Defaut',
+                click () { window.setThemeMenu('default') }
+              },
+              {
+                label: 'Dark',
+                click () { window.setThemeMenu('dark') }
+              },
+              {
+                label: 'Light',
+                click () { window.setThemeMenu('light') }
+              },
+              {
+                label: 'Cyber',
+                click () { window.setThemeMenu('cyber') }
+              },
+              {
+                label: 'Steve',
+                click () { window.setThemeMenu('steve') }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        type: 'separator'
+      },
+      {
+        label: 'Export Data',
+        click () { window.exportDataMenu() }
+      },
+      {
+        label: 'Import Data',
+        click () { window.importDataMenu() }
       },
       {
         type: 'separator'

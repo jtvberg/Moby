@@ -78,7 +78,11 @@ window.setInterval(addScheduledTasks, 3600000)
 window.setInterval(archiveDoneTasks(settings.mobySettings.ArchiveDone || 7), 3600000)
 window.setInterval(pruneArchive(settings.mobySettings.ArchivePrune || 0), 3600000)
 window.setInterval(tasks.updateTaskAge, 3600000)
-window.setInterval(gitHub.getIssues, 1000000)
+window.setInterval(refreshAll, 600000)
+
+function refreshAll () {
+  $('.refresh-data').click()
+}
 
 // Scheduled tasks method
 function addScheduledTasks () {
@@ -139,8 +143,9 @@ function loadIssues (stack) {
 // Load ServiceNow incidents
 function loadSnIncidents (type) {
   serviceNow.updateSnIncidentList()
+  $('#sn-stack').find('.box').children(`.${type}`).remove()
   if (serviceNow.snIncidentList.length === 0) {
-    $('#sn-stack').find('.box').append(`<div class="header">No ${type}s</div>`)
+    $('#sn-stack').find('.box').append(`<div class="header ${type}">No ${type}s</div>`)
   } else {
     serviceNow.snIncidentList.forEach(inc => {
       serviceNow.snTagList.push(type)
@@ -686,6 +691,8 @@ $(document).on('click', '.refresh-data', (e) => {
     gitHub.getIssues($(e.currentTarget).closest('.serv-stack').prop('id'))
   } else if ($(e.currentTarget).data('source') === 'sn') {
     serviceNow.getSnIncidents(settings.mobySettings.SnDomain, settings.mobySettings.SnToken)
+  } else {
+    return
   }
   $(e.currentTarget).closest('.stack-footer').find('.stack-updated').text(new Date(Date.now()).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }))
 })

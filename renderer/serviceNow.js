@@ -103,7 +103,7 @@ exports.getSnIncidents = (domain, token) => {
       filters.push(`ORassignment_group.sys_id=${group.GroupId}`)
     }
   })
-  $('#sn-stack').find('.box').children().remove()
+  $('#sn-stack').find('.box').children('.card').remove()
   this.snTagList.length = 0
   incidents.length = 0
   const types = ['Problem', 'Incident']

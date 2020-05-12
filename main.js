@@ -21,7 +21,7 @@ const createWindow = () => {
   })
 
   // open DevTools remove for dist
-  win.webContents.openDevTools()
+  // win.webContents.openDevTools()
 
   // HTML to open
   win.loadURL(`file://${__dirname}/renderer/main.html`)
@@ -94,10 +94,10 @@ const createQuickMenu = () => {
 // Create windows, tray, post electron init
 app.on('ready', () => {
   createWindow()
+  createQuickMenu()
   // Tray icon only on Mac
   if (process.platform === 'darwin') {
     createTray()
-    createQuickMenu()
   }
   win.webContents.on('dom-ready', () => {
     // IPC event to send system desktop path

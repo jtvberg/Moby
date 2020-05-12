@@ -16,7 +16,7 @@ exports.refreshRepos = () => {
   this.repoList = JSON.parse(localStorage.getItem('repoList'))
 }
 
-// Get issues from repo
+// Iterate through repos and call issue service
 exports.getIssues = (repoId) => {
   if (repoId) {
     const repo = this.repoList.find(repo => `git-stack-${repo.Owner}-${repo.Repo}` === repoId)
@@ -28,6 +28,7 @@ exports.getIssues = (repoId) => {
   }
 }
 
+// Get issues from repo
 const callIssueService = (repo) => {
   if (repo.Active) {
     const repoStack = `git-stack-${repo.Owner}-${repo.Repo}`
@@ -56,8 +57,9 @@ const callIssueService = (repo) => {
         })
       })
       ipcRenderer.send('get-issues', repoStack)
-    }).catch(error => {
-      console.log(error)
+    }).catch(err => {
+      console.log(err)
+      alert('Unable to connect to GitHub')
     })
   }
 }

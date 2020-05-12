@@ -3,7 +3,6 @@ const { ipcRenderer, clipboard } = require('electron')
 const ServiceNow = require('servicenow-rest-api')
 const os = require('os')
 const username = os.userInfo().username
-const creds = require('./creds')
 
 // Import ServiceNow groups from local storage
 exports.snGroupsList = JSON.parse(localStorage.getItem('snGroupList')) || []
@@ -39,7 +38,7 @@ exports.updateSnGroupActive = (groupId, groupActive) => {
 }
 
 // Query for available groups based on user
-exports.getSnGroups = () => {
+exports.getSnGroups = (domain, token) => {
   const fields = [
     'sys_id',
     'group'
@@ -48,7 +47,15 @@ exports.getSnGroups = () => {
     `user.u_ms_id=${username}`
   ]
   const type = 'sys_user_grmember'
-  const sn = new ServiceNow(creds.snDomain, creds.snUser, creds.snPass)
+  let un = ''
+  let pw = ''
+  try {
+    un = atob(token).split('**')[0]
+    pw = atob(token).split('**')[1]
+  } catch (err) {
+    alert('Invalid ServiceNow Token')
+  }
+  const sn = new ServiceNow(domain, un, pw)
   sn.Authenticate()
   sn.getTableData(fields, filters, type, function (res) {
     try {
@@ -74,7 +81,7 @@ exports.saveSnGroups = () => {
 }
 
 // Query for incidents within active groups
-exports.getSnIncidents = () => {
+exports.getSnIncidents = (domain, token) => {
   const fields = [
     'number',
     'state',
@@ -99,8 +106,16 @@ exports.getSnIncidents = () => {
   $('#sn-stack').find('.box').children().remove()
   this.snTagList.length = 0
   incidents.length = 0
-  const types = ['Incident', 'Problem']
-  const sn = new ServiceNow(creds.snDomain, creds.snUser, creds.snPass)
+  const types = ['Problem', 'Incident']
+  let un = ''
+  let pw = ''
+  try {
+    un = atob(token).split('**')[0]
+    pw = atob(token).split('**')[1]
+  } catch (err) {
+    alert('Invalid ServiceNow Token')
+  }
+  const sn = new ServiceNow(domain, un, pw)
   sn.Authenticate()
   let isError = false
   types.forEach(type => {
@@ -109,7 +124,7 @@ exports.getSnIncidents = () => {
         res.forEach(r => { // TODO: handle error
           incidents.push(r)
         })
-        if (res.length > 0) {
+        if (res.length >= 0) {
           ipcRenderer.send('get-incidents', type)
         }
       } catch (err) {

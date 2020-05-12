@@ -106,6 +106,7 @@ body {
 .box {
   min-height: 35px;
   overflow-y: scroll;
+  margin: 2px 0px 5px 0px;
 }
 
 .footer {
@@ -215,7 +216,7 @@ body {
 }
 
 .ddcm>a:hover {
-  color: var(--highlight);
+  color: var(--highlight)
 }
 
 .ddcm>a:active {
@@ -237,7 +238,7 @@ body {
   grid-template-rows: auto 1fr;
   transition: 0.3s;
   border-radius: 3px;
-  margin: 5px;
+  margin: 3px 3px 0px 3px;
   padding: 2px;
   font-size: var(--font-base-size);
   -webkit-app-region: no-drag;
@@ -436,7 +437,6 @@ body {
 .tag-box {
   display: flex;
   flex-wrap: wrap;
-  font-size: calc(var(--font-base-size - 20%));
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -564,7 +564,7 @@ body {
 }
 
 .check-unchecked {
-  color: var(--muted);
+  color: var(--unchecked);
 }
 
 a {
@@ -605,6 +605,30 @@ a {
 
 .repo-menu {
   float: right;
+}
+
+.stack-updated {
+  float: left;
+  font-size: calc(var(--font-base-size) + 40%);
+  margin: -4px 0px -5px 3px;
+}
+
+.btn-secondary {
+  background-color: var(--main-background-light) !important;
+  border-color: var(--main-background-light) !important;
+}
+
+.btn-secondary.active,
+.btn-secondary.focus,
+.btn-secondary:active:focus  {
+  background-color: var(--checked) !important;
+  border-color: var(--checked) !important;
+  color: var(--main-background-dark) !important;
+}
+
+.btn-secondary:hover {
+  background-color: var(--highlight) !important;
+  border-color: var(--highlight) !important;
 }
 
 #servicenow-group-box {

@@ -124,23 +124,31 @@ function pruneArchive (days) {
 
 // Load GitHub issues
 function loadIssues (stack) {
-  gitHub.issueList.forEach((issue) => {
-    if (issue.stack === stack) {
-      gitHub.addIssue(issue)
-    }
-  })
-  loadTagCloud()
+  if (gitHub.issueList.find(issue => issue.stack === stack) === undefined) {
+    $(`#${stack}`).find('.box').append('<div class="header">No Issues</div>')
+  } else {
+    gitHub.issueList.forEach((issue) => {
+      if (issue.stack === stack) {
+        gitHub.addIssue(issue)
+      }
+    })
+    loadTagCloud()
+  }
 }
 
 // Load ServiceNow incidents
 function loadSnIncidents (type) {
-  serviceNow.snTagList.push(type)
   serviceNow.updateSnIncidentList()
-  serviceNow.snIncidentList.forEach(inc => {
-    if (inc.number.substring(0, 3).toLowerCase() === type.substring(0, 3).toLowerCase()) {
-      serviceNow.addSnIncident(inc)
-    }
-  })
+  if (serviceNow.snIncidentList.length === 0) {
+    $('#sn-stack').find('.box').append(`<div class="header">No ${type}s</div>`)
+  } else {
+    serviceNow.snIncidentList.forEach(inc => {
+      serviceNow.snTagList.push(type)
+      if (inc.number.substring(0, 2).toLowerCase() === type.substring(0, 2).toLowerCase()) {
+        serviceNow.addSnIncident(inc)
+      }
+    })
+  }
 }
 // #endregion
 
@@ -148,12 +156,7 @@ function loadSnIncidents (type) {
 // Check settings to make sure they are present and complete
 function checkSettings () {
 // If no setting found
-  if (settings.mobySettings.length === 0) {
-    // Set Defaults
-    settings.defaultSettings()
-  } else {
-    // TODO: fill in defaults where missing
-  }
+  settings.defaultSettings(true)
   // Apply them
   applySettings()
   // Set theme
@@ -244,8 +247,8 @@ function loadSettingsModal () {
   toggleCheck($('#settings-serv-toggle'), settings.mobySettings.ServToggle)
   toggleCheck($('#settings-github-toggle'), settings.mobySettings.GhToggle)
   toggleCheck($('#settings-servicenow-toggle'), settings.mobySettings.SnToggle)
-  $(`input[name=radio-archive][value=${settings.mobySettings.ArchiveDone || 7}]`).prop('checked', true)
-  $(`input[name=radio-prune][value=${settings.mobySettings.ArchivePrune || 0}]`).prop('checked', true)
+  $(`input[name=radio-archive][value=${settings.mobySettings.ArchiveDone || 7}]`).prop('checked', true).parent('.btn').addClass('active')
+  $(`input[name=radio-prune][value=${settings.mobySettings.ArchivePrune || 0}]`).prop('checked', true).parent('.btn').addClass('active')
   // Reload repos
   $('#settings-github-repos').children().remove()
   $('#collapse-github, #collapse-rally, #collapse-servicenow').collapse('hide')
@@ -255,7 +258,9 @@ function loadSettingsModal () {
     gitHubRepo += buildRepoItem(repo)
   })
   $('#settings-github-repos').append(gitHubRepo)
-  // Load SN groups
+  // Load SN auth / groups
+  $('#settings-servicenow-domain').val(settings.mobySettings.SnDomain)
+  $('#settings-servicenow-token').val(settings.mobySettings.SnToken)
   loadSnGroups()
   $('#settings-modal').modal('show')
 }
@@ -374,12 +379,17 @@ $('.panel-header').click(function () {
 // Refresh available ServiceNow groups
 $('#settings-sngroups-refresh-button').click(() => {
   $('#servicenow-group-box').children().remove()
-  serviceNow.getSnGroups()
+  serviceNow.getSnGroups(settings.mobySettings.SnDomain, settings.mobySettings.SnToken)
 })
 
 // Track change to SN group selection
 $('#settings-servicenow-toggle').click(() => {
   groupChange = true
+})
+
+// Track change to SN domain/token fields
+$('.servicenow-edit').change(function () {
+  $(this).addClass('input-change')
 })
 
 // Track for changes in group entries selection on click of checks or labels (through check-host)
@@ -470,7 +480,7 @@ function getStacks () {
     gitHub.getIssues()
   }
   if (settings.mobySettings.SnToggle) {
-    serviceNow.getSnIncidents()
+    serviceNow.getSnIncidents(settings.mobySettings.SnDomain, settings.mobySettings.SnToken)
   }
   loadTagCloud()
   applySettings()
@@ -514,6 +524,7 @@ function buildStack (id, title, index, url) {
   const isDefault = id.substring(0, 6) === stackPrefix
   const stackClass = isDefault ? 'stack' : 'serv-stack'
   const dragDrop = isDefault ? ' ondrop="drop(event)" ondragover="allowDrop(event)"' : ''
+  const updated = isDefault ? '' : new Date(Date.now()).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
   let addTaskBtn = `" href="#task-modal" data-toggle="modal" data-stack-id="${id}" data-type-id="new"`
   let refreshBtn = 'hidden'
   let refreshDataSource = ''
@@ -542,7 +553,8 @@ function buildStack (id, title, index, url) {
                       <div class="header stack-header" contenteditable="${isDefault}" onclick="document.execCommand('selectAll',false,null)" oncontextmenu="event.preventDefault(); event.stopPropagation();">${title}</div>
                       ${removeStackBtn}
                       <div class="box"></div>
-                      <div>
+                      <div class="stack-footer">
+                        <span class="footer stack-updated">${updated}</span>
                         <span data-toggle="tooltip" title="Add ${itemType}" style="float: right;">
                           <div class="footer fas fa-plus fa-2x${addTaskBtn}></div>
                         </span>
@@ -673,8 +685,9 @@ $(document).on('click', '.refresh-data', (e) => {
   if ($(e.currentTarget).data('source') === 'git') {
     gitHub.getIssues($(e.currentTarget).closest('.serv-stack').prop('id'))
   } else if ($(e.currentTarget).data('source') === 'sn') {
-    serviceNow.getSnIncidents()
+    serviceNow.getSnIncidents(settings.mobySettings.SnDomain, settings.mobySettings.SnToken)
   }
+  $(e.currentTarget).closest('.stack-footer').find('.stack-updated').text(new Date(Date.now()).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }))
 })
 
 // In-line stack title update event
@@ -859,7 +872,8 @@ function exportData () {
     Stacks: JSON.parse(localStorage.getItem('stackList')) || [],
     Tasks: JSON.parse(localStorage.getItem('taskList')) || [],
     Settings: JSON.parse(localStorage.getItem('mobySettings')) || [],
-    Repos: JSON.parse(localStorage.getItem('repoList')) || []
+    Repos: JSON.parse(localStorage.getItem('repoList')) || [],
+    SnGroups: JSON.parse(localStorage.getItem('snGroupList')) || []
   }
   fs.writeFile(`${desktopPath}/moby_export_${Date.now()}.txt`, JSON.stringify(JSONexport, null, 4), err => {
     if (err) {
@@ -872,7 +886,7 @@ function exportData () {
 
 // Import all data
 function importData () {
-  if (!confirm('Import will replace all stacks and settings and add tasks and repos that are not present.\nFurther, any tasks not assigned an existing stack will be moved into your first stack.\nAre you sure?')) {
+  if (!confirm('Import will replace all stacks and settings and add tasks, repos and groups that are not present.\nFurther, any tasks not assigned an existing stack will be moved into your first stack.\nAre you sure?')) {
     return
   }
   let latestExport = 0
@@ -943,7 +957,7 @@ function importData () {
       alert(err)
     }
     try {
-      // Task import
+      // Repo import
       const JSONimport = JSON.parse(data).Repos
       if (JSONimport) {
         let i = 0
@@ -963,6 +977,31 @@ function importData () {
         }
       } else {
         alert('\n No repos found')
+      }
+    } catch (err) {
+      alert(err)
+    }
+    try {
+      // ServiceNow Group import
+      const JSONimport = JSON.parse(data).SnGroups
+      if (JSONimport) {
+        let i = 0
+        JSONimport.forEach(group => {
+          if (!serviceNow.snGroupsList.some(e => e.GroupId === group.GroupId)) {
+            serviceNow.snGroupsList.push(group)
+            i++
+          }
+        })
+        serviceNow.saveSnGroups()
+        if (i > 1) {
+          alertString += `\n${i} groups imported succesfully`
+        } else if (i === 1) {
+          alertString += '\n1 group imported succesfully'
+        } else {
+          alertString += '\nNo new groups found'
+        }
+      } else {
+        alert('\n No groups found')
       }
     } catch (err) {
       alert(err)
@@ -1048,6 +1087,7 @@ function loadTaskModal (type, stack) {
       $('#check-fri').prop('checked', getTask.WeekDay.includes(5))
       $('#check-sat').prop('checked', getTask.WeekDay.includes(6))
     }
+    // $(`input[name=radio-archive][value=${getTask.MonthDay}]`).prop('checked', true).parent('.btn').addClass('active')
     $(`input[name=radio-recur][value=${getTask.MonthDay}]`).prop('checked', true)
     enableRecur(!$('#radio-once').is(':checked'))
   }

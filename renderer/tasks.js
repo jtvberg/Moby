@@ -313,8 +313,7 @@ exports.addTask = (task, highlight, settings) => {
   })
   // Copy task details to clipboard
   $(`#copy-button-${task.TaskId}`).click(() => {
-    const cbs = `${task.TaskTitle}\n${task.TaskDetail}`
-    clipboard.writeText(cbs)
+    clipboard.writeText(`${task.TaskTitle}\n${task.TaskDetail}\n`)
   })
   // Initialize tooltips
   $(function () {

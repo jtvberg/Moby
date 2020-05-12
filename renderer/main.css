@@ -72,6 +72,16 @@ body {
   width: calc(100% - 60px);
 }
 
+.no-results {
+  color: var(--primary);
+  font-size: var(--font-base-size);
+  font-weight: 500;
+  justify-self: center;
+  text-align: center;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
 .stack-add {
   color: var(--trans);
   display: table;

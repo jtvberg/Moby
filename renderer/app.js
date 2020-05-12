@@ -145,7 +145,7 @@ function loadSnIncidents (type) {
   serviceNow.updateSnIncidentList()
   $('#sn-stack').find('.box').children(`.${type}`).remove()
   if (serviceNow.snIncidentList.length === 0) {
-    $('#sn-stack').find('.box').append(`<div class="header ${type}">No ${type}s</div>`)
+    $('#sn-stack').find('.box').append(`<div class="no-results ${type}">No ${type}s</div>`)
   } else {
     serviceNow.snIncidentList.forEach(inc => {
       serviceNow.snTagList.push(type)
@@ -231,6 +231,8 @@ function setTheme (themeId) {
     $('#moby-bg-img').prop('src', 'res/moby_bg.png')
   }
   updateTitileBar()
+  remote.Menu.getApplicationMenu().getMenuItemById('theme').submenu.items.forEach(mi => { mi.checked = false })
+  remote.Menu.getApplicationMenu().getMenuItemById(`${themeId}`).checked = true
   ipcRenderer.send('theme-change', themeId)
 }
 

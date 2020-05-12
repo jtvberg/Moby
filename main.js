@@ -95,9 +95,10 @@ const createQuickMenu = () => {
 app.on('ready', () => {
   createWindow()
   createQuickMenu()
+  createTray()
   // Tray icon only on Mac
-  if (process.platform === 'darwin') {
-    createTray()
+  if (process.platform !== 'darwin') {
+    tray.destroy()
   }
   win.webContents.on('dom-ready', () => {
     // IPC event to send system desktop path

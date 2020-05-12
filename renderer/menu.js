@@ -46,8 +46,8 @@ const template = [
       },
       {
         label: 'Toggle Task Age',
-        id: 'menu-task-age',
         type: 'checkbox',
+        id: 'menu-task-age',
         accelerator: 'CmdOrCtrl+G',
         click () { window.toggleAgeMenu() }
       }
@@ -92,25 +92,36 @@ if (process.platform === 'darwin') {
           },
           {
             label: 'Theme',
+            id: 'theme',
             submenu: [
               {
-                label: 'Defaut',
+                label: 'Default',
+                id: 'default',
+                type: 'checkbox',
                 click () { window.setThemeMenu('default') }
               },
               {
                 label: 'Dark',
+                id: 'dark',
+                type: 'checkbox',
                 click () { window.setThemeMenu('dark') }
               },
               {
                 label: 'Light',
+                id: 'light',
+                type: 'checkbox',
                 click () { window.setThemeMenu('light') }
               },
               {
                 label: 'Cyber',
+                id: 'cyber',
+                type: 'checkbox',
                 click () { window.setThemeMenu('cyber') }
               },
               {
                 label: 'Steve',
+                id: 'steve',
+                type: 'checkbox',
                 click () { window.setThemeMenu('steve') }
               }
             ]
@@ -171,25 +182,36 @@ if (process.platform === 'darwin') {
           },
           {
             label: 'Theme',
+            id: 'theme',
             submenu: [
               {
-                label: 'Defaut',
+                label: 'Default',
+                id: 'default',
+                type: 'checkbox',
                 click () { window.setThemeMenu('default') }
               },
               {
                 label: 'Dark',
+                id: 'dark',
+                type: 'checkbox',
                 click () { window.setThemeMenu('dark') }
               },
               {
                 label: 'Light',
+                id: 'light',
+                type: 'checkbox',
                 click () { window.setThemeMenu('light') }
               },
               {
                 label: 'Cyber',
+                id: 'cyber',
+                type: 'checkbox',
                 click () { window.setThemeMenu('cyber') }
               },
               {
                 label: 'Steve',
+                id: 'steve',
+                type: 'checkbox',
                 click () { window.setThemeMenu('steve') }
               }
             ]

@@ -1,5 +1,5 @@
 // Modules and variable definition
-const { ipcRenderer, shell } = require('electron')
+const { ipcRenderer, clipboard } = require('electron')
 const { Octokit } = require('@octokit/rest')
 
 // Track repo list
@@ -16,36 +16,50 @@ exports.refreshRepos = () => {
   this.repoList = JSON.parse(localStorage.getItem('repoList'))
 }
 
-// Get issues from repo
-exports.getIssues = () => {
-  if (this.repoList.length > 0) {
+// Iterate through repos and call issue service
+exports.getIssues = (repoId) => {
+  if (repoId) {
+    const repo = this.repoList.find(repo => `git-stack-${repo.Owner}-${repo.Repo}` === repoId)
+    callIssueService(repo)
+  } else if (this.repoList.length > 0) {
     this.repoList.forEach((repo) => {
-      if (repo.Active) {
-        const octokit = new Octokit({ auth: repo.Auth })
-        octokit.paginate('GET /repos/:owner/:repo/issues', {
-          baseUrl: repo.BaseUrl,
-          owner: repo.Owner,
-          repo: repo.Repo
-        }).then(issues => {
-          issues.forEach((issue) => {
-            const owned = issue.user.login === repo.User
-            let assigned = false
-            assigned = issue.assignee && issue.assignee.login === repo.User ? true : assigned
-            issue.assignees.forEach((assignee) => {
-              if (assignee.login === repo.User) { assigned = true }
-            })
-            this.issueList.push({
-              stack: `#git-stack-${repo.Owner}-${repo.Repo}`,
-              user: repo.User,
-              assigned: assigned,
-              owned: owned,
-              repoId: repo.RepoId,
-              issueOjb: issue
-            })
-          })
-          ipcRenderer.send('get-issues')
+      callIssueService(repo)
+    })
+  }
+}
+
+// Get issues from repo
+const callIssueService = (repo) => {
+  if (repo.Active) {
+    const repoStack = `git-stack-${repo.Owner}-${repo.Repo}`
+    const octokit = new Octokit({ auth: repo.Auth })
+    octokit.paginate('GET /repos/:owner/:repo/issues', {
+      baseUrl: repo.BaseUrl,
+      owner: repo.Owner,
+      repo: repo.Repo
+    }).then(issues => {
+      $(`#${repoStack}`).find('.box').children().remove()
+      this.issueList = this.issueList.filter(val => val.stack !== repoStack)
+      issues.forEach((issue) => {
+        const owned = issue.user.login === repo.User
+        let assigned = false
+        assigned = issue.assignee && issue.assignee.login === repo.User ? true : assigned
+        issue.assignees.forEach((assignee) => {
+          if (assignee.login === repo.User) { assigned = true }
         })
-      }
+        this.issueList.push({
+          stack: `git-stack-${repo.Owner}-${repo.Repo}`,
+          user: repo.User,
+          assigned: assigned,
+          owned: owned,
+          repoId: repo.RepoId,
+          issueOjb: issue
+        })
+      })
+      ipcRenderer.send('get-issues', repoStack)
+    }).catch(err => {
+      console.log(err)
+      alert('Unable to connect to GitHub')
     })
   }
 }
@@ -54,12 +68,12 @@ exports.getIssues = () => {
 exports.addIssue = (issue) => {
   const mine = this.repoList.find(repo => repo.RepoId === issue.repoId).AssignToMe
   const id = issue.issueOjb.node_id.replace('=', '')
-  // Remove existing card instance
-  $(`#${id}`).remove()
   if (!mine || (mine && (issue.assigned || issue.owned))) {
+    // Get issue dates and calc age
     const cd = new Date(issue.issueOjb.created_at)
     const ud = new Date(issue.issueOjb.updated_at)
     const age = Math.floor((Date.now() - ud) / 86400000) + '/' + Math.floor((Date.now() - cd) / 86400000)
+    // Get issue assigne=ment
     const assigned = issue.issueOjb.assignee ? issue.issueOjb.assignee.login : 'NA'
     // Set card color
     let color = issue.owned ? 3 : 1
@@ -99,7 +113,7 @@ exports.addIssue = (issue) => {
     const bandedCards = $('.card-bar').is(':visible') ? '' : 'style="display: none;"'
     const colorCards = $('.card-bar').is(':visible') ? ' color-trans' : ''
     // Generate issue card html
-    const issueHtml = `<div class="card color-${color}${colorCards}" id="${id}" data-github-url="${issue.issueOjb.html_url}">
+    const issueHtml = `<div class="card color-${color}${colorCards}" id="${id}" data-url="${issue.issueOjb.html_url}">
                         <div class="card-bar color-${color}"${bandedCards}></div>  
                         <div class="card-header" style="clear: both" id="b${id}" data-toggle="collapse" data-target="#c${id}">
                           <span class="color-glyph fas fa-${colorGlyph}" ${showColorGlyphs}></span>
@@ -107,14 +121,15 @@ exports.addIssue = (issue) => {
                           <span class="aging" id="a${id}" ${showAge}>${age}</span>
                         </div>
                         <div class="card-content collapse collapse-content" id="c${id}">
-                          <div class="detail" id="d${id}" contenteditable="true" style="white-space: pre-wrap;" draggable="true" ondragstart="event.preventDefault(); event.stopPropagation();"><a style="color: var(--highlight)" id="l${id}" href="${issue.issueOjb.html_url}">GitHub Link</a><br><b>Created:</b> ${cd.toLocaleDateString()}<br><b>Updated:</b> ${ud.toLocaleDateString()}<br><b>Opened by:</b> ${issue.issueOjb.user.login}<br><b>Assigned to:</b> ${assigned}<br><b>Detail:</b> ${issue.issueOjb.body}</div>
+                          <div class="card-detail" id="d${id}" style="white-space: pre-wrap;" draggable="true" ondragstart="event.preventDefault(); event.stopPropagation();"><a style="color: var(--highlight)" id="l${id}" href="${issue.issueOjb.html_url}">GitHub Link</a><br><b>Created:</b> ${cd.toLocaleDateString()}<br><b>Updated:</b> ${ud.toLocaleDateString()}<br><b>Opened by:</b> ${issue.issueOjb.user.login}<br><b>Assigned to:</b> ${assigned}<br><b>Detail:</b> ${issue.issueOjb.body}</div>
                           <div class="tag-box" id="t${id}">${tagHTML}</div>
                           <div class="card-menu">
+                            <div class="card-menu-item fas fa-clipboard" id="copy-button-${id}" data-toggle="tooltip" title="Copy To Clipboard"></div>
                           </div>
                         </div>
                       </div>`
     // Add issue html to host
-    $(issue.stack).find('.box').append(issueHtml)
+    $(`#${issue.stack}`).find('.box').append(issueHtml)
     // Active issue setting event
     $(`#${id}`).on('click', () => {
       window.activeTask = id
@@ -126,8 +141,10 @@ exports.addIssue = (issue) => {
     $(`#${id}`).contextmenu((e) => {
       e.stopPropagation()
     })
-    $(`#l${id}`).on('click', () => {
-      shell.openExternal(`${issue.issueOjb.html_url}`)
+    // Copy issue details to clipboard
+    $(`#copy-button-${id}`).click(() => {
+      const cbs = `#${issue.issueOjb.number} ${issue.issueOjb.title}\nLink: ${issue.issueOjb.html_url}\nCreated: ${cd.toLocaleDateString()}\nUpdated: ${ud.toLocaleDateString()}\nOpened by: ${issue.issueOjb.user.login}\nAssigned to: ${assigned}\nDetail: ${issue.issueOjb.body}`
+      clipboard.writeText(cbs)
     })
     // Initialize tooltips
     $(function () {
@@ -145,7 +162,7 @@ exports.saveRepos = () => {
 exports.submitRepo = (repoId) => {
   const url = new URL($(`#surl${repoId}`).val())
   const newRepo = {
-    Active: $(`#deactivate-button-${repoId}`).hasClass('check-checked'),
+    Active: $(`#dar${repoId}`).hasClass('check-checked'),
     RepoId: repoId,
     AssignToMe: $(`#satm${repoId}`).hasClass('check-checked'),
     Auth: $(`#sat${repoId}`).val(),

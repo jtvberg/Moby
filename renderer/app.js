@@ -3,6 +3,7 @@ const { ipcRenderer, shell, remote } = require('electron')
 const settings = require('./settings')
 const tasks = require('./tasks')
 const gitHub = require('./gitHub')
+const serviceNow = require('./serviceNow')
 const fs = require('fs')
 require('bootstrap/js/dist/modal')
 require('./menu.js')
@@ -15,6 +16,7 @@ let newTagList = []
 let match = ''
 let desktopPath = ''
 let repoChange = false
+let groupChange = false
 // #endregion
 
 // #region IPC handlers
@@ -24,9 +26,20 @@ ipcRenderer.on('desktop-path', (e, data) => {
 })
 
 // IPC event when git issues returned; then add to stack
-ipcRenderer.on('send-issues', () => {
-  gitHub.issueList.forEach(gitHub.addIssue)
-  loadTagCloud()
+ipcRenderer.on('send-issues', (e, data) => {
+  loadIssues(data)
+})
+
+// IPC event when sn groups returned
+ipcRenderer.on('send-groups', () => {
+  serviceNow.updateSnGroupList()
+  serviceNow.saveSnGroups()
+  loadSnGroups()
+})
+
+// IPC event when sn groups returned
+ipcRenderer.on('send-incidents', (e, data) => {
+  loadSnIncidents(data)
 })
 
 // IPC event to get task data from tray window
@@ -58,7 +71,7 @@ addScheduledTasks()
 archiveDoneTasks(settings.mobySettings.ArchiveDone)
 pruneArchive(settings.mobySettings.ArchivePrune)
 tasks.updateTaskAge()
-gitHub.getIssues()
+checkSettings()
 
 // Set intervals for data refresh
 window.setInterval(addScheduledTasks, 3600000)
@@ -108,13 +121,52 @@ function pruneArchive (days) {
     })
   }
 }
+
+// Load GitHub issues
+function loadIssues (stack) {
+  if (gitHub.issueList.find(issue => issue.stack === stack) === undefined) {
+    $(`#${stack}`).find('.box').append('<div class="header">No Issues</div>')
+  } else {
+    gitHub.issueList.forEach((issue) => {
+      if (issue.stack === stack) {
+        gitHub.addIssue(issue)
+      }
+    })
+    loadTagCloud()
+  }
+}
+
+// Load ServiceNow incidents
+function loadSnIncidents (type) {
+  serviceNow.updateSnIncidentList()
+  if (serviceNow.snIncidentList.length === 0) {
+    $('#sn-stack').find('.box').append(`<div class="header">No ${type}s</div>`)
+  } else {
+    serviceNow.snIncidentList.forEach(inc => {
+      serviceNow.snTagList.push(type)
+      if (inc.number.substring(0, 2).toLowerCase() === type.substring(0, 2).toLowerCase()) {
+        serviceNow.addSnIncident(inc)
+      }
+    })
+  }
+}
 // #endregion
 
 // #region Settings
+// Check settings to make sure they are present and complete
+function checkSettings () {
+// If no setting found
+  settings.defaultSettings(true)
+  // Apply them
+  applySettings()
+  // Set theme
+  setTheme(settings.mobySettings.Theme)
+}
+
 // Import settings from local storate and apply
 function applySettings () {
   if (settings.mobySettings) {
-    // Set theme
+    // Set Theme
     setTheme(settings.mobySettings.Theme)
     // Toggle Aging
     remote.Menu.getApplicationMenu().getMenuItemById('menu-task-age').checked = settings.mobySettings.Aging
@@ -186,24 +238,75 @@ function updateTitileBar () {
 // Load Settings modal
 function loadSettingsModal () {
   repoChange = false
+  groupChange = false
   // Set check states on settings modal
   toggleCheck($('#settings-bands'), settings.mobySettings.BandedCards)
   toggleCheck($('#settings-glyphs'), settings.mobySettings.ColorGlyphs)
   toggleCheck($('#settings-dblclick'), settings.mobySettings.DblClick)
-  toggleCheck($('#settings-github-toggle'), settings.mobySettings.GhToggle)
   toggleCheck($('#settings-aging'), settings.mobySettings.Aging)
-  $(`input[name=radio-archive][value=${settings.mobySettings.ArchiveDone || 7}]`).prop('checked', true)
-  $(`input[name=radio-prune][value=${settings.mobySettings.ArchivePrune || 0}]`).prop('checked', true)
+  toggleCheck($('#settings-serv-toggle'), settings.mobySettings.ServToggle)
+  toggleCheck($('#settings-github-toggle'), settings.mobySettings.GhToggle)
+  toggleCheck($('#settings-servicenow-toggle'), settings.mobySettings.SnToggle)
+  $(`input[name=radio-archive][value=${settings.mobySettings.ArchiveDone || 7}]`).prop('checked', true).parent('.btn').addClass('active')
+  $(`input[name=radio-prune][value=${settings.mobySettings.ArchivePrune || 0}]`).prop('checked', true).parent('.btn').addClass('active')
   // Reload repos
   $('#settings-github-repos').children().remove()
-  $('#collapse-github, #collapse-rally, #collapse-serviceNow').collapse('hide')
-  $('#collapse-general').collapse('show')
+  $('#collapse-github, #collapse-rally, #collapse-servicenow').collapse('hide')
+  // $('#collapse-general').collapse('show')
   let gitHubRepo = ''
   gitHub.repoList.forEach((repo) => {
     gitHubRepo += buildRepoItem(repo)
   })
   $('#settings-github-repos').append(gitHubRepo)
+  // Load SN auth / groups
+  $('#settings-servicenow-domain').val(settings.mobySettings.SnDomain)
+  $('#settings-servicenow-token').val(settings.mobySettings.SnToken)
+  loadSnGroups()
   $('#settings-modal').modal('show')
+}
+
+// Load SN groups in settings modal
+function loadSnGroups () {
+  $('#servicenow-group-box').children().remove()
+  if (serviceNow.snGroupsList && serviceNow.snGroupsList.length > 0) {
+    serviceNow.snGroupsList.forEach(group => {
+      const checked = group.GroupActive ? 'fa-check-square check-checked' : 'fa-square check-unchecked'
+      const snGroup = `<div class="check-modal-host">
+                        <div class="fas ${checked} check-checkbox servicenow-group-check" data-sngroup-id="${group.GroupId}"></div>
+                        <label class="check-label">${group.GroupName}</label>
+                      </div>`
+      $('#servicenow-group-box').append(snGroup)
+    })
+  } else {
+    $('#servicenow-group-box').append('<div>No Groups Found</div>')
+  }
+}
+
+// Save settings
+function saveSetting () {
+  $('#settings-modal').modal('hide')
+  // save general settings
+  settings.saveSettings()
+  // activate settings
+  applySettings()
+  // add/update repos
+  if (repoChange) {
+    gitHub.repoList = []
+    $('.github-repo').each(function () {
+      gitHub.submitRepo($(this).data('repo-id'))
+    })
+  }
+  // update SN groups
+  if (groupChange) {
+    $('.servicenow-group-check').each(function () {
+      serviceNow.updateSnGroupActive($(this).data('sngroup-id'), $(this).hasClass('check-checked'))
+    })
+  }
+  serviceNow.saveSnGroups()
+
+  if (groupChange || repoChange) {
+    getStacks()
+  }
 }
 
 // Settings modal repo builder
@@ -218,33 +321,33 @@ const buildRepoItem = (repo) => {
   const repoAssigned = repo && repo.AssignToMe === true ? 'fa-check-square check-checked' : 'fa-square check-unchecked'
   const repoItem = `<div class="github-repo" data-repo-id="${repoId}">
                       <div class="repo-menu">
-                        <div class="repo-menu-item-delete fas fa-minus-square" id="delete-button-${repoId}" data-toggle="tooltip" title="Delete Repo"></div>
-                        <div class="repo-menu-item-clone fas fa-clone" id="clone-button-${repoId}" data-toggle="tooltip" title="Clone Repo"></div>
+                        <div class="repo-menu-item-delete fas fa-minus-square" data-toggle="tooltip" title="Delete Repo"></div>
+                        <div class="repo-menu-item-clone fas fa-clone" data-toggle="tooltip" title="Clone Repo"></div>
                       </div>
-                      <div class="check-modal-host repo-check">
-                        <div class="repo-menu-item-deactivate fas ${repoActiveCheck} check-checkbox" id="deactivate-button-${repoId}" data-toggle="tooltip" title="Active"></div>
+                      <div class="check-modal-host">
+                        <div class="fas ${repoActiveCheck} check-checkbox repo-check" id="dar${repoId}" data-toggle="tooltip" title="Active"></div>
                         <div class="check-label">${repoTitle}</div>
                       </div>
                       <div>
                         <small class="left-margin">GitHub URL</small>
-                        <input class="form-control form-control-sm text-box repo-edit" id="surl${repoId}" placeholder="Enter GitHub URL" value="${repoUrl}">
+                        <input class="form-control form-control-sm text-box repo-edit" id="surl${repoId}" placeholder="https://github.com/owner/repo" value="${repoUrl}">
                         <small class="text-muted left-margin">This is the home location of the repo</small>
                       </div>
                       <div class="form-row">
                         <div class="form-group col-md-4">
                           <small class="left-margin">User Name</small>
-                          <input class="form-control form-control-sm text-box repo-edit" id="sun${repoId}" placeholder="Enter User Name" value="${repoUser}">
+                          <input class="form-control form-control-sm text-box repo-edit" id="sun${repoId}" placeholder="l33tcoder" value="${repoUser}">
                           <small class="text-muted left-margin">Your user name on this GitHub instance</small>
                         </div>
                         <div class="form-group col-md-8">
                           <small class="left-margin">Personal Access Token</small>
                           <input class="form-control form-control-sm text-box repo-edit" id="sat${repoId}" placeholder="Enter Token" value="${repoAuth}">
-                          <small class="text-muted left-margin">Not required but you may be throttled. Click here to obtain one</small>
+                          <small class="text-muted left-margin">Not required but you may be throttled. Click <a style="color: var(--highlight)" href="https://github.com/settings/tokens">here</a> to obtain one</small>
                         </div>
                       </div>
                       <div class="form-row left-margin" style="margin-top: -10px;">
-                        <div class="check-modal-host repo-check">
-                          <small class="fas ${repoAssigned} check-checkbox" id="satm${repoId}"></small>
+                        <div class="check-modal-host">
+                          <small class="fas ${repoAssigned} check-checkbox repo-check" id="satm${repoId}"></small>
                           <small class="check-label small-check">Assigned to or Opened by me</small>
                           <small class="text-muted check-description">Checked will only show issues that have been assigned to or opened by you</small>
                         </div>
@@ -265,35 +368,54 @@ const addNewGitHub = () => {
 
 // Save changes button click handler
 $('#settings-button').click(() => {
-  $('#settings-modal').modal('hide')
-  // save general settings
-  settings.saveSettings()
-  // activate settings
-  toggleColorGlyphs(settings.mobySettings.ColorGlyphs)
-  toggleBandedCards(settings.mobySettings.BandedCards)
-  // add/update repos
-  if (repoChange) {
-    gitHub.repoList = []
-    $('.github-repo').each(function () {
-      gitHub.submitRepo($(this).data('repo-id'))
-    })
-    getStacks()
-  }
+  saveSetting()
 })
 
-// Scroll down when expanding headers in settings modal
+// Collapse other panels when clicking on headers in settings modal
 $('.panel-header').click(function () {
-  $('.modal-body').animate({ scrollTop: parseInt($(this).offset().top - 100) }, 'fast')
+  $('.panel-header').parent().find('.collapse').collapse('hide')
 })
 
-// Track for changes in repo entries on input
+// Refresh available ServiceNow groups
+$('#settings-sngroups-refresh-button').click(() => {
+  $('#servicenow-group-box').children().remove()
+  serviceNow.getSnGroups(settings.mobySettings.SnDomain, settings.mobySettings.SnToken)
+})
+
+// Track change to SN group selection
+$('#settings-servicenow-toggle').click(() => {
+  groupChange = true
+})
+
+// Track change to SN domain/token fields
+$('.servicenow-edit').change(function () {
+  $(this).addClass('input-change')
+})
+
+// Track for changes in group entries selection on click of checks or labels (through check-host)
+$(document).on('click', '.servicenow-group-check', (e) => {
+  groupChange = true
+})
+
+// Track change to repo show status-
+$('#settings-github-toggle').click(() => {
+  repoChange = true
+})
+
+// Track for changes in repo entries on input and hightlight
 $(document).on('change', '.repo-edit', (e) => {
   repoChange = true
   $(e.currentTarget).addClass('input-change')
 })
 
-// Track for changes in repo entries on click
+// Track for changes in repo entries on click of checks or labels (through check-host)
 $(document).on('click', '.repo-check', (e) => {
+  repoChange = true
+})
+
+// Delete repo
+$(document).on('click', '.repo-menu-item-delete', (e) => {
+  $(e.currentTarget).closest('.github-repo').remove()
   repoChange = true
 })
 
@@ -304,34 +426,14 @@ $(document).on('click', '.repo-menu-item-clone', (e) => {
   $('#settings-github-repos').append(buildRepoItem(newRepo))
   $('.modal-body').animate({ scrollTop: $(document).height() }, 'fast')
 })
-
-// Assigned to me checkbox click handler
-$(document).on('click', '.check-card-checkbox', (e) => {
-  repoChange = true
-})
-
-// Assigned to me checkbox label click handler
-$(document).on('click', '.check-card-label', (e) => {
-  repoChange = true
-})
-
-// Deactivate repo
-$(document).on('click', '.repo-menu-item-deactivate', (e) => {
-  repoChange = true
-})
-
-// Deactivate repo
-$(document).on('click', '.repo-menu-item-delete', (e) => {
-  $(e.currentTarget).closest('.github-repo').remove()
-  repoChange = true
-})
 // #endregion
 
 // #region Stack code
 // Stack load; if non defined use default
 function getStacks () {
+  // Moby Task Stacks
   const stacks = JSON.parse(localStorage.getItem('stackList')) || []
-  $('.stack-host').children('.stack, .git-stack').remove()
+  $('.stack-host').children('.stack, .serv-stack').remove()
   let index = 0
   if (stacks.length > 1) {
     $('#task-stack').empty()
@@ -343,9 +445,10 @@ function getStacks () {
   } else {
     getDefaultStacks()
   }
-  $('#git-button').hide()
-  if (gitHub.repoList.length > 0) {
-    let showBtn = false
+  $('#si-button').hide()
+  // GitHub stacks
+  let showBtn = false
+  if (settings.mobySettings.GhToggle && gitHub.repoList.length > 0) {
     gitHub.repoList.forEach((repo) => {
       if (repo.Active) {
         buildStack(`git-stack-${repo.Owner}-${repo.Repo}`, repo.Repo, index, repo.Url)
@@ -353,20 +456,32 @@ function getStacks () {
         index++
       }
     })
-    if (showBtn) {
-      $('#git-button').show()
-      if (settings.mobySettings) {
-        if (settings.mobySettings.GhToggle === false) {
-          $('#git-button').addClass('menu-item-toggled')
-        } else {
-          $('.git-stack').hide(0)
-        }
+  }
+  // ServiceNow stacks
+  if (settings.mobySettings.SnToggle && serviceNow.snGroupsList && serviceNow.snGroupsList.filter(group => group.GroupActive === true).length > 0) {
+    buildStack('sn-stack', 'ServiceNow', index, 'https://optum.service-now.com/')
+    showBtn = true
+    index++
+  }
+  // Check if there are stacks to show button and check settings for toggle behavior
+  if (showBtn) {
+    $('#si-button').show()
+    if (settings.mobySettings) {
+      if (settings.mobySettings.ServToggle === false) {
+        $('#si-button').addClass('menu-item-toggled')
+      } else {
+        $('.serv-stack').hide(0)
       }
     }
   }
-  // Add tasks, issues, tags to the stacks
+  // Add tasks, issues, incidents, tags to the stacks
   tasks.taskList.forEach(tasks.addTask)
-  gitHub.issueList.forEach(gitHub.addIssue)
+  if (settings.mobySettings.GhToggle) {
+    gitHub.getIssues()
+  }
+  if (settings.mobySettings.SnToggle) {
+    serviceNow.getSnIncidents(settings.mobySettings.SnDomain, settings.mobySettings.SnToken)
+  }
   loadTagCloud()
   applySettings()
 }
@@ -407,12 +522,29 @@ function saveStacks () {
 // Build out and insert stacks
 function buildStack (id, title, index, url) {
   const isDefault = id.substring(0, 6) === stackPrefix
-  const stackClass = isDefault ? 'stack' : 'git-stack'
-  const itemType = isDefault ? 'Task' : 'Issue'
+  const stackClass = isDefault ? 'stack' : 'serv-stack'
   const dragDrop = isDefault ? ' ondrop="drop(event)" ondragover="allowDrop(event)"' : ''
-  const addTaskBtn = isDefault ? `" href="#task-modal" data-toggle="modal" data-stack-id="${id}" data-type-id="new"` : ` add-issue" data-url="${url}"`
-  let addStackBtn = id === 'stack-do' ? '' : '<div class="stack-add fas fa-caret-square-left" data-toggle="tooltip" title="Insert Stack" onclick="addNewStackClick(event)"></div>'
-  addStackBtn = id.substring(0, 9) === 'git-stack' ? `<div class="git-stack-icon fab fa-github" data-toggle="tooltip" title="Source Link" data-url="${url}"></div>` : addStackBtn
+  const updated = isDefault ? '' : new Date(Date.now()).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
+  let addTaskBtn = `" href="#task-modal" data-toggle="modal" data-stack-id="${id}" data-type-id="new"`
+  let refreshBtn = 'hidden'
+  let refreshDataSource = ''
+  let itemType = 'Task'
+  let addStackBtn = ''
+  if (isDefault && id !== 'stack-do') {
+    addStackBtn = '<div class="stack-add fas fa-caret-square-left" data-toggle="tooltip" title="Insert Stack" onclick="addNewStackClick(event)"></div>'
+  } else if (id.substring(0, 3) === 'git') {
+    addTaskBtn = ` add-issue" data-url="${url}"`
+    refreshBtn = ''
+    refreshDataSource = 'data-source="git"'
+    itemType = 'Issue'
+    addStackBtn = `<div class="git-stack-icon stack-icon fab fa-github" data-toggle="tooltip" title="Repo Link" data-url="${url}"></div>`
+  } else if (id.substring(0, 2) === 'sn') {
+    addTaskBtn = ` add-incident" data-url="${url}"`
+    refreshBtn = ''
+    refreshDataSource = 'data-source="sn"'
+    itemType = 'Incident'
+    addStackBtn = `<div class="sn-stack-icon stack-icon fas fa-exclamation-triangle" data-toggle="tooltip" title="ServiceNow Link" data-url="${url}"></div>`
+  }
   const removeStackBtn = id === 'stack-do' || id === 'stack-done' || !isDefault ? '' : `<div class="dropdown-menu dropdown-menu-sm ddcm" id="context-menu-${id}">
                                                     <a class="dropdown-item" href="#remove-modal" data-toggle="modal">Remove Stack</a>
                                                   </div>`
@@ -421,9 +553,15 @@ function buildStack (id, title, index, url) {
                       <div class="header stack-header" contenteditable="${isDefault}" onclick="document.execCommand('selectAll',false,null)" oncontextmenu="event.preventDefault(); event.stopPropagation();">${title}</div>
                       ${removeStackBtn}
                       <div class="box"></div>
-                      <span data-toggle="tooltip" title="Add ${itemType}" style="justify-self: right;">
-                        <div class="footer fas fa-plus fa-2x${addTaskBtn}></div>
-                      <span>
+                      <div class="stack-footer">
+                        <span class="footer stack-updated">${updated}</span>
+                        <span data-toggle="tooltip" title="Add ${itemType}" style="float: right;">
+                          <div class="footer fas fa-plus fa-2x${addTaskBtn}></div>
+                        </span>
+                        <span ${refreshBtn} data-toggle="tooltip" title="Refresh from Source" style="float: right;">
+                          <div class="footer fas fa-sync-alt fa-2x refresh-data" ${refreshDataSource}></div>
+                        </span>
+                      </div>
                     </div>`
   $('.stack-host').append(stackHtml)
   $(`#${id}`).on('contextmenu', () => {
@@ -527,14 +665,29 @@ $('.stack-header').on('paste', (e) => {
   e.preventDefault()
 })
 
-// Stack add for git issues
+// Stack icon click
+$(document).on('click', '.stack-icon', (e) => {
+  shell.openExternal($(e.currentTarget).data('url'))
+})
+
+// GitHub stack add issue click
 $(document).on('click', '.add-issue', (e) => {
   shell.openExternal(`${$(e.currentTarget).data('url')}/issues/new`)
 })
 
-// Stack add for git issues
-$(document).on('click', '.git-stack-icon', (e) => {
+// ServiceNow add incident click
+$(document).on('click', '.add-incident', (e) => {
   shell.openExternal($(e.currentTarget).data('url'))
+})
+
+// Refresh data click
+$(document).on('click', '.refresh-data', (e) => {
+  if ($(e.currentTarget).data('source') === 'git') {
+    gitHub.getIssues($(e.currentTarget).closest('.serv-stack').prop('id'))
+  } else if ($(e.currentTarget).data('source') === 'sn') {
+    serviceNow.getSnIncidents(settings.mobySettings.SnDomain, settings.mobySettings.SnToken)
+  }
+  $(e.currentTarget).closest('.stack-footer').find('.stack-updated').text(new Date(Date.now()).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }))
 })
 
 // In-line stack title update event
@@ -564,7 +717,8 @@ $(document).on('blur', '.stack-header', function () {
 function loadTagCloud () {
   $('#tag-cloud-box').children('.cloud-tags').remove()
   if (tasks.tagList.length > 0 || gitHub.tagList.length > 0) {
-    const utl = [...new Set(tasks.tagList.concat(gitHub.tagList))]
+    const utl = [...new Set(tasks.tagList.concat(gitHub.tagList).concat(serviceNow.snTagList))]
+    utl.sort()
     utl.forEach((tag) => {
       $('#tag-cloud-box').append(`<div class="cloud-tags">${tag}</div>`)
     })
@@ -592,21 +746,21 @@ const toggleTags = () => {
   }
 }
 
-// Toggle tag cloud
+// Toggle Service stacks
 // eslint-disable-next-line no-unused-vars
 const toggleIssues = () => {
-  if ($('.git-stack').is(':visible')) {
+  if ($('.serv-stack').is(':visible')) {
     $('.stack').show()
-    $('.git-stack').hide(0)
-    $('#git-button').removeClass('menu-item-toggled')
+    $('.serv-stack').hide(0)
+    $('#si-button').removeClass('menu-item-toggled')
   } else {
-    if (settings.mobySettings && settings.mobySettings.GhToggle === true) {
+    if (settings.mobySettings && settings.mobySettings.ServToggle === true) {
       $('.stack').hide(0)
       $('#stack-archive').show()
       $('#stack-schedule').show()
     }
-    $('.git-stack').show()
-    $('#git-button').addClass('menu-item-toggled')
+    $('.serv-stack').show()
+    $('#si-button').addClass('menu-item-toggled')
   }
 }
 
@@ -623,10 +777,10 @@ $(document).on('click', '.cloud-tags', (e) => {
   $(e.currentTarget).addClass('cloud-tags-toggled')
   $('.tags').filter(function () {
     return $(this).text() === $(e.currentTarget).text()
-  }).closest('.card').addClass('card-tagged').find('.collapse').collapse('show')
+  }).closest('.card').addClass('card-tagged') // .find('.collapse').collapse('show') // TODO: open on tag select
 })
 
-// Show tasks with tag
+// Remove tag from task card
 $(document).on('contextmenu', '.tags', (e) => {
   $(e.currentTarget).remove()
   tasks.tagList.splice(tasks.tagList.indexOf($(e.currentTarget).text()), 1)
@@ -718,7 +872,8 @@ function exportData () {
     Stacks: JSON.parse(localStorage.getItem('stackList')) || [],
     Tasks: JSON.parse(localStorage.getItem('taskList')) || [],
     Settings: JSON.parse(localStorage.getItem('mobySettings')) || [],
-    Repos: JSON.parse(localStorage.getItem('repoList')) || []
+    Repos: JSON.parse(localStorage.getItem('repoList')) || [],
+    SnGroups: JSON.parse(localStorage.getItem('snGroupList')) || []
   }
   fs.writeFile(`${desktopPath}/moby_export_${Date.now()}.txt`, JSON.stringify(JSONexport, null, 4), err => {
     if (err) {
@@ -731,7 +886,7 @@ function exportData () {
 
 // Import all data
 function importData () {
-  if (!confirm('Import will replace all stacks and settings and add tasks and repos that are not present.\nFurther, any tasks not assigned an existing stack will be moved into your first stack.\nAre you sure?')) {
+  if (!confirm('Import will replace all stacks and settings and add tasks, repos and groups that are not present.\nFurther, any tasks not assigned an existing stack will be moved into your first stack.\nAre you sure?')) {
     return
   }
   let latestExport = 0
@@ -802,7 +957,7 @@ function importData () {
       alert(err)
     }
     try {
-      // Task import
+      // Repo import
       const JSONimport = JSON.parse(data).Repos
       if (JSONimport) {
         let i = 0
@@ -822,6 +977,31 @@ function importData () {
         }
       } else {
         alert('\n No repos found')
+      }
+    } catch (err) {
+      alert(err)
+    }
+    try {
+      // ServiceNow Group import
+      const JSONimport = JSON.parse(data).SnGroups
+      if (JSONimport) {
+        let i = 0
+        JSONimport.forEach(group => {
+          if (!serviceNow.snGroupsList.some(e => e.GroupId === group.GroupId)) {
+            serviceNow.snGroupsList.push(group)
+            i++
+          }
+        })
+        serviceNow.saveSnGroups()
+        if (i > 1) {
+          alertString += `\n${i} groups imported succesfully`
+        } else if (i === 1) {
+          alertString += '\n1 group imported succesfully'
+        } else {
+          alertString += '\nNo new groups found'
+        }
+      } else {
+        alert('\n No groups found')
       }
     } catch (err) {
       alert(err)
@@ -907,6 +1087,7 @@ function loadTaskModal (type, stack) {
       $('#check-fri').prop('checked', getTask.WeekDay.includes(5))
       $('#check-sat').prop('checked', getTask.WeekDay.includes(6))
     }
+    // $(`input[name=radio-archive][value=${getTask.MonthDay}]`).prop('checked', true).parent('.btn').addClass('active')
     $(`input[name=radio-recur][value=${getTask.MonthDay}]`).prop('checked', true)
     enableRecur(!$('#radio-once').is(':checked'))
   }
@@ -1017,6 +1198,8 @@ const drop = (e) => {
     $(e.target).append($(`#${data}`))
   } else if ($(e.target).hasClass('stack')) {
     $(e.target).find('.box').append($(`#${data}`))
+  } else if ($(e.target).parent().hasClass('stack')) {
+    $(e.target).parent().find('.box').append($(`#${data}`))
   } else {
     $(e.target).closest('.box').append($(`#${data}`))
   }
@@ -1043,12 +1226,18 @@ const collapseAll = () => {
 // Double clikc on card opens edit modal
 $(document).on('dblclick', '.card', (e) => {
   if (settings.mobySettings.DblClick) {
-    if ($(e.currentTarget).parent().parent().hasClass('git-stack')) {
-      shell.openExternal($(e.currentTarget).data('github-url'))
+    if ($(e.currentTarget).parent().parent().hasClass('serv-stack', 'sn-stack')) {
+      shell.openExternal($(e.currentTarget).data('url'))
     } else {
       $(e.currentTarget).find('#edit-button').click()
     }
   }
+})
+
+// Open links in external browser (otherwise it will try to open them in the renderer)
+$(document).on('click', 'a[href^="http"]', function (e) {
+  e.preventDefault()
+  shell.openExternal(this.href)
 })
 
 // Deselect task
@@ -1128,9 +1317,6 @@ $(document).on('click', '.check-checkbox', (e) => {
 
 // Checkbox label click handler
 $(document).on('click', '.check-label', (e) => {
-  toggleCheck($(e.currentTarget).parent('.check-host, .repo-check, .check-modal-host').find('.check-checkbox'))
-  if ($(e.currentTarget).parent('.check-host').find('.check-checkbox').hasClass('check-card-checkbox')) {
-    setSubtaskCheck($(e.currentTarget))
-  }
+  $(e.currentTarget).parent('.check-host, .check-modal-host').find('.check-checkbox').click()
 })
 // #endregion

@@ -35,7 +35,8 @@
     "bootstrap": "^4.4.1",
     "custom-electron-titlebar": "^3.2.2",
     "jquery": "3.4.1",
-    "popper.js": "^1.16.1"
+    "popper.js": "^1.16.1",
+    "servicenow-rest-api": "^1.1.1"
   },
   "build": {
     "appId": "com.insomniaclabs.moby",

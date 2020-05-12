@@ -11,8 +11,8 @@ const createWindow = () => {
   win = new BrowserWindow({
     width: 1200,
     height: 800,
-    minWidth: 320,
-    minHeight: 425,
+    minWidth: 500,
+    minHeight: 470,
     titleBarStyle: 'hidden',
     frame: false,
     webPreferences: {
@@ -21,7 +21,7 @@ const createWindow = () => {
   })
 
   // open DevTools remove for dist
-  // win.webContents.openDevTools()
+  win.webContents.openDevTools()
 
   // HTML to open
   win.loadURL(`file://${__dirname}/renderer/main.html`)
@@ -150,6 +150,17 @@ ipcMain.on('delete-task', () => {
   win.webContents.send('update-tags')
 })
 
-ipcMain.on('get-issues', () => {
-  win.webContents.send('send-issues')
+// IPC channel for getting GitHub Issues
+ipcMain.on('get-issues', (e, data) => {
+  win.webContents.send('send-issues', data)
+})
+
+// IPC channel for getting SN Groups
+ipcMain.on('get-groups', () => {
+  win.webContents.send('send-groups')
+})
+
+// IPC channel for getting SN Incidents
+ipcMain.on('get-incidents', (e, data) => {
+  win.webContents.send('send-incidents', data)
 })

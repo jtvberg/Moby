@@ -13,7 +13,8 @@
   --opaque: #ffffff15;
   --opaque-card: #0000002c;
   --highlight: #32b3d3;
-  --checked: #00ff00;
+  --unchecked: #ffffff42;
+  --checked: #fff;
   --focused: #fff;
   --img-opacity: .02;
   --main-background-light: #333333;

@@ -23,7 +23,7 @@
           <div class="menu-item fas fa-calendar fa-2x" data-toggle="tooltip" title="Scheduled Tasks"></div>
         </span>
         <div class="menu-item fas fa-tags fa-2x" id="tags-button" style="font-size: 150%;" data-toggle="tooltip" title="Toggle Tags" onclick="toggleTags(event)"></div>
-        <div class="menu-item fab fa-github fa-2x" id="git-button" style="display: none;" data-toggle="tooltip" title="Toggle GitHub Issues" onclick="toggleIssues(event)"></div>
+        <div class="menu-item fas fa-server fa-2x" id="si-button" style="display: none;" data-toggle="tooltip" title="Toggle Service Stacks" onclick="toggleIssues(event)"></div>
         <div class="menu-item fas fa-expand-arrows-alt fa-2x" data-toggle="tooltip" title="Expand All" onclick="expandAll(event)"></div>
         <div class="menu-item fas fa-compress-arrows-alt fa-2x" data-toggle="tooltip" title="Collapse All" onclick="collapseAll(event)"></div>
         <div class="menu-item fas fa-sign-out-alt fa-2x" data-toggle="tooltip" title="Exit" onclick="exit(event)"></div>
@@ -46,7 +46,7 @@
           </div>
           <div class="color-item color-pick-5" id="color-5-button" data-color-id="5" onclick="toggleColorClick(event)">
             <span class="color-box fas fa-square fa-2x"></span>
-            <span class="color-glyph fas fa-tree fa-2x" style="display: none; font-size: calc(var(--font-base-size) + 100%);"></span>
+            <span class="color-glyph fas fa-tree fa-2x" style="display: none; font-size: calc(var(--font-base-size) + 100%); margin-bottom: 3px;"></span>
           </div>
         </div>
       </div>
@@ -135,6 +135,23 @@
                         </div>
                       </div>
                       <div class="form-group">
+                        <!-- <div class="btn-group btn-group-toggle" data-toggle="buttons" id="choose-recur">
+                          <label class="btn btn-secondary btn-sm">
+                              <input type="radio" name="radio-recur" value="0"> One-time
+                          </label>
+                          <label class="btn btn-secondary btn-sm">
+                              <input type="radio" name="radio-recur" value="1"> Weekly
+                          </label>
+                          <label class="btn btn-secondary btn-sm">
+                              <input type="radio" name="radio-recur" value="2"> Bi-Weekly
+                          </label>
+                          <label class="btn btn-secondary btn-sm">
+                              <input type="radio" name="radio-recur" value="3"> Tri-Weekly
+                          </label>
+                          <label class="btn btn-secondary btn-sm">
+                              <input type="radio" name="radio-recur" value="4"> Monthly
+                          </label>
+                        </div> -->
                         <div id="choose-recur">
                           <div class="form-check form-check-inline form-control-sm">
                             <input type="radio" class="form-check-input" name="radio-recur" id="radio-once" value="0" checked="true">
@@ -277,7 +294,7 @@
           <div class="modal-body">
             <div class="form-group">
               <label>Push Tasks To</label>
-              <select class="form-control form-control-sm" id="task-stack-new">
+              <select class="form-control form-control-sm text-box" id="task-stack-new">
               </select>
             </div>
           </div>
@@ -331,57 +348,52 @@
                           <label class="check-label">Open Task on Double-click</label>
                           <small class="text-muted check-description">Opens the edit modal when double-clicking on a task card</small>
                         </div>
+                        <div class="check-modal-host">
+                          <div class="fas fa-square check-checkbox check-unchecked" id="settings-serv-toggle"></div>
+                          <label class="check-label">Integrated Systems Toggle Button Behavior</label>
+                          <small class="text-muted check-description">Checked will show only GitHub issues or ServiceNow incidents when toggled on. Default behavior will add the stacks to the current view. </small>
+                        </div>
                         <div class="form-group" style="margin-bottom: 5px;">
                           <div class="check-label">Archive Completed Tasks</div>
-                          <div id="choose-archive">
-                            <div class="form-check form-check-inline settings-radio">
-                              <input type="radio" class="form-check-input" name="radio-archive" id="radio-never-archive" value="0">
-                              <label class="form-check-label" for="radio-never-archive">Never</label>
-                            </div>
-                            <div class="form-check form-check-inline settings-radio">
-                              <input type="radio" class="form-check-input" name="radio-archive" id="radio-fourteen" value="14">
-                              <label class="form-check-label" for="radio-fourteen">14 Days</label>
-                            </div>
-                            <div class="form-check form-check-inline settings-radio">
-                              <input type="radio" class="form-check-input" name="radio-archive" id="radio-seven" value="7">
-                              <label class="form-check-label" for="radio-seven">7 Days</label>
-                            </div>
-                            <div class="form-check form-check-inline settings-radio">
-                              <input type="radio" class="form-check-input" name="radio-archive" id="radio-three" value="3">
-                              <label class="form-check-label" for="radio-three">3 Days</label>
-                            </div>
-                            <div class="form-check form-check-inline settings-radio">
-                              <input type="radio" class="form-check-input" name="radio-archive" id="radio-one" value="1">
-                              <label class="form-check-label" for="radio-one">1 Day</label>
-                            </div>
+                          <div class="btn-group btn-group-toggle" data-toggle="buttons" id="choose-archive">
+                            <label class="btn btn-secondary btn-sm">
+                                <input type="radio" name="radio-archive" value="0"> Never
+                            </label>
+                            <label class="btn btn-secondary btn-sm">
+                                <input type="radio" name="radio-archive" value="14"> 14 Days
+                            </label>
+                            <label class="btn btn-secondary btn-sm">
+                                <input type="radio" name="radio-archive" value="7"> 7 Days
+                            </label>
+                            <label class="btn btn-secondary btn-sm">
+                                <input type="radio" name="radio-archive" value="3"> 3 Days
+                            </label>
+                            <label class="btn btn-secondary btn-sm">
+                                <input type="radio" name="radio-archive" value="1"> 1 Day
+                            </label>
                           </div>
                           <div style="margin-top: -2px;">
                             <small class="text-muted check-description">Sets how many days until completed tasks are automatically archived</small>
                           </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="margin-bottom: 5px;">
                           <div class="check-label">Archive Pruning</div>
-                          <div id="choose-prune">
-                            <div class="form-check form-check-inline settings-radio">
-                              <input type="radio" class="form-check-input" name="radio-prune" id="radio-never-prune" value="0">
-                              <label class="form-check-label" for="radio-never-prune">Never</label>
-                            </div>
-                            <div class="form-check form-check-inline settings-radio">
-                              <input type="radio" class="form-check-input" name="radio-prune" id="radio-onetwenty" value="120">
-                              <label class="form-check-label" for="radio-onetwenty">120 Days</label>
-                            </div>
-                            <div class="form-check form-check-inline settings-radio">
-                              <input type="radio" class="form-check-input" name="radio-prune" id="radio-ninety" value="90">
-                              <label class="form-check-label" for="radio-ninety">90 Days</label>
-                            </div>
-                            <div class="form-check form-check-inline settings-radio">
-                              <input type="radio" class="form-check-input" name="radio-prune" id="radio-sixty" value="60">
-                              <label class="form-check-label" for="radio-sixty">60 Days</label>
-                            </div>
-                            <div class="form-check form-check-inline settings-radio">
-                              <input type="radio" class="form-check-input" name="radio-prune" id="radio-thirty" value="30">
-                              <label class="form-check-label" for="radio-thirty">30 Days</label>
-                            </div>
+                          <div class="btn-group btn-group-toggle" data-toggle="buttons" id="choose-prune">
+                            <label class="btn btn-secondary btn-sm">
+                                <input type="radio" name="radio-prune" value="0"> Never
+                            </label>
+                            <label class="btn btn-secondary btn-sm">
+                                <input type="radio" name="radio-prune" value="120"> 120 Days
+                            </label>
+                            <label class="btn btn-secondary btn-sm">
+                                <input type="radio" name="radio-prune" value="90"> 90 Days
+                            </label>
+                            <label class="btn btn-secondary btn-sm">
+                                <input type="radio" name="radio-prune" value="60"> 60 Days
+                            </label>
+                            <label class="btn btn-secondary btn-sm">
+                                <input type="radio" name="radio-prune" value="30"> 30 Days
+                            </label>
                           </div>
                           <div style="margin-top: -2px;">
                             <small class="text-muted check-description">Sets how many days until archived tasks are deleted</small>
@@ -405,8 +417,8 @@
                       <div id="collapse-github" class="collapse settings-github-group" data-parent="#panel-github">
                         <div class="check-modal-host">
                           <div class="fas fa-square check-checkbox check-unchecked" id="settings-github-toggle"></div>
-                          <label class="check-label">GitHub Toggle Button Behavior</label>
-                          <small class="text-muted check-description">Checked will show only GitHub issues when toggled on. Default behavior will add the stacks to the current view. </small>
+                          <label class="check-label">Load GitHub Issues Stacks</label>
+                          <small class="text-muted check-description">Checked will load issues fron GitHub from the selected repos. </small>
                         </div>
                         <label>Repos</label>
                         <div class="fas fa-plus-square add-github" data-toggle="tooltip" title="Add Repo" onclick="addNewGitHub(event)"></div>
@@ -433,18 +445,42 @@
                   </div>
                 </div>
               </div>
-              <div hidden class="form-group">
-                <div class="panel-group" id="panel-serviceNow">
+              <div class="form-group">
+                <div class="panel-group" id="panel-servicenow">
                   <div class="panel">
                     <div class="panel-header">
-                      <a class="collapsed" data-toggle="collapse" data-target="#collapse-serviceNow">
+                      <a class="collapsed" data-toggle="collapse" data-target="#collapse-servicenow">
                         <i class="fa fa-chevron-down"></i>
                         ServiceNow Integration
                       </a>
                     </div>
                     <div class="panel-body">
-                      <div id="collapse-serviceNow" class="collapse" data-parent="#panel-serviceNow">
-                        <label>Thing</label>
+                      <div id="collapse-servicenow" class="collapse settings-group" data-parent="#panel-servicenow">
+                        <div class="check-modal-host">
+                          <div class="fas fa-square check-checkbox check-unchecked" id="settings-servicenow-toggle"></div>
+                          <label class="check-label">Load ServiceNow Incidents Stack</label>
+                          <small class="text-muted check-description">Checked will load incidents fron ServiceNow assigned to selected groups. </small>
+                        </div>
+                        <div class="form-row" style="margin-bottom: -8px;">
+                          <div class="form-group col-md-6">
+                            <label class="left-margin" style="margin-bottom: 2px;">Domain</label>
+                            <input class="form-control form-control-sm text-box servicenow-edit" id="settings-servicenow-domain" placeholder="companyname.service-now.com">
+                            <small class="text-muted left-margin">Domain of your ServiceNow instance</small>
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label class="left-margin" style="margin-bottom: 2px;">Access Token</label>
+                            <input class="form-control form-control-sm text-box servicenow-edit" id="settings-servicenow-token" placeholder="Enter Token">
+                            <small class="text-muted left-margin">Access Token supplied by your company</small>
+                          </div>
+                        </div>
+                        <div>
+                          <label class="left-margin">Assignment Groups</label>
+                        </div>
+                        <div style="margin: -10px 0px -2px 5px">
+                          <small class="text-muted check-description">Incidents from checked groups only will be displayed.</small>
+                          <div class="footer fas fa-sync-alt" id="settings-sngroups-refresh-button" style="float: right; font-size: calc(var(--font-base-size) + 30%);" data-toggle="tooltip" title="Refresh Group List"></div>
+                        </div>
+                        <div id="servicenow-group-box" style="margin-left: 0px; margin-right: 0px;"></div>
                       </div>
                     </div>
                   </div>

@@ -1,5 +1,5 @@
 // Modules and variable definition
-const { ipcRenderer } = require('electron')
+const { ipcRenderer, clipboard } = require('electron')
 let updTaskId = null
 
 // Function for when I change something about the data model
@@ -198,12 +198,14 @@ exports.cloneTask = (taskId, taskStack) => {
 }
 
 // Add task(s) to UI
-exports.addTask = (task, highlight) => {
+exports.addTask = (task, highlight, settings) => {
   // Add task tags
   let tagHTML = ''
   if (task.Tags && task.Tags.length > 0) {
     task.Tags.forEach((tag) => {
-      this.tagList.push(tag)
+      if (task.TaskStack !== 'stack-archive' && task.TaskStack !== 'stack-schedule') {
+        this.tagList.push(tag)
+      }
       tagHTML += `<div class="tags">${tag}</div>`
     })
   }
@@ -257,14 +259,15 @@ exports.addTask = (task, highlight) => {
                         <span class="aging" id="a${task.TaskId}" ${showAge}></span>
                       </div>
                       <div class="card-content collapse collapse-content" id="c${task.TaskId}">
-                        <div class="detail" id="d${task.TaskId}" contenteditable="true" style="white-space: pre-wrap;" draggable="true" ondragstart="event.preventDefault(); event.stopPropagation();">${task.TaskDetail}</div>
+                        <div class="card-detail" id="d${task.TaskId}" contenteditable="true" style="white-space: pre-wrap;" draggable="true" ondragstart="event.preventDefault(); event.stopPropagation();">${task.TaskDetail}</div>
                         <div class="subtask-box">${subtaskHTML}</div>
                         <div class="tag-box" id="t${task.TaskId}">${tagHTML}</div>
                         <div class="card-menu">
-                          <div class="card-menu-item-del fas fa-minus-square" id="del-button-${task.TaskId}" data-toggle="tooltip" title="${archDelete} Task" ></div>
-                          <div class="card-menu-item-clone fas fa-clone" id="clone-button-${task.TaskId}" data-toggle="tooltip" title="Clone Task"></div>
+                          <div class="card-menu-item fas fa-minus-square" id="del-button-${task.TaskId}" data-toggle="tooltip" title="${archDelete} Task" ></div>
+                          <div class="card-menu-item fas fa-clone" id="clone-button-${task.TaskId}" data-toggle="tooltip" title="Clone Task"></div>
+                          <div class="card-menu-item fas fa-clipboard" id="copy-button-${task.TaskId}" data-toggle="tooltip" title="Copy To Clipboard"></div>
                           <span data-toggle="tooltip" title="Edit Task">
-                            <div class="card-menu-item-edit fas fa-edit" id="edit-button" href="#task-modal" data-toggle="modal" data-type-id="edit"></div>
+                            <div class="card-menu-item fas fa-edit" id="edit-button" href="#task-modal" data-toggle="modal" data-type-id="edit"></div>
                           </span>
                         </div>
                       </div>
@@ -307,6 +310,10 @@ exports.addTask = (task, highlight) => {
   // Clone active task (to 'do')
   $(`#clone-button-${task.TaskId}`).click(() => {
     this.cloneTask(task.TaskId)
+  })
+  // Copy task details to clipboard
+  $(`#copy-button-${task.TaskId}`).click(() => {
+    clipboard.writeText(`${task.TaskTitle}\n${task.TaskDetail}\n`)
   })
   // Initialize tooltips
   $(function () {

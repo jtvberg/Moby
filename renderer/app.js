@@ -196,13 +196,16 @@ function toggleBandedCards (check) {
 
 // Toggle aging on tasks handler
 function toggleAge (check) {
-  if (check === true) {
+  let c = check
+  if (c === true) {
     $('.aging').show()
-  } else if (check === false) {
+  } else if (c === false) {
     $('.aging').hide()
   } else {
-    ($('.aging').is(':visible')) ? $('.aging').hide() : $('.aging').show()
+    c = !$('.aging').is(':visible')
+    c ? $('.aging').show() : $('.aging').hide()
   }
+  remote.Menu.getApplicationMenu().getMenuItemById('menu-task-age').checked = c
 }
 
 // Toggle color glyphs on tasks handler

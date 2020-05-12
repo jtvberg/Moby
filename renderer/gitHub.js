@@ -9,7 +9,7 @@ exports.repoList = JSON.parse(localStorage.getItem('repoList')) || []
 exports.issueList = []
 
 // Track tag list
-exports.tagList = ['Issue']
+exports.tagList = []
 
 // Refresh repo list
 exports.refreshRepos = () => {

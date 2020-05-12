@@ -131,13 +131,14 @@ function loadIssues (stack) {
   if (gitHub.issueList.find(issue => issue.stack === stack) === undefined) {
     $(`#${stack}`).find('.box').append('<div class="header">No Issues</div>')
   } else {
+    gitHub.tagList.push('Issue')
     gitHub.issueList.forEach((issue) => {
       if (issue.stack === stack) {
         gitHub.addIssue(issue)
       }
     })
-    loadTagCloud()
   }
+  loadTagCloud()
 }
 
 // Load ServiceNow incidents
@@ -147,13 +148,14 @@ function loadSnIncidents (type) {
   if (serviceNow.snIncidentList.length === 0) {
     $('#sn-stack').find('.box').append(`<div class="no-results ${type}">No ${type}s</div>`)
   } else {
+    serviceNow.snTagList.push(type)
     serviceNow.snIncidentList.forEach(inc => {
-      serviceNow.snTagList.push(type)
       if (inc.number.substring(0, 2).toLowerCase() === type.substring(0, 2).toLowerCase()) {
         serviceNow.addSnIncident(inc)
       }
     })
   }
+  loadTagCloud()
 }
 // #endregion
 

@@ -103,7 +103,7 @@ exports.getSnIncidents = (domain, token) => {
       filters.push(`ORassignment_group.sys_id=${group.GroupId}`)
     }
   })
-  $('#sn-stack').find('.box').children('.card').remove()
+  $('#sn-stack').find('.box').children().remove()
   this.snTagList.length = 0
   incidents.length = 0
   const types = ['Problem', 'Incident']
@@ -119,6 +119,7 @@ exports.getSnIncidents = (domain, token) => {
   sn.Authenticate()
   let isError = false
   types.forEach(type => {
+    $('#sn-stack').find('.box').append(`<div class="no-results getting-results">Getting ${type}s</div>`)
     sn.getTableData(fields, filters, type.toLowerCase(), function (res) {
       try {
         res.forEach(r => { // TODO: handle error
@@ -141,6 +142,8 @@ exports.getSnIncidents = (domain, token) => {
 // Add incidents to UI
 exports.addSnIncident = (incident) => {
   const id = incident.number
+  // Remove existing card instance
+  $(`#${id}`).remove()
   // Get incident dates and calc age
   const cd = new Date(incident.opened_at)
   const ud = new Date(incident.sys_updated_on)

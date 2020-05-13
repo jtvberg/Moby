@@ -32,13 +32,14 @@ exports.getIssues = (repoId) => {
 const callIssueService = (repo) => {
   if (repo.Active) {
     const repoStack = `git-stack-${repo.Owner}-${repo.Repo}`
+    $(`#${repoStack}`).find('.box').children().remove()
+    $(`#${repoStack}`).find('.box').append('<div class="no-results getting-results">Getting Issues</div>')
     const octokit = new Octokit({ auth: repo.Auth })
     octokit.paginate('GET /repos/:owner/:repo/issues', {
       baseUrl: repo.BaseUrl,
       owner: repo.Owner,
       repo: repo.Repo
     }).then(issues => {
-      $(`#${repoStack}`).find('.box').children().remove()
       this.issueList = this.issueList.filter(val => val.stack !== repoStack)
       issues.forEach((issue) => {
         const owned = issue.user.login === repo.User
@@ -68,6 +69,8 @@ const callIssueService = (repo) => {
 exports.addIssue = (issue) => {
   const mine = this.repoList.find(repo => repo.RepoId === issue.repoId).AssignToMe
   const id = issue.issueOjb.node_id.replace('=', '')
+  // Remove existing card instance
+  $(`#${id}`).remove()
   if (!mine || (mine && (issue.assigned || issue.owned))) {
     // Get issue dates and calc age
     const cd = new Date(issue.issueOjb.created_at)

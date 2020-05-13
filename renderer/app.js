@@ -128,8 +128,9 @@ function pruneArchive (days) {
 
 // Load GitHub issues
 function loadIssues (stack) {
+  $(`#${stack}`).find('.box').children().remove()
   if (gitHub.issueList.find(issue => issue.stack === stack) === undefined) {
-    $(`#${stack}`).find('.box').append('<div class="header">No Issues</div>')
+    $(`#${stack}`).find('.box').append('<div class="no-results">No Issues</div>')
   } else {
     gitHub.tagList.push('Issue')
     gitHub.issueList.forEach((issue) => {
@@ -140,11 +141,10 @@ function loadIssues (stack) {
   }
   loadTagCloud()
 }
-
 // Load ServiceNow incidents
 function loadSnIncidents (type) {
   serviceNow.updateSnIncidentList()
-  $('#sn-stack').find('.box').children(`.${type}`).remove()
+  $('#sn-stack').find('.box').children(`.${type}, .getting-results`).remove()
   if (serviceNow.snIncidentList.filter(inc => inc.number.substring(0, 2).toLowerCase() === type.substring(0, 2).toLowerCase()).length === 0) {
     $('#sn-stack').find('.box').append(`<div class="no-results ${type}">No ${type}s</div>`)
   } else {

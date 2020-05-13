@@ -171,7 +171,8 @@ if (process.platform === 'darwin') {
     label: remote.app.name,
     submenu: [
       {
-        role: 'about'
+        role: 'about',
+        click () { alert(`${remote.app.name}\n${remote.app.getVersion()}`) }
       },
       {
         label: 'Preferences',

@@ -145,7 +145,7 @@ function loadIssues (stack) {
 function loadSnIncidents (type) {
   serviceNow.updateSnIncidentList()
   $('#sn-stack').find('.box').children(`.${type}`).remove()
-  if (serviceNow.snIncidentList.length === 0) {
+  if (serviceNow.snIncidentList.filter(inc => inc.number.substring(0, 2).toLowerCase() === type.substring(0, 2).toLowerCase()).length === 0) {
     $('#sn-stack').find('.box').append(`<div class="no-results ${type}">No ${type}s</div>`)
   } else {
     serviceNow.snTagList.push(type)

@@ -237,7 +237,7 @@ function setTheme (themeId) {
   }
   updateTitileBar()
   remote.Menu.getApplicationMenu().getMenuItemById('theme').submenu.items.forEach(mi => { mi.checked = false })
-  remote.Menu.getApplicationMenu().getMenuItemById(`${themeId}`).checked = true
+  remote.Menu.getApplicationMenu().getMenuItemById(`${themeId || 'default'}`).checked = true
   ipcRenderer.send('theme-change', themeId)
 }
 

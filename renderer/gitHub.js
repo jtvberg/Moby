@@ -8,6 +8,9 @@ exports.repoList = JSON.parse(localStorage.getItem('repoList')) || []
 // Track issue list
 exports.issueList = []
 
+// Track previous list for new
+let prevIssueList = []
+
 // Track tag list
 exports.tagList = []
 
@@ -40,6 +43,7 @@ const callIssueService = (repo) => {
       owner: repo.Owner,
       repo: repo.Repo
     }).then(issues => {
+      prevIssueList = this.issueList
       this.issueList = this.issueList.filter(val => val.stack !== repoStack)
       issues.forEach((issue) => {
         const owned = issue.user.login === repo.User
@@ -69,6 +73,11 @@ const callIssueService = (repo) => {
 exports.addIssue = (issue) => {
   const mine = this.repoList.find(repo => repo.RepoId === issue.repoId).AssignToMe
   const id = issue.issueOjb.node_id.replace('=', '')
+  // Highlight new issues
+  let highlight = false
+  if (prevIssueList.length > 0 && prevIssueList.find(i => i.issueOjb.node_id.replace('=', '') === id) === undefined) {
+    highlight = true
+  }
   // Remove existing card instance
   $(`#${id}`).remove()
   if (!mine || (mine && (issue.assigned || issue.owned))) {
@@ -112,11 +121,13 @@ exports.addIssue = (issue) => {
     const showColorGlyphs = $('.color-glyph').is(':visible') ? '' : 'style="display: none;"'
     // Check if age is toggled
     const showAge = $('.aging').is(':visible') ? 'style' : 'style="display: none;"'
+    // Check if new to highlight
+    const issueHighlight = highlight === true ? ' card-highlighted' : ''
     // Show banded cards $('.card-bar').is(':visible')
     const bandedCards = $('.card-bar').is(':visible') ? '' : 'style="display: none;"'
     const colorCards = $('.card-bar').is(':visible') ? ' color-trans' : ''
     // Generate issue card html
-    const issueHtml = `<div class="card color-${color}${colorCards}" id="${id}" data-url="${issue.issueOjb.html_url}">
+    const issueHtml = `<div class="card${issueHighlight} color-${color}${colorCards}" id="${id}" data-url="${issue.issueOjb.html_url}">
                         <div class="card-bar color-${color}"${bandedCards}></div>  
                         <div class="card-header" style="clear: both" id="b${id}" data-toggle="collapse" data-target="#c${id}">
                           <span class="color-glyph fas fa-${colorGlyph}" ${showColorGlyphs}></span>

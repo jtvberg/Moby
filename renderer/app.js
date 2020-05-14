@@ -141,6 +141,7 @@ function loadIssues (stack) {
   }
   loadTagCloud()
 }
+
 // Load ServiceNow incidents
 function loadSnIncidents (type) {
   serviceNow.updateSnIncidentList()

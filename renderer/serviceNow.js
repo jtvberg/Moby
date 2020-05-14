@@ -19,6 +19,9 @@ const groups = []
 // Temp incident array
 const incidents = []
 
+// Track previous list for new
+let prevSnIncidentList = []
+
 // Update local list of available ServiceNow groups from temp array
 exports.updateSnGroupList = () => {
   groups.forEach(group => {
@@ -105,6 +108,7 @@ exports.getSnIncidents = (domain, token) => {
   })
   $('#sn-stack').find('.box').children().remove()
   this.snTagList.length = 0
+  prevSnIncidentList = incidents
   incidents.length = 0
   const types = ['Problem', 'Incident']
   let un = ''
@@ -144,6 +148,11 @@ exports.addSnIncident = (incident) => {
   const id = incident.number
   // Remove existing card instance
   $(`#${id}`).remove()
+  // Highlight new issues
+  let highlight = false
+  if (prevSnIncidentList.length > 0 && prevSnIncidentList.find(i => i.number === id) === undefined) {
+    highlight = true
+  }
   // Get incident dates and calc age
   const cd = new Date(incident.opened_at)
   const ud = new Date(incident.sys_updated_on)
@@ -179,11 +188,13 @@ exports.addSnIncident = (incident) => {
   const showColorGlyphs = $('.color-glyph').is(':visible') ? '' : 'style="display: none;"'
   // Check if age is toggled
   const showAge = $('.aging').is(':visible') ? 'style' : 'style="display: none;"'
+  // Check if new to highlight
+  const icidentHighlight = highlight === true ? ' card-highlighted' : ''
   // Show banded cards $('.card-bar').is(':visible')
   const bandedCards = $('.card-bar').is(':visible') ? '' : 'style="display: none;"'
   const colorCards = $('.card-bar').is(':visible') ? ' color-trans' : ''
   // Generate issue card html
-  const incidentHtml = `<div class="card color-${color}${colorCards}" id="${id}" data-url="${url}">
+  const incidentHtml = `<div class="card${icidentHighlight} color-${color}${colorCards}" id="${id}" data-url="${url}">
                       <div class="card-bar color-${color}"${bandedCards}></div>  
                       <div class="card-header" style="clear: both" id="b${id}" data-toggle="collapse" data-target="#c${id}">
                         <span class="color-glyph fas fa-${colorGlyph}" ${showColorGlyphs}></span>

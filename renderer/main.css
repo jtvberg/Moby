@@ -619,7 +619,7 @@ a {
 
 .stack-updated {
   float: left;
-  font-size: calc(var(--font-base-size) + 40%);
+  font-size: calc(var(--font-base-size) + 20%);
   margin: -4px 0px -5px 3px;
 }
 

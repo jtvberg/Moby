@@ -162,7 +162,6 @@ exports.submitTask = (taskType) => {
     getTask.Tags = tags
     getTask.Subtasks = subtasks
     getTask.UpdateTimestamp = updateTimestamp
-    $(`#${getTask.TaskId}`).remove()
   }
   this.saveTasks()
   this.addTask(newTaskData)
@@ -193,12 +192,14 @@ exports.cloneTask = (taskId, taskStack) => {
     }
     this.taskList.push(newTaskData)
     this.saveTasks()
-    this.addTask(newTaskData, true)
+    this.addTask(newTaskData)
   }
 }
 
 // Add task(s) to UI
-exports.addTask = (task, highlight) => {
+exports.addTask = (task) => {
+  // Reomove existing card
+  $(`#${task.TaskId}`).remove()
   // Add task tags
   let tagHTML = ''
   if (task.Tags && task.Tags.length > 0) {
@@ -245,13 +246,11 @@ exports.addTask = (task, highlight) => {
   const showAge = $('.aging').is(':visible') ? '' : 'style="display: none;"'
   // Check if archived and update archive tooltip to delete
   const archDelete = task.TaskStack === 'stack-archive' ? 'Delete' : 'Archive'
-  // Check if clone to highlight
-  const taskHighlight = highlight === true ? ' card-highlighted' : ''
   // Show banded cards $('.card-bar').is(':visible')
   const bandedCards = $('.card-bar').is(':visible') ? '' : 'style="display: none;"'
   const colorCards = $('.card-bar').is(':visible') ? ' color-trans' : ''
   // Generate task card html
-  const taskHtml = `<div class="card${taskHighlight} color-${task.TaskColor}${colorCards}" id="${task.TaskId}" draggable="true" ondragstart="drag(event)">
+  const taskHtml = `<div class="card color-${task.TaskColor}${colorCards}" id="${task.TaskId}" draggable="true" ondragstart="drag(event)">
                       <div class="card-bar color-${task.TaskColor}"${bandedCards}></div>                    
                       <div class="card-header" style="clear: both" id="b${task.TaskId}" data-toggle="collapse" data-target="#c${task.TaskId}">
                         <span class="color-glyph fas fa-${colorGlyph}" ${showColorGlyphs}></span>
@@ -276,13 +275,6 @@ exports.addTask = (task, highlight) => {
   $(`#${task.TaskStack}`).find('.box').append(taskHtml)
   // Add Ageing
   this.updateTaskAge(task.taskId)
-  // Active task setting event
-  $(`#${task.TaskId}`).on('click', () => {
-    window.activeTask = task.TaskId
-    $('.card').removeClass('card-selected')
-    $(`#${task.TaskId}`).removeClass('card-highlighted').addClass('card-selected').parent().animate({ scrollTop: $(`#${task.TaskId}`).offset().top - $(`#${task.TaskId}`).parent().offset().top + $(`#${task.TaskId}`).parent().scrollTop() })
-    $('.window-title').text(`Moby - ${task.TaskTitle}`)
-  })
   // Stop right-click on card invoking remove stack
   $(`#${task.TaskId}`).contextmenu((e) => {
     e.stopPropagation()

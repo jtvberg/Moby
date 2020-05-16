@@ -9,6 +9,7 @@ require('bootstrap/js/dist/modal')
 require('./menu.js')
 const customTitlebar = require('custom-electron-titlebar')
 const stackPrefix = 'stack-'
+const knownList = JSON.parse(localStorage.getItem('knownList')) || createKnown()
 let taskType = 'new'
 let winMax = false
 let updStack = false
@@ -72,6 +73,7 @@ archiveDoneTasks(settings.mobySettings.ArchiveDone)
 pruneArchive(settings.mobySettings.ArchivePrune)
 tasks.updateTaskAge()
 checkSettings()
+highlightCards()
 
 // Set intervals for data refresh
 window.setInterval(addScheduledTasks, 3600000)
@@ -140,6 +142,7 @@ function loadIssues (stack) {
     })
   }
   loadTagCloud()
+  highlightCards()
 }
 
 // Load ServiceNow incidents
@@ -157,6 +160,7 @@ function loadSnIncidents (type) {
     })
   }
   loadTagCloud()
+  highlightCards()
 }
 // #endregion
 
@@ -565,7 +569,7 @@ function buildStack (id, title, index, url) {
                       ${addStackBtn}
                       <div class="header stack-header" contenteditable="${isDefault}" onclick="document.execCommand('selectAll',false,null)" oncontextmenu="event.preventDefault(); event.stopPropagation();">${title}</div>
                       ${removeStackBtn}
-                      <div class="box"></div>
+                      <div class="box" id="${id}-box"></div>
                       <div class="stack-footer">
                         <span class="footer stack-updated">${updated}</span>
                         <span data-toggle="tooltip" title="Add ${itemType}" style="float: right;">
@@ -594,6 +598,7 @@ function buildStack (id, title, index, url) {
   $('.stack-host').on('mouseleave', () => {
     $(`#context-menu-${id}`).removeClass('show').hide().css({ width: '0px' })
   })
+  changeWatch(`${id}-box`)
 }
 
 // Add new user defined stack
@@ -1194,6 +1199,51 @@ function toggleColor (colorId) {
   }
 }
 
+// Get the color of the passed card
+function getColor (card) {
+  let color
+  if ($(card).hasClass('color-1')) { color = 1 }
+  if ($(card).hasClass('color-2')) { color = 2 }
+  if ($(card).hasClass('color-3')) { color = 3 }
+  if ($(card).hasClass('color-4')) { color = 4 }
+  if ($(card).hasClass('color-5')) { color = 5 }
+  return color
+}
+
+// Create a list of task ids on the board
+function createKnown () {
+  const tl = []
+  $('.card').each(function () {
+    tl.push(getColor($(this)) + $(this).prop('id'))
+  })
+  return tl
+}
+
+// Watch for dom changes to highlight new cards
+function changeWatch (box) {
+  var targetNode = document.getElementById(box)
+  var config = { childList: true }
+  var callback = function (mutationsList, observer) {
+    for (var mutation of mutationsList) {
+      if (mutation.type === 'childList') {
+        highlightCards()
+      }
+    }
+  }
+  var observer = new MutationObserver(callback)
+  observer.observe(targetNode, config)
+}
+
+// Highlight newly added cards via diff from knownList (which would include color change)
+function highlightCards () {
+  const cl = createKnown()
+  const diff = $(cl).not(knownList).get()
+  diff.forEach(task => {
+    const id = task.substring(1, task.length)
+    $(`#${id}`).addClass('card-highlighted')
+  })
+}
+
 // Task drag and drop events
 // eslint-disable-next-line no-unused-vars
 const allowDrop = (e) => {
@@ -1237,6 +1287,21 @@ const expandAll = () => {
 const collapseAll = () => {
   $('.collapse').collapse('hide')
 }
+
+// Active issue setting event
+$(document).on('click', '.card', function (e) {
+  const id = $(e.currentTarget).prop('id')
+  window.activeTask = parseInt(id)
+  $('.card').removeClass('card-selected')
+  if ($(`#${id}`).hasClass('card-highlighted')) {
+    knownList.push(getColor($(e.currentTarget)) + id)
+    localStorage.setItem('knownList', JSON.stringify([...new Set(knownList)]))
+  }
+  if ($(`#${id}`).offset()) {
+    $(`#${id}`).removeClass('card-highlighted').addClass('card-selected').parent().animate({ scrollTop: $(`#${id}`).offset().top - $(`#${id}`).parent().offset().top + $(`#${id}`).parent().scrollTop() })
+  }
+  $('.window-title').text(`Moby - ${$(e.currentTarget).find('.title').text()}`)
+})
 
 // Double clikc on card opens edit modal
 $(document).on('dblclick', '.card', (e) => {

@@ -857,6 +857,11 @@ window.collapseAllMenu = () => {
   collapseAll()
 }
 
+// Task menu commands; Mark all tasks read
+window.createKnownMenu = () => {
+  createKnown(true)
+}
+
 // Task menu commands; Toggle age on tasks
 window.toggleAgeMenu = () => {
   toggleAge()
@@ -1211,11 +1216,16 @@ function getColor (card) {
 }
 
 // Create a list of task ids on the board
-function createKnown () {
+function createKnown (save) {
   const tl = []
   $('.card').each(function () {
     tl.push(getColor($(this)) + $(this).prop('id'))
   })
+  if (save) {
+    tl.forEach(t => knownList.push(t))
+    localStorage.setItem('knownList', JSON.stringify(knownList))
+    highlightCards()
+  }
   return tl
 }
 
@@ -1238,6 +1248,7 @@ function changeWatch (box) {
 function highlightCards () {
   const cl = createKnown()
   const diff = $(cl).not(knownList).get()
+  $('.card').removeClass('card-highlighted')
   diff.forEach(task => {
     const id = task.substring(1, task.length)
     $(`#${id}`).addClass('card-highlighted')

@@ -45,6 +45,11 @@ const template = [
         click () { window.collapseAllMenu() }
       },
       {
+        label: 'Mark All Tasks Read',
+        accelerator: 'CmdOrCtrl+R',
+        click () { window.createKnownMenu() }
+      },
+      {
         label: 'Toggle Task Age',
         type: 'checkbox',
         id: 'menu-task-age',

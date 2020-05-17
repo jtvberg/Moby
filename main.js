@@ -146,6 +146,10 @@ ipcMain.on('win-min', () => {
   win.minimize()
 })
 
+ipcMain.on('badge-count', (e, data) => {
+  app.setBadgeCount(data)
+})
+
 // IPC channel to update tags on task delete
 ipcMain.on('delete-task', () => {
   win.webContents.send('update-tags')

@@ -141,6 +141,7 @@ function loadIssues (stack) {
       }
     })
   }
+  applySettings()
   loadTagCloud()
   highlightCards()
 }
@@ -159,6 +160,7 @@ function loadSnIncidents (type) {
       }
     })
   }
+  applySettings()
   loadTagCloud()
   highlightCards()
 }
@@ -543,6 +545,7 @@ function buildStack (id, title, index, url) {
   const stackClass = isDefault ? 'stack' : 'serv-stack'
   const dragDrop = isDefault ? ' ondrop="drop(event)" ondragover="allowDrop(event)"' : ''
   const updated = isDefault ? '' : new Date(Date.now()).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
+  const updatedTs = new Date(Date.now()).toLocaleString()
   let addTaskBtn = `" href="#task-modal" data-toggle="modal" data-stack-id="${id}" data-type-id="new"`
   let refreshBtn = 'hidden'
   let refreshDataSource = ''
@@ -572,7 +575,7 @@ function buildStack (id, title, index, url) {
                       ${removeStackBtn}
                       <div class="box" id="${id}-box"></div>
                       <div class="stack-footer">
-                        <span class="footer stack-updated">${updated}</span>
+                        <span class="footer stack-updated" data-toggle="tooltip" title="Last Update: ${updatedTs}">${updated}</span>
                         <span data-toggle="tooltip" title="Add ${itemType}" style="float: right;">
                           <div class="footer fas fa-plus fa-2x${addTaskBtn}></div>
                         </span>
@@ -1254,6 +1257,7 @@ function highlightCards () {
     const id = task.substring(1, task.length)
     $(`#${id}`).addClass('card-highlighted')
   })
+  ipcRenderer.send('badge-count', diff.length || 0)
 }
 
 // Task drag and drop events
@@ -1308,6 +1312,7 @@ $(document).on('click', '.card', function (e) {
   if ($(`#${id}`).hasClass('card-highlighted')) {
     knownList.push(getColor($(e.currentTarget)) + id)
     localStorage.setItem('knownList', JSON.stringify([...new Set(knownList)]))
+    highlightCards()
   }
   if ($(`#${id}`).offset()) {
     $(`#${id}`).removeClass('card-highlighted').addClass('card-selected').parent().animate({ scrollTop: $(`#${id}`).offset().top - $(`#${id}`).parent().offset().top + $(`#${id}`).parent().scrollTop() })

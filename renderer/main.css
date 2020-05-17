@@ -644,7 +644,7 @@ a {
   float: left;
   font-size: calc(var(--font-base-size) + 20%);
   margin: -4px 0px -5px 3px;
-  cursor: auto;
+  cursor: default;
 }
 
 .btn-secondary {

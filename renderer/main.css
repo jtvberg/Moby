@@ -262,7 +262,7 @@ body {
 }
 
 .card:hover {
-  box-shadow: 0 4px 8px 0 rgba(82, 82, 82, 0.6);
+  box-shadow: inset 0px 0px 2px 1px var(--primary);
 }
 
 .card-bar {
@@ -644,6 +644,7 @@ a {
   float: left;
   font-size: calc(var(--font-base-size) + 20%);
   margin: -4px 0px -5px 3px;
+  cursor: auto;
 }
 
 .btn-secondary {

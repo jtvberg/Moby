@@ -119,7 +119,7 @@ exports.getSnIncidents = (domain, token) => {
   sn.Authenticate()
   let isError = false
   types.forEach(type => {
-    $('#sn-stack').find('.box').append(`<div class="no-results getting-results">Getting ${type}s</div>`)
+    $('#sn-stack').find('.box').append(`<div class="no-results getting-results"><span">Getting ${type}s </span><div class="spinner-grow spinner-grow-sm" role="status"></div></div>`)
     sn.getTableData(fields, filters, type.toLowerCase(), function (res) {
       try {
         res.forEach(r => {

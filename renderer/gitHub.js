@@ -33,7 +33,7 @@ const callIssueService = (repo) => {
   if (repo.Active) {
     const repoStack = `git-stack-${repo.Owner}-${repo.Repo}`
     $(`#${repoStack}`).find('.box').children().remove()
-    $(`#${repoStack}`).find('.box').append('<div class="no-results getting-results">Getting Issues</div>')
+    $(`#${repoStack}`).find('.box').append('<div class="no-results getting-results"><span>Getting Issues </span><div class="spinner-grow spinner-grow-sm" role="status"></div></div>')
     const octokit = new Octokit({ auth: repo.Auth })
     octokit.paginate('GET /repos/:owner/:repo/issues', {
       baseUrl: repo.BaseUrl,

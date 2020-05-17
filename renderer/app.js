@@ -396,6 +396,7 @@ $('.panel-header').click(function () {
 // Refresh available ServiceNow groups
 $('#settings-sngroups-refresh-button').click(() => {
   $('#servicenow-group-box').children().remove()
+  $('#servicenow-group-box').append('<div><span">Getting Groups </span><div class="spinner-grow spinner-grow-sm" role="status"></div></div>')
   serviceNow.getSnGroups(settings.mobySettings.SnDomain, settings.mobySettings.SnToken)
 })
 

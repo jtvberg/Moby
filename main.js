@@ -34,7 +34,7 @@ const createWindow = () => {
 // Create tray icon and calculate positions
 let tray
 const createTray = () => {
-  tray = new Tray(path.join(__dirname, 'renderer/res/moby_icon_19.png'))
+  tray = new Tray(path.join(__dirname, 'renderer/res/moby_icon_19_Template.png'))
   tray.on('click', function (e) {
     toggleQuickMenu()
   })

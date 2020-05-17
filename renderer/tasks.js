@@ -7,10 +7,9 @@ function updateTaskListModel () {
   const rl = localStorage.getItem('taskList') || null
   if (rl) {
     const tl = JSON.parse(rl) || []
-    tl.forEach(task => {
-      task.TaskColor = parseInt(task.TaskColor)
-      task.MonthDay = parseInt(task.MonthDay)
-    })
+    // tl.forEach(task => {
+    //   // Use to update task model
+    // })
     localStorage.setItem('taskList', JSON.stringify(tl))
     return tl
   }

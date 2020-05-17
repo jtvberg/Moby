@@ -659,6 +659,24 @@ const addNewStackClick = (e) => {
   addNewStack($(e.currentTarget).closest('.stack').data('stack-index'))
 }
 
+// Toggle Service stacks
+// eslint-disable-next-line no-unused-vars
+const toggleServStacks = () => {
+  if ($('.serv-stack').is(':visible')) {
+    $('.stack').show()
+    $('.serv-stack').hide(0)
+    $('#si-button').removeClass('menu-item-toggled')
+  } else {
+    if (settings.mobySettings && settings.mobySettings.ServToggle === true) {
+      $('.stack').hide(0)
+      $('#stack-archive').show()
+      $('#stack-schedule').show()
+    }
+    $('.serv-stack').show()
+    $('#si-button').addClass('menu-item-toggled')
+  }
+}
+
 // Remove stack modal load event
 $('#remove-modal').on('show.bs.modal', (e) => {
   loadRemoveModal($(e.relatedTarget).closest('.stack').data('stack-index'))
@@ -766,24 +784,6 @@ const toggleTags = () => {
   }
 }
 
-// Toggle Service stacks
-// eslint-disable-next-line no-unused-vars
-const toggleIssues = () => {
-  if ($('.serv-stack').is(':visible')) {
-    $('.stack').show()
-    $('.serv-stack').hide(0)
-    $('#si-button').removeClass('menu-item-toggled')
-  } else {
-    if (settings.mobySettings && settings.mobySettings.ServToggle === true) {
-      $('.stack').hide(0)
-      $('#stack-archive').show()
-      $('#stack-schedule').show()
-    }
-    $('.serv-stack').show()
-    $('#si-button').addClass('menu-item-toggled')
-  }
-}
-
 // Fill tag on tab or enter with matched tag
 $('#tag-edit-box').keydown(function (e) {
   if (e.keyCode === 9 || e.keyCode === 13) {
@@ -797,7 +797,7 @@ $(document).on('click', '.cloud-tags', (e) => {
   $(e.currentTarget).addClass('cloud-tags-toggled')
   $('.tags').filter(function () {
     return $(this).text() === $(e.currentTarget).text()
-  }).closest('.card').addClass('card-tagged') // .find('.collapse').collapse('show') // TODO: open on tag select
+  }).closest('.card').addClass('card-tagged') // .find('.collapse').collapse('show') // TODO: setting?
 })
 
 // Remove tag from task card
@@ -1095,7 +1095,7 @@ function loadTaskModal (type, stack) {
         const checked = subtask.Checked === true ? 'fa-check-square check-checked' : 'fa-square check-unchecked'
         subtaskHTML += `<div class="check-modal-host" id="${subtask.SubtaskId}">
                           <div class="fas check-checkbox ${checked}"></div>
-                          <label class="check-label" contenteditable="true">${subtask.Text}</label>
+                          <label class="check-label check-edit-label" contenteditable="true">${subtask.Text}</label>
                         </div>`
       })
     }

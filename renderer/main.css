@@ -89,6 +89,11 @@ body {
   left: 5px;
   font-size: calc(var(--font-base-size) + 50%);
   position: absolute;
+  cursor: pointer;
+}
+
+.stack-icon {
+  cursor: pointer;
 }
 
 .git-stack-icon {
@@ -270,6 +275,7 @@ body {
 .card-content {
   grid-column: 2;
   padding: 0px 0px 0px 2px;
+  cursor: text;
 }
 
 .card-header {
@@ -278,6 +284,7 @@ body {
   padding: 0px 0px 0px 2px;
   border: none;
   background-color: var(--trans);
+  cursor: pointer;
 }
 
 .card-selected {
@@ -360,6 +367,7 @@ body {
 .card-menu,
 .footer {
   color: var(--opaque);
+  cursor: pointer;
 }
 
 .card-menu {
@@ -374,6 +382,7 @@ body {
   color: var(--menu-primary);
   padding: 4px;
   -webkit-app-region: no-drag;
+  cursor: pointer;
 }
 
 .menu-item-toggled {
@@ -385,6 +394,7 @@ body {
   border-color: var(--highlight) !important;
   border-width: 2px solid !important;
   -webkit-app-region: no-drag;
+  cursor: pointer;
 }
 
 .color-item:hover {
@@ -492,6 +502,7 @@ body {
   overflow: hidden;
   width: fit-content;
   max-width: 100px;
+  cursor: pointer;
 }
 
 .cloud-tags:hover {
@@ -540,12 +551,14 @@ body {
 .check-host {
   display: grid;
   grid-template-columns: 12px 1fr 3px;
+  cursor: pointer;
 }
 
 .check-checkbox {
   grid-column: 1;
   grid-row: 1;
   margin-top: 4px;
+  cursor: pointer;
 }
 
 .check-checkbox:hover {
@@ -556,10 +569,16 @@ body {
   grid-column: 2;
   grid-row: 1;
   margin-bottom: 2px;
+  cursor: pointer;
+}
+
+.check-edit-label {
+  cursor: text;
 }
 
 .check-card-label {
   padding-top: 1px;
+  cursor: pointer;
 }
 
 .check-description {
@@ -575,6 +594,10 @@ body {
 
 .check-unchecked {
   color: var(--unchecked);
+}
+
+.radio {
+  cursor: pointer !important;
 }
 
 a {

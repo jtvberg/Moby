@@ -122,7 +122,7 @@ exports.getSnIncidents = (domain, token) => {
     $('#sn-stack').find('.box').append(`<div class="no-results getting-results">Getting ${type}s</div>`)
     sn.getTableData(fields, filters, type.toLowerCase(), function (res) {
       try {
-        res.forEach(r => { // TODO: handle error
+        res.forEach(r => {
           incidents.push(r)
         })
         if (res.length >= 0) {

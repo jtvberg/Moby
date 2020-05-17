@@ -23,7 +23,7 @@
           <div class="menu-item fas fa-calendar fa-2x" data-toggle="tooltip" title="Scheduled Tasks"></div>
         </span>
         <div class="menu-item fas fa-tags fa-2x" id="tags-button" style="font-size: 150%;" data-toggle="tooltip" title="Toggle Tags" onclick="toggleTags(event)"></div>
-        <div class="menu-item fas fa-server fa-2x" id="si-button" style="display: none;" data-toggle="tooltip" title="Toggle Service Stacks" onclick="toggleIssues(event)"></div>
+        <div class="menu-item fas fa-server fa-2x" id="si-button" style="display: none;" data-toggle="tooltip" title="Toggle Service Stacks" onclick="toggleServStacks(event)"></div>
         <div class="menu-item fas fa-expand-arrows-alt fa-2x" data-toggle="tooltip" title="Expand All" onclick="expandAll(event)"></div>
         <div class="menu-item fas fa-compress-arrows-alt fa-2x" data-toggle="tooltip" title="Collapse All" onclick="collapseAll(event)"></div>
         <div class="menu-item fas fa-sign-out-alt fa-2x" data-toggle="tooltip" title="Exit" onclick="exit(event)"></div>
@@ -154,24 +154,24 @@
                         </div> -->
                         <div id="choose-recur">
                           <div class="form-check form-check-inline form-control-sm">
-                            <input type="radio" class="form-check-input" name="radio-recur" id="radio-once" value="0" checked="true">
-                            <label class="form-check-label" for="radio-once">One-time</label>
+                            <input type="radio" class="form-check-input radio" name="radio-recur" id="radio-once" value="0" checked="true">
+                            <label class="form-check-label radio" for="radio-once">One-time</label>
                           </div>
                           <div class="form-check form-check-inline form-control-sm">
-                            <input type="radio" class="form-check-input" name="radio-recur" id="radio-weekly" value="1">
-                            <label class="form-check-label" for="radio-weekly">Weekly</label>
+                            <input type="radio" class="form-check-input radio" name="radio-recur" id="radio-weekly" value="1">
+                            <label class="form-check-label radio" for="radio-weekly">Weekly</label>
                           </div>
                           <div class="form-check form-check-inline form-control-sm">
-                            <input type="radio" class="form-check-input" name="radio-recur" id="radio-biWeekly" value="2">
-                            <label class="form-check-label" for="radio-biWeekly">Bi-Weekly</label>
+                            <input type="radio" class="form-check-input radio" name="radio-recur" id="radio-biWeekly" value="2">
+                            <label class="form-check-label radio" for="radio-biWeekly">Bi-Weekly</label>
                           </div>
                           <div class="form-check form-check-inline form-control-sm">
-                            <input type="radio" class="form-check-input" name="radio-recur" id="radio-triWeekly" value="3">
-                            <label class="form-check-label" for="radio-triWeekly">Tri-Weekly</label>
+                            <input type="radio" class="form-check-input radio" name="radio-recur" id="radio-triWeekly" value="3">
+                            <label class="form-check-label radio" for="radio-triWeekly">Tri-Weekly</label>
                           </div>
                           <div class="form-check form-check-inline form-control-sm">
-                            <input type="radio" class="form-check-input" name="radio-recur" id="radio-monthly" value="4">
-                            <label class="form-check-label" for="radio-Monthly">Monthly</label>
+                            <input type="radio" class="form-check-input radio" name="radio-recur" id="radio-monthly" value="4">
+                            <label class="form-check-label radio" for="radio-Monthly">Monthly</label>
                           </div>
                         </div>
                         <fieldset hidden id="choose-days">

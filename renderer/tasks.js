@@ -163,7 +163,7 @@ exports.submitTask = (taskType) => {
     getTask.UpdateTimestamp = updateTimestamp
   }
   this.saveTasks()
-  this.addTask(newTaskData)
+  return this.addTask(newTaskData)
 }
 
 // Clone task to 'do'
@@ -310,6 +310,8 @@ exports.addTask = (task) => {
   $(function () {
     $('[data-toggle="tooltip"]').tooltip({ delay: { show: 1500, hide: 100 } })
   })
+  // Return the ID created
+  return task.TaskColor + '' + task.TaskId
 }
 
 // Archive a specific task

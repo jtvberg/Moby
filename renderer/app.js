@@ -282,6 +282,8 @@ function loadSettingsModal () {
   // Load SN auth / groups
   $('#settings-servicenow-domain').val(settings.mobySettings.SnDomain)
   $('#settings-servicenow-token').val(settings.mobySettings.SnToken)
+  $('input[name=radio-priority]').prop('checked', false).parent('.btn').removeClass('active')
+  $(`input[name=radio-priority][value=${settings.mobySettings.SnPriority}]`).prop('checked', true).parent('.btn').addClass('active')
   loadSnGroups()
   $('#settings-modal').modal('show')
 }
@@ -420,19 +422,24 @@ $('#settings-servicenow-toggle').click(() => {
   groupChange = true
 })
 
+// Track change to SN priority
+$('#choose-priority').click(() => {
+  groupChange = true
+})
+
 // Track change to SN domain/token fields
 $('.servicenow-edit').change(function () {
   $(this).addClass('input-change')
 })
 
-// Track for changes in group entries selection on click of checks or labels (through check-host)
-$(document).on('click', '.servicenow-group-check', (e) => {
-  groupChange = true
-})
-
 // Track change to repo show status-
 $('#settings-github-toggle').click(() => {
   repoChange = true
+})
+
+// Track for changes in group entries selection on click of checks or labels (through check-host)
+$(document).on('click', '.servicenow-group-check', (e) => {
+  groupChange = true
 })
 
 // Track for changes in repo entries on input and hightlight
@@ -1191,7 +1198,8 @@ $('#radio-once').click(() => {
 
 // Task modal submit event
 $('#submit-button').click(() => {
-  tasks.submitTask(taskType)
+  knownList.push(tasks.submitTask(taskType))
+  localStorage.setItem('knownList', JSON.stringify(knownList))
   $('#task-modal').modal('hide')
 })
 

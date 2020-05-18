@@ -63,7 +63,8 @@ exports.saveSettings = (themeId) => {
       GhToggle: $('#settings-github-toggle').hasClass('check-checked'),
       SnToggle: $('#settings-servicenow-toggle').hasClass('check-checked'),
       SnDomain: $('#settings-servicenow-domain').val().trim(),
-      SnToken: $('#settings-servicenow-token').val().trim()
+      SnToken: $('#settings-servicenow-token').val().trim(),
+      SnPriority: parseInt($('#choose-priority input:radio:checked').val())
     }
     this.mobySettings = settings
   }

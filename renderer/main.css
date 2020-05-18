@@ -253,7 +253,7 @@ body {
   grid-template-rows: auto 1fr;
   transition: 0.3s;
   border-radius: 3px;
-  margin: 3px 3px 0px 3px;
+  margin: 2px 3px 1px 3px;
   padding: 2px;
   font-size: var(--font-base-size);
   -webkit-app-region: no-drag;
@@ -262,7 +262,7 @@ body {
 }
 
 .card:hover {
-  box-shadow: inset 0px 0px 2px 1px var(--primary);
+  box-shadow: inset 0px 0px 2px 1px var(--primary), 0px 0px 2px 1px var(--primary);
 }
 
 .card-bar {
@@ -291,12 +291,8 @@ body {
   border-color: var(--focused) !important;
 }
 
+.card-tagged,
 .card-highlighted {
-  border-width: 2px;
-  border-color: var(--highlight);
-}
-
-.card-tagged {
   border-width: 2px;
   border-color: var(--highlight);
 }

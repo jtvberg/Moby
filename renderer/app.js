@@ -818,10 +818,13 @@ $('#tag-edit-box').keydown(function (e) {
 
 // Show tasks with tag
 $(document).on('click', '.cloud-tags', (e) => {
-  $(e.currentTarget).addClass('cloud-tags-toggled')
-  $('.tags').filter(function () {
-    return $(this).text() === $(e.currentTarget).text()
-  }).closest('.card').addClass('card-tagged') // .find('.collapse').collapse('show') // TODO: setting?
+  ($(e.currentTarget).hasClass('cloud-tags-toggled')) ? $(e.currentTarget).removeClass('cloud-tags-toggled') : $(e.currentTarget).addClass('cloud-tags-toggled')
+  $('.card').removeClass('card-tagged')
+  const toggledTags = $('.cloud-tags').filter(function () { return $(this).hasClass('cloud-tags-toggled') }).map(function () { return $(this).text() })
+  $('.tags').each(function () {
+    if ($.inArray($(this).text(), toggledTags) !== -1) { $(this).closest('.card').addClass('card-tagged') }
+  })
+  // .find('.collapse').collapse('show') // TODO: setting?
 })
 
 // Remove tag from task card

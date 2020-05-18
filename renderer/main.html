@@ -493,11 +493,34 @@
                         <div>
                           <label class="left-margin">Assignment Groups</label>
                         </div>
-                        <div style="margin: -10px 0px -2px 5px">
+                        <div style="margin: -10px 0px -2px 5px;">
                           <small class="text-muted check-description">Incidents from checked groups only will be displayed.</small>
                           <div class="footer fas fa-sync-alt" id="settings-sngroups-refresh-button" style="float: right; font-size: calc(var(--font-base-size) + 30%);" data-toggle="tooltip" title="Refresh Group List"></div>
                         </div>
                         <div id="servicenow-group-box" style="margin-left: 0px; margin-right: 0px;"></div>
+                        <div class="form-group" style="margin: 8px 0px -2px 5px;">
+                          <div class="check-label">Priority Level</div>
+                          <div class="btn-group btn-group-toggle" style="margin: 0px 0px 2px -5px;" data-toggle="buttons" id="choose-priority">
+                            <label class="btn btn-secondary btn-sm">
+                                <input type="radio" name="radio-priority" value="1"> 1 only
+                            </label>
+                            <label class="btn btn-secondary btn-sm">
+                                <input type="radio" name="radio-priority" value="2"> >2
+                            </label>
+                            <label class="btn btn-secondary btn-sm">
+                                <input type="radio" name="radio-priority" value="3"> >3
+                            </label>
+                            <label class="btn btn-secondary btn-sm">
+                                <input type="radio" name="radio-priority" value="4"> >4
+                            </label>
+                            <label class="btn btn-secondary btn-sm">
+                                <input type="radio" name="radio-priority" value="5"> All
+                            </label>
+                          </div>
+                          <div style="margin-top: -2px;">
+                            <small class="text-muted check-description">Sets the priority level of returned incidents/problems.</small>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>

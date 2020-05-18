@@ -665,6 +665,13 @@ a {
   border-color: var(--highlight) !important;
 }
 
+.input-group-prepend {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
 #servicenow-group-box {
   border-color: var(--main-background-light) !important;
   border-width: 1px !important;

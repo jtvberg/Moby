@@ -266,8 +266,10 @@ function loadSettingsModal () {
   toggleCheck($('#settings-serv-toggle'), settings.mobySettings.ServToggle)
   toggleCheck($('#settings-github-toggle'), settings.mobySettings.GhToggle)
   toggleCheck($('#settings-servicenow-toggle'), settings.mobySettings.SnToggle)
-  $(`input[name=radio-archive][value=${settings.mobySettings.ArchiveDone || 7}]`).prop('checked', true).parent('.btn').addClass('active')
-  $(`input[name=radio-prune][value=${settings.mobySettings.ArchivePrune || 0}]`).prop('checked', true).parent('.btn').addClass('active')
+  $('input[name=radio-archive]').prop('checked', false).parent('.btn').removeClass('active')
+  $('input[name=radio-prune]').prop('checked', false).parent('.btn').removeClass('active')
+  $(`input[name=radio-archive][value=${settings.mobySettings.ArchiveDone}]`).prop('checked', true).parent('.btn').addClass('active')
+  $(`input[name=radio-prune][value=${settings.mobySettings.ArchivePrune}]`).prop('checked', true).parent('.btn').addClass('active')
   // Reload repos
   $('#settings-github-repos').children().remove()
   $('#collapse-github, #collapse-rally, #collapse-servicenow').collapse('hide')
@@ -302,7 +304,7 @@ function loadSnGroups () {
 }
 
 // Save settings
-function saveSetting () {
+function saveSettings () {
   $('#settings-modal').modal('hide')
   // save general settings
   settings.saveSettings()
@@ -387,11 +389,22 @@ const addNewGitHub = () => {
 
 // Save changes button click handler
 $('#settings-button').click(() => {
-  saveSetting()
+  saveSettings()
+})
+
+// Reset settings to defaults
+$('#settings-default-button').click(() => {
+  if (!confirm('This will restore all settings to defaults outside of any user inputted data.\nAre you sure?')) {
+    return
+  }
+  $('#settings-modal').modal('hide')
+  settings.defaultSettings()
+  settings.refreshSettings()
+  applySettings()
 })
 
 // Collapse other panels when clicking on headers in settings modal
-$('.panel-header').click(function () {
+$('.panel-header').click(() => {
   $('.panel-header').parent().find('.collapse').collapse('hide')
 })
 

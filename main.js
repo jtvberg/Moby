@@ -146,6 +146,7 @@ ipcMain.on('win-min', () => {
   win.minimize()
 })
 
+// IPC channel to set unread badge
 ipcMain.on('badge-count', (e, data) => {
   app.setBadgeCount(data)
 })

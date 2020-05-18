@@ -34,10 +34,10 @@ exports.defaultSettings = (fill) => {
       ArchiveDone: 7,
       ArchivePrune: 120,
       ServToggle: false,
-      GhToggle: false,
-      SnToggle: false,
-      SnDomain: '',
-      SnToken: ''
+      GhToggle: this.mobySettings.GhToggle || false,
+      SnToggle: this.mobySettings.SnToggle || false,
+      SnDomain: this.mobySettings.SnDomain || '',
+      SnToken: this.mobySettings.SnToken || ''
     }
   }
   this.mobySettings = settings
@@ -55,8 +55,8 @@ exports.saveSettings = (themeId) => {
       BandedCards: $('#settings-bands').hasClass('check-checked'),
       Aging: $('#settings-aging').hasClass('check-checked'),
       DblClick: $('#settings-dblclick').hasClass('check-checked'),
-      ArchiveDone: parseInt($('#choose-archive input:radio:checked').val()) || 7,
-      ArchivePrune: parseInt($('#choose-prune input:radio:checked').val()) || 0,
+      ArchiveDone: parseInt($('#choose-archive input:radio:checked').val()),
+      ArchivePrune: parseInt($('#choose-prune input:radio:checked').val()),
       ServToggle: $('#settings-serv-toggle').hasClass('check-checked'),
       GhToggle: $('#settings-github-toggle').hasClass('check-checked'),
       SnToggle: $('#settings-servicenow-toggle').hasClass('check-checked'),

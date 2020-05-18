@@ -22,7 +22,8 @@ exports.defaultSettings = (fill) => {
       GhToggle: this.mobySettings.GhToggle || false,
       SnToggle: this.mobySettings.SnToggle || false,
       SnDomain: this.mobySettings.SnDomain || '',
-      SnToken: this.mobySettings.SnToken || ''
+      SnToken: this.mobySettings.SnToken || '',
+      SnPriority: this.mobySettings.SnPriority || 3
     }
   } else {
     settings = {
@@ -37,7 +38,8 @@ exports.defaultSettings = (fill) => {
       GhToggle: this.mobySettings.GhToggle || false,
       SnToggle: this.mobySettings.SnToggle || false,
       SnDomain: this.mobySettings.SnDomain || '',
-      SnToken: this.mobySettings.SnToken || ''
+      SnToken: this.mobySettings.SnToken || '',
+      SnPriority: this.mobySettings.SnPriority || 3
     }
   }
   this.mobySettings = settings

@@ -513,7 +513,7 @@ function getStacks () {
     gitHub.getIssues()
   }
   if (settings.mobySettings.SnToggle) {
-    serviceNow.getSnIncidents(settings.mobySettings.SnDomain, settings.mobySettings.SnToken)
+    serviceNow.getSnIncidents(settings.mobySettings.SnDomain, settings.mobySettings.SnToken, settings.mobySettings.SnPriority)
   }
   loadTagCloud()
   applySettings()
@@ -738,7 +738,7 @@ $(document).on('click', '.refresh-data', (e) => {
   if ($(e.currentTarget).data('source') === 'git') {
     gitHub.getIssues($(e.currentTarget).closest('.serv-stack').prop('id'))
   } else if ($(e.currentTarget).data('source') === 'sn') {
-    serviceNow.getSnIncidents(settings.mobySettings.SnDomain, settings.mobySettings.SnToken)
+    serviceNow.getSnIncidents(settings.mobySettings.SnDomain, settings.mobySettings.SnToken, settings.mobySettings.SnPriority)
   } else {
     return
   }

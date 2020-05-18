@@ -81,7 +81,7 @@ exports.saveSnGroups = () => {
 }
 
 // Query for incidents within active groups
-exports.getSnIncidents = (domain, token) => {
+exports.getSnIncidents = (domain, token, priority) => {
   const fields = [
     'number',
     'state',
@@ -94,7 +94,7 @@ exports.getSnIncidents = (domain, token) => {
     'sys_id'
   ]
   const filters = [
-    'priority<=3',
+    `priority<=${priority}`,
     'active=true'
   ]
   filters.push('assignment_group.sys_id=non-existant-group')

@@ -1161,9 +1161,8 @@ function enableRecur (enable) {
 
 // Task modal load event
 $('#task-modal').on('show.bs.modal', (e) => {
-  const type = $(e.relatedTarget).data('type-id') ? $(e.relatedTarget).data('type-id') : taskType
   const stack = $(e.relatedTarget).data('stack-id') ? $(e.relatedTarget).data('stack-id') : 'stack-do'
-  loadTaskModal(type, stack)
+  loadTaskModal(taskType, stack)
 })
 
 // Focus title field on modal 'shown'
@@ -1330,8 +1329,8 @@ const collapseAll = () => {
 
 // Active issue setting event
 $(document).on('click', '.card', function (e) {
-  const id = $(e.currentTarget).prop('id')
-  window.activeTask = parseInt(id)
+  const id = parseInt($(e.currentTarget).prop('id'))
+  window.activeTask = id
   $('.card').removeClass('card-selected')
   if ($(`#${id}`).hasClass('card-highlighted')) {
     knownList.push(getColor($(e.currentTarget)) + id)
@@ -1344,13 +1343,29 @@ $(document).on('click', '.card', function (e) {
   $('.window-title').text(`Moby - ${$(e.currentTarget).find('.title').text()}`)
 })
 
+// Open task edit modal on card edit button click
+$(document).on('click', '.card-edit-button', function (e) {
+  window.activeTask = parseInt($(e.currentTarget).closest('.card').prop('id'))
+  taskType = 'edit'
+  $('#task-modal').modal('show')
+})
+
+// Delete active task (send to archive; delete if in archive)
+// $(document).on('click', '.card-del-button', function (e) {
+//   if ($(e.currentTarget).closest('.stack').prop('id') === 'stack-archive') {
+//     tasks.deleteTask($(e.currentTarget).closest('.card').prop('id'))
+//   } else {
+//     tasks.archiveTask($(e.currentTarget).closest('.card').prop('id'))
+//   }
+// })
+
 // Double clikc on card opens edit modal
 $(document).on('dblclick', '.card', (e) => {
   if (settings.mobySettings.DblClick) {
     if ($(e.currentTarget).parent().parent().hasClass('serv-stack', 'sn-stack')) {
       shell.openExternal($(e.currentTarget).data('url'))
     } else {
-      $(e.currentTarget).find('#edit-button').click()
+      $(e.currentTarget).find('.card-edit-button').click()
     }
   }
 })

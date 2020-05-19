@@ -264,9 +264,7 @@ exports.addTask = (task) => {
                           <div class="card-menu-item fas fa-minus-square" id="del-button-${task.TaskId}" data-toggle="tooltip" title="${archDelete} Task" ></div>
                           <div class="card-menu-item fas fa-clone" id="clone-button-${task.TaskId}" data-toggle="tooltip" title="Clone Task"></div>
                           <div class="card-menu-item fas fa-clipboard" id="copy-button-${task.TaskId}" data-toggle="tooltip" title="Copy To Clipboard"></div>
-                          <span data-toggle="tooltip" title="Edit Task">
-                            <div class="card-menu-item fas fa-edit" id="edit-button" href="#task-modal" data-toggle="modal" data-type-id="edit"></div>
-                          </span>
+                          <div class="card-menu-item fas fa-edit card-edit-button" data-toggle="tooltip" title="Edit Task"></div>
                         </div>
                       </div>
                     </div>`
@@ -317,8 +315,9 @@ exports.addTask = (task) => {
 // Archive a specific task
 exports.archiveTask = (taskId) => {
   if (taskId) {
-    $('#stack-archive').find('.box').append($(`#${taskId}`))
-    this.updateTaskStack(taskId, 'stack-archive')
+    const id = parseInt(taskId)
+    $('#stack-archive').find('.box').append($(`#${id}`))
+    this.updateTaskStack(id, 'stack-archive')
     this.saveTasks()
   }
 }
@@ -326,12 +325,13 @@ exports.archiveTask = (taskId) => {
 // Delete a specific task
 exports.deleteTask = (taskId) => {
   if (taskId) {
-    $(`#del-button-${taskId}`).tooltip('hide')
-    $(`#${taskId}`).remove()
-    this.taskList.find(task => task.TaskId === taskId).Tags.forEach(tag => {
+    const id = parseInt(taskId)
+    $(`#del-button-${id}`).tooltip('hide')
+    $(`#${id}`).remove()
+    this.taskList.find(task => task.TaskId === id).Tags.forEach(tag => {
       this.tagList.splice(this.tagList.indexOf(tag), 1)
     })
-    this.taskList = this.taskList.filter(task => task.TaskId !== taskId)
+    this.taskList = this.taskList.filter(task => task.TaskId !== id)
     this.saveTasks()
     ipcRenderer.send('delete-task')
   }
@@ -340,8 +340,9 @@ exports.deleteTask = (taskId) => {
 // Archive a specific task
 exports.restoreTask = (taskId) => {
   if (taskId) {
-    $('#stack-do').find('.box').append($(`#${taskId}`))
-    this.updateTaskStack(taskId, 'stack-do')
+    const id = parseInt(taskId)
+    $('#stack-do').find('.box').append($(`#${id}`))
+    this.updateTaskStack(id, 'stack-do')
     this.saveTasks()
   }
 }

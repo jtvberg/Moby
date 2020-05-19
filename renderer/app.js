@@ -1329,11 +1329,11 @@ const collapseAll = () => {
 
 // Active issue setting event
 $(document).on('click', '.card', function (e) {
-  const id = parseInt($(e.currentTarget).prop('id'))
+  const id = $(e.currentTarget).prop('id')
   window.activeTask = id
   $('.card').removeClass('card-selected')
   if ($(`#${id}`).hasClass('card-highlighted')) {
-    knownList.push(getColor($(e.currentTarget)) + id)
+    knownList.push(getColor($(e.currentTarget)) + '' + id)
     localStorage.setItem('knownList', JSON.stringify([...new Set(knownList)]))
     highlightCards()
   }
@@ -1349,15 +1349,6 @@ $(document).on('click', '.card-edit-button', function (e) {
   taskType = 'edit'
   $('#task-modal').modal('show')
 })
-
-// Delete active task (send to archive; delete if in archive)
-// $(document).on('click', '.card-del-button', function (e) {
-//   if ($(e.currentTarget).closest('.stack').prop('id') === 'stack-archive') {
-//     tasks.deleteTask($(e.currentTarget).closest('.card').prop('id'))
-//   } else {
-//     tasks.archiveTask($(e.currentTarget).closest('.card').prop('id'))
-//   }
-// })
 
 // Double clikc on card opens edit modal
 $(document).on('dblclick', '.card', (e) => {

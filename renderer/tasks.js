@@ -53,7 +53,7 @@ exports.updateTaskAge = (taskId) => {
 
 // Update task detail helper function
 exports.updateTaskDetail = (taskId, taskDetail) => {
-  if (taskId && taskDetail) {
+  if (taskId) {
     this.taskList.find(task => task.TaskId === parseInt(taskId)).TaskDetail = taskDetail
     this.updateTimestamp(taskId)
   }
@@ -276,6 +276,10 @@ exports.addTask = (task) => {
   $(`#${task.TaskId}`).contextmenu((e) => {
     e.stopPropagation()
   })
+
+  $(`#d${task.TaskId}`).on('dblclick', (e) => {
+    e.stopPropagation()
+  })
   // In-line detail update event
   $(`#d${task.TaskId}`).on('input', () => {
     updTaskId = task.TaskId
@@ -284,7 +288,7 @@ exports.addTask = (task) => {
   $(`#d${task.TaskId}`).on('blur', () => {
     window.getSelection().removeAllRanges()
     if (updTaskId) {
-      this.updateTaskDetail(updTaskId, $(`#d${task.TaskId}`)[0].innerText)
+      this.updateTaskDetail(updTaskId, $(`#d${task.TaskId}`)[0].innerText || '')
       updTaskId = null
     }
   })

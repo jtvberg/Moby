@@ -456,6 +456,7 @@ body {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  cursor: default;
 }
 
 #tag-cloud-box {

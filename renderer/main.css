@@ -512,7 +512,7 @@ body {
 }
 
 .cloud-tags-toggled {
-  background-color: var(--primary);
+  background-color: var(--primary) !important;
   color: var(--secondary);
 }
 

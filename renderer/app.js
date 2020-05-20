@@ -782,27 +782,27 @@ function loadTagCloud () {
     const utl = [...new Set(tasks.tagList.concat(gitHub.tagList).concat(serviceNow.snTagList))]
     utl.sort()
     utl.forEach((tag) => {
-      let color = `#${asciiToHex(tag).substring(0, 6)}`
-      color = hexToHSL(color)
+      let color = `#${asciiToHex(tag)}`
+      color = hexToHSL(color, 60)
       $('#tag-cloud-box').append(`<div class="cloud-tags" style="background-color: ${color}">${tag}</div>`)
     })
   }
 }
 
 // Convert hex color to HSL
-function hexToHSL (H) {
+function hexToHSL (hex, saturation) {
   // Convert hex to RGB first
   let r = 0
   let g = 0
   let b = 0
-  if (H.length === 4) {
-    r = '0x' + H[1] + H[1]
-    g = '0x' + H[2] + H[2]
-    b = '0x' + H[3] + H[3]
-  } else if (H.length === 7) {
-    r = '0x' + H[1] + H[2]
-    g = '0x' + H[3] + H[4]
-    b = '0x' + H[5] + H[6]
+  if (hex.length === 4) {
+    r = '0x' + hex[1] + hex[1]
+    g = '0x' + hex[2] + hex[2]
+    b = '0x' + hex[3] + hex[3]
+  } else if (hex.length === 7) {
+    r = '0x' + hex[1] + hex[2]
+    g = '0x' + hex[3] + hex[4]
+    b = '0x' + hex[5] + hex[6]
   }
   // Then to HSL
   r /= 255
@@ -830,19 +830,21 @@ function hexToHSL (H) {
   if (h < 0) { h += 360 }
   l = (cmax + cmin) / 2
   s = delta === 0 ? 0 : delta / (1 - Math.abs(2 * l - 1))
-  s = 40 // +(s * 200).toFixed(1)
+  s = saturation || +(s * 200).toFixed(1)
   l = +(l * 100).toFixed(1)
   return 'hsl(' + h + ',' + s + '%,' + l + '%)'
 }
 
-// Convert string to Hex
+// Convert string to 6 character Hex
 function asciiToHex (str) {
-  const arr1 = []
-  for (let n = 0, l = str.length; n < l; n++) {
-    const hex = Number(str.charCodeAt(n)).toString(16)
-    arr1.push(hex)
+  const arr = []
+  for (let i = 0, t = 3; i < t; i++) {
+    for (let n = 0, l = str.length; n < l; n++) {
+      const hex = Number(str.charCodeAt(n)).toString(16)
+      arr.push(hex)
+    }
   }
-  return arr1.join('')
+  return arr.join('').substring(0, 6)
 }
 
 // Add new tag even from Task Modal

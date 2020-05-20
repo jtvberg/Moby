@@ -504,7 +504,7 @@ body {
 
 .cloud-tags:hover {
   background-color: var(--primary);
-  color: var(--secondary);
+  color: var(--highlight);
 }
 
 .cloud-tags:focus {

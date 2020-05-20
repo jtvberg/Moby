@@ -87,7 +87,9 @@ exports.addIssue = (issue) => {
     let tagHTML = '<div class="tags">Issue</div>'
     if (issue.issueOjb.labels && issue.issueOjb.labels.length > 0) {
       issue.issueOjb.labels.forEach((tag) => {
-        tagHTML += `<div class="tags">${tag.name}</div>`
+        let tagColor = `#${asciiToHex(tag.name)}`
+        tagColor = hexToHSL(tagColor, 60)
+        tagHTML += `<div class="tags" style="background-color: ${tagColor}">${tag.name}</div>`
         this.tagList.push(tag.name)
       })
     }
@@ -174,4 +176,62 @@ exports.submitRepo = (repoId) => {
   this.repoList.push(newRepo)
   this.saveRepos()
   this.getIssues()
+}
+
+// Convert hex color to HSL
+function hexToHSL (hex, saturation) {
+  // Convert hex to RGB first
+  let r = 0
+  let g = 0
+  let b = 0
+  if (hex.length === 4) {
+    r = '0x' + hex[1] + hex[1]
+    g = '0x' + hex[2] + hex[2]
+    b = '0x' + hex[3] + hex[3]
+  } else if (hex.length === 7) {
+    r = '0x' + hex[1] + hex[2]
+    g = '0x' + hex[3] + hex[4]
+    b = '0x' + hex[5] + hex[6]
+  }
+  // Then to HSL
+  r /= 255
+  g /= 255
+  b /= 255
+  const cmin = Math.min(r, g, b)
+  const cmax = Math.max(r, g, b)
+  const delta = cmax - cmin
+  let h = 0
+  let s = 0
+  let l = 0
+
+  if (delta === 0) {
+    h = 0
+  } else if (cmax === r) {
+    h = ((g - b) / delta) % 6
+  } else if (cmax === g) {
+    h = (b - r) / delta + 2
+  } else {
+    h = (r - g) / delta + 4
+  }
+
+  h = Math.round(h * 60)
+
+  if (h < 0) { h += 360 }
+  l = (cmax + cmin) / 2
+  s = delta === 0 ? 0 : delta / (1 - Math.abs(2 * l - 1))
+  s = saturation || +(s * 200).toFixed(1)
+  l = +(l * 100).toFixed(1)
+  return 'hsl(' + h + ',' + s + '%,' + l + '%)'
+}
+
+// Convert string to 6 character Hex
+function asciiToHex (str) {
+  const arr = []
+  for (let i = 0, t = 3; i < t; i++) {
+    for (let n = 0, l = str.length; n < l; n++) {
+      const hex = Number(str.charCodeAt(n)).toString(16)
+      arr.push(hex)
+    }
+  }
+  return arr.join('').substring(0, 6)
 }

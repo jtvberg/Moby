@@ -4,6 +4,7 @@ const settings = require('./settings')
 const tasks = require('./tasks')
 const gitHub = require('./gitHub')
 const serviceNow = require('./serviceNow')
+const rally = require('./rally')
 const fs = require('fs')
 require('bootstrap/js/dist/modal')
 require('./menu.js')
@@ -1222,7 +1223,8 @@ function enableRecur (enable) {
 // Task modal load event
 $('#task-modal').on('show.bs.modal', (e) => {
   const stack = $(e.relatedTarget).data('stack-id') ? $(e.relatedTarget).data('stack-id') : 'stack-do'
-  loadTaskModal(taskType, stack)
+  const type = $(e.relatedTarget).data('type-id') || taskType
+  loadTaskModal(type, stack)
 })
 
 // Focus title field on modal 'shown'

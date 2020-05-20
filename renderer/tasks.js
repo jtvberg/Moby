@@ -206,9 +206,9 @@ exports.addTask = (task) => {
       if (task.TaskStack !== 'stack-archive' && task.TaskStack !== 'stack-schedule') {
         this.tagList.push(tag)
       }
-      let color = `#${asciiToHex(tag)}`
-      color = hexToHSL(color, 60)
-      tagHTML += `<div class="tags" style="background-color: ${color}">${tag}</div>`
+      let tagColor = `#${asciiToHex(tag)}`
+      tagColor = hexToHSL(tagColor, 60)
+      tagHTML += `<div class="tags" style="background-color: ${tagColor}">${tag}</div>`
     })
   }
   // Add subtasks

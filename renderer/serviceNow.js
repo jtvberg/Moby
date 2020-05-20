@@ -153,7 +153,10 @@ exports.addSnIncident = (incident) => {
   const color = priority === 1 ? 2 : priority === 2 ? 4 : priority === 3 ? 3 : priority === 4 ? 1 : 5
   // color = issue.assigned ? 2 : color
   // Add issue tags
-  const tagHTML = id.substring(0, 3) === 'INC' ? '<div class="tags">Incident</div>' : '<div class="tags">Problem</div>'
+  const tag = id.substring(0, 3) === 'INC' ? 'Incident' : 'Problem'
+  let tagColor = `#${asciiToHex(tag)}`
+  tagColor = hexToHSL(tagColor, 60)
+  const tagHTML = `<div class="tags" style="background-color: ${tagColor}">${tag}</div>`
   // get incident URL
   const url = id.substring(0, 3) === 'INC' ? `https://optum.service-now.com/nav_to.do?uri=incident.do?sys_id=${incident.sys_id}` : `https://optum.service-now.com/nav_to.do?uri=problem.do?sys_id=${incident.sys_id}`
   // Color glyphs
@@ -214,4 +217,62 @@ exports.addSnIncident = (incident) => {
   $(function () {
     $('[data-toggle="tooltip"]').tooltip({ delay: { show: 1500, hide: 100 } })
   })
+}
+
+// Convert hex color to HSL
+function hexToHSL (hex, saturation) {
+  // Convert hex to RGB first
+  let r = 0
+  let g = 0
+  let b = 0
+  if (hex.length === 4) {
+    r = '0x' + hex[1] + hex[1]
+    g = '0x' + hex[2] + hex[2]
+    b = '0x' + hex[3] + hex[3]
+  } else if (hex.length === 7) {
+    r = '0x' + hex[1] + hex[2]
+    g = '0x' + hex[3] + hex[4]
+    b = '0x' + hex[5] + hex[6]
+  }
+  // Then to HSL
+  r /= 255
+  g /= 255
+  b /= 255
+  const cmin = Math.min(r, g, b)
+  const cmax = Math.max(r, g, b)
+  const delta = cmax - cmin
+  let h = 0
+  let s = 0
+  let l = 0
+
+  if (delta === 0) {
+    h = 0
+  } else if (cmax === r) {
+    h = ((g - b) / delta) % 6
+  } else if (cmax === g) {
+    h = (b - r) / delta + 2
+  } else {
+    h = (r - g) / delta + 4
+  }
+
+  h = Math.round(h * 60)
+
+  if (h < 0) { h += 360 }
+  l = (cmax + cmin) / 2
+  s = delta === 0 ? 0 : delta / (1 - Math.abs(2 * l - 1))
+  s = saturation || +(s * 200).toFixed(1)
+  l = +(l * 100).toFixed(1)
+  return 'hsl(' + h + ',' + s + '%,' + l + '%)'
+}
+
+// Convert string to 6 character Hex
+function asciiToHex (str) {
+  const arr = []
+  for (let i = 0, t = 3; i < t; i++) {
+    for (let n = 0, l = str.length; n < l; n++) {
+      const hex = Number(str.charCodeAt(n)).toString(16)
+      arr.push(hex)
+    }
+  }
+  return arr.join('').substring(0, 6)
 }

@@ -2,7 +2,7 @@
 const { ipcRenderer } = require('electron')
 const rally = require('rally')
 const creds = require('./creds.js')
-// var queryUtils = rally.util.query
+// const queryUtils = rally.util.query
 
 // Export project list
 exports.rallyProjectList = JSON.parse(localStorage.getItem('rallyProjectList')) || []
@@ -54,3 +54,40 @@ exports.getRallyProjects = (domain, token) => {
 exports.saveRallyProjects = () => {
   localStorage.setItem('rallyProjectList', JSON.stringify(this.rallyProjectList))
 }
+
+// Get all items within query parameters
+exports.getRallyItems = (domain, token) => {
+  const restApi = rally({
+    apiKey: token,
+    server: domain,
+    requestOptions: {
+      headers: {
+        'X-RallyIntegrationName': 'Moby',
+        'X-RallyIntegrationVendor': 'jtvberg',
+        'X-RallyIntegrationVersion': '1.0'
+      }
+    }
+  })
+
+  restApi.query({
+    type: 'defect',
+    start: 1,
+    pageSize: 200,
+    limit: 200,
+    fetch: ['Project', 'LastUpdateDate', 'FormattedId', 'SubmittedBy', 'Owner']
+  }, function (error, result) {
+    if (error) {
+      console.log(error)
+      // alert('Unable to connect to Rally')
+    } else {
+      console.log(result.Results)
+      // projectList.length = 0
+      // result.Results.forEach(element => {
+      //   projectList.push({ ProjectName: element.Project.Name, ProjectId: element.Project.ObjectID, ProjectUrl: element.Project._ref })
+      // })
+      // ipcRenderer.send('get-projects')
+    }
+  })
+}
+
+this.getRallyItems(creds.rallyDomain, creds.rallyToken)

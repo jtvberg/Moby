@@ -47,6 +47,8 @@ ipcRenderer.on('send-incidents', (e, data) => {
 // IPC event when sn groups returned
 ipcRenderer.on('send-projects', () => {
   rally.updateProjectList()
+  rally.saveRallyProjects()
+  loadRallyProjects()
 })
 
 // IPC event to get task data from tray window
@@ -272,6 +274,7 @@ function loadSettingsModal () {
   toggleCheck($('#settings-serv-toggle'), settings.mobySettings.ServToggle)
   toggleCheck($('#settings-github-toggle'), settings.mobySettings.GhToggle)
   toggleCheck($('#settings-servicenow-toggle'), settings.mobySettings.SnToggle)
+  toggleCheck($('#settings-rally-toggle'), settings.mobySettings.RallyToggle)
   $('input[name=radio-archive]').prop('checked', false).parent('.btn').removeClass('active')
   $('input[name=radio-prune]').prop('checked', false).parent('.btn').removeClass('active')
   $(`input[name=radio-archive][value=${settings.mobySettings.ArchiveDone}]`).prop('checked', true).parent('.btn').addClass('active')
@@ -291,6 +294,9 @@ function loadSettingsModal () {
   $('input[name=radio-priority]').prop('checked', false).parent('.btn').removeClass('active')
   $(`input[name=radio-priority][value=${settings.mobySettings.SnPriority}]`).prop('checked', true).parent('.btn').addClass('active')
   loadSnGroups()
+  // Load Rally auth / projects
+  $('#settings-rally-domain').val(settings.mobySettings.RallyDomain)
+  $('#settings-rally-token').val(settings.mobySettings.RallyToken)
   loadRallyProjects()
   $('#settings-modal').modal('show')
 }
@@ -350,6 +356,7 @@ function saveSettings () {
     })
   }
   serviceNow.saveSnGroups()
+  rally.saveRallyProjects()
 
   if (groupChange || repoChange) {
     getStacks()
@@ -461,6 +468,13 @@ $('#settings-github-toggle').click(() => {
   repoChange = true
 })
 
+// Refresh available Rally projects
+$('#settings-rallyprojects-refresh-button').click(() => {
+  $('#rally-project-box').children().remove()
+  $('#rally-project-box').append('<div><span">Getting Projects </span><div class="spinner-grow spinner-grow-sm" role="status"></div></div>')
+  rally.getRallyProjects(settings.mobySettings.RallyDomain, settings.mobySettings.RallyToken)
+})
+
 // Track for changes in group entries selection on click of checks or labels (through check-host)
 $(document).on('click', '.servicenow-group-check', (e) => {
   groupChange = true
@@ -546,8 +560,9 @@ function getStacks () {
   if (settings.mobySettings.SnToggle) {
     serviceNow.getSnIncidents(settings.mobySettings.SnDomain, settings.mobySettings.SnToken, settings.mobySettings.SnPriority)
   }
-  // TODO: Setting
-  rally.getRallyProjects()
+  if (settings.mobySettings.RallyToggle) {
+    // TODO: get tasks
+  }
   loadTagCloud()
   applySettings()
 }

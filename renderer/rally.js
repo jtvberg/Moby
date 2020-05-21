@@ -2,17 +2,6 @@
 const { ipcRenderer } = require('electron')
 const rally = require('rally')
 const creds = require('./creds.js')
-const restApi = rally({
-  apiKey: creds.rallyToken,
-  server: 'https://rally1.rallydev.com',
-  requestOptions: {
-    headers: {
-      'X-RallyIntegrationName': 'Moby',
-      'X-RallyIntegrationVendor': 'jtvberg',
-      'X-RallyIntegrationVersion': '1.0'
-    }
-  }
-})
 // var queryUtils = rally.util.query
 
 // Export project list
@@ -28,7 +17,19 @@ exports.updateProjectList = () => {
 }
 
 // Get all projects with permissions based on token
-exports.getRallyProjects = () => {
+exports.getRallyProjects = (domain, token) => {
+  const restApi = rally({
+    apiKey: token,
+    server: domain,
+    requestOptions: {
+      headers: {
+        'X-RallyIntegrationName': 'Moby',
+        'X-RallyIntegrationVendor': 'jtvberg',
+        'X-RallyIntegrationVersion': '1.0'
+      }
+    }
+  })
+
   restApi.query({
     type: 'projectpermission',
     start: 1,

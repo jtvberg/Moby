@@ -23,7 +23,10 @@ exports.defaultSettings = (fill) => {
       SnToggle: this.mobySettings.SnToggle || false,
       SnDomain: this.mobySettings.SnDomain || '',
       SnToken: this.mobySettings.SnToken || '',
-      SnPriority: this.mobySettings.SnPriority || 3
+      SnPriority: this.mobySettings.SnPriority || 3,
+      RallyToggle: this.mobySettings.RallyToggle || false,
+      RallyDomain: this.mobySettings.RallyDomain || '',
+      RallyToken: this.mobySettings.RallyToken || ''
     }
   } else {
     settings = {
@@ -39,7 +42,10 @@ exports.defaultSettings = (fill) => {
       SnToggle: this.mobySettings.SnToggle || false,
       SnDomain: this.mobySettings.SnDomain || '',
       SnToken: this.mobySettings.SnToken || '',
-      SnPriority: this.mobySettings.SnPriority || 3
+      SnPriority: this.mobySettings.SnPriority || 3,
+      RallyToggle: this.mobySettings.RallyToggle || false,
+      RallyDomain: this.mobySettings.RallyDomain || '',
+      RallyToken: this.mobySettings.RallyToken || ''
     }
   }
   this.mobySettings = settings
@@ -64,7 +70,10 @@ exports.saveSettings = (themeId) => {
       SnToggle: $('#settings-servicenow-toggle').hasClass('check-checked'),
       SnDomain: $('#settings-servicenow-domain').val().trim(),
       SnToken: $('#settings-servicenow-token').val().trim(),
-      SnPriority: parseInt($('#choose-priority input:radio:checked').val())
+      SnPriority: parseInt($('#choose-priority input:radio:checked').val()),
+      RallyToggle: $('#settings-rally-toggle').hasClass('check-checked'),
+      RallyDomain: $('#settings-rally-domain').val().trim(),
+      RallyToken: $('#settings-rally-token').val().trim()
     }
     this.mobySettings = settings
   }

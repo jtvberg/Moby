@@ -4,7 +4,7 @@ const settings = require('./settings')
 const tasks = require('./tasks')
 const gitHub = require('./gitHub')
 const serviceNow = require('./serviceNow')
-// const rally = require('./rally')
+const rally = require('./rally')
 const fs = require('fs')
 require('bootstrap/js/dist/modal')
 require('./menu.js')
@@ -39,9 +39,14 @@ ipcRenderer.on('send-groups', () => {
   loadSnGroups()
 })
 
-// IPC event when sn groups returned
+// IPC event when sn incidents returned
 ipcRenderer.on('send-incidents', (e, data) => {
   loadSnIncidents(data)
+})
+
+// IPC event when sn groups returned
+ipcRenderer.on('send-projects', () => {
+  rally.updateProjectList()
 })
 
 // IPC event to get task data from tray window
@@ -286,6 +291,7 @@ function loadSettingsModal () {
   $('input[name=radio-priority]').prop('checked', false).parent('.btn').removeClass('active')
   $(`input[name=radio-priority][value=${settings.mobySettings.SnPriority}]`).prop('checked', true).parent('.btn').addClass('active')
   loadSnGroups()
+  loadRallyProjects()
   $('#settings-modal').modal('show')
 }
 
@@ -303,6 +309,23 @@ function loadSnGroups () {
     })
   } else {
     $('#servicenow-group-box').append('<div>No Groups Found</div>')
+  }
+}
+
+// Load Rally projects in settings modal
+function loadRallyProjects () {
+  $('#rally-project-box').children().remove()
+  if (rally.rallyProjectList && rally.rallyProjectList.length > 0) {
+    rally.rallyProjectList.forEach(project => {
+      const checked = project.ProjectActive ? 'fa-check-square check-checked' : 'fa-square check-unchecked'
+      const rallyProject = `<div class="check-modal-host">
+                        <div class="fas ${checked} check-checkbox servicenow-group-check" data-project-id="${project.ProjectId}"></div>
+                        <label class="check-label">${project.ProjectName}</label>
+                      </div>`
+      $('#rally-project-box').append(rallyProject)
+    })
+  } else {
+    $('#rally-project-box').append('<div>No Projects Found</div>')
   }
 }
 
@@ -523,6 +546,8 @@ function getStacks () {
   if (settings.mobySettings.SnToggle) {
     serviceNow.getSnIncidents(settings.mobySettings.SnDomain, settings.mobySettings.SnToken, settings.mobySettings.SnPriority)
   }
+  // TODO: Setting
+  rally.getRallyProjects()
   loadTagCloud()
   applySettings()
 }

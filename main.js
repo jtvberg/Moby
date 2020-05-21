@@ -170,3 +170,8 @@ ipcMain.on('get-groups', () => {
 ipcMain.on('get-incidents', (e, data) => {
   win.webContents.send('send-incidents', data)
 })
+
+// IPC channel for getting Rally Projects
+ipcMain.on('get-projects', () => {
+  win.webContents.send('send-projects')
+})

@@ -1,4 +1,5 @@
 // Modules and variable definition
+const { ipcRenderer } = require('electron')
 const rally = require('rally')
 const creds = require('./creds.js')
 const restApi = rally({
@@ -14,26 +15,41 @@ const restApi = rally({
 })
 // var queryUtils = rally.util.query
 
+// Export project list
+exports.rallyProjectList = JSON.parse(localStorage.getItem('rallyProjectList')) || []
+
+// Local project list
+const projectList = []
+
+// Update export list with local
+exports.updateProjectList = () => {
+  projectList.sort((a, b) => (a.ProjectName > b.ProjectName) ? 1 : -1)
+  this.rallyProjectList = projectList
+}
+
+// Get all projects with permissions based on token
 exports.getRallyProjects = () => {
-  const projectList = []
   restApi.query({
     type: 'projectpermission',
     start: 1,
     pageSize: 200,
     limit: 200,
-    fetch: ['Project']
+    fetch: ['Project', 'Name', 'ObjectID']
   }, function (error, result) {
     if (error) {
       console.log(error)
+      alert('Unable to connect to Rally')
     } else {
-      console.log(result.Results)
+      projectList.length = 0
       result.Results.forEach(element => {
-        projectList.push(element.Project._refObjectName)
+        projectList.push({ ProjectName: element.Project.Name, ProjectId: element.Project.ObjectID, ProjectUrl: element.Project._ref })
       })
-      projectList.sort((a, b) => (a > b) ? 1 : -1)
-      console.log(projectList)
+      ipcRenderer.send('get-projects')
     }
   })
 }
 
-// this.getRallyProjects()
+// Save groups to local storage
+exports.saveRallyProjects = () => {
+  localStorage.setItem('rallyProjectList', JSON.stringify(this.rallyProjectList))
+}

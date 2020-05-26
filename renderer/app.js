@@ -85,8 +85,8 @@ highlightCards()
 
 // Set intervals for data refresh
 window.setInterval(addScheduledTasks, 3600000)
-window.setInterval(archiveDoneTasks(settings.mobySettings.ArchiveDone || 7), 3600000)
-window.setInterval(pruneArchive(settings.mobySettings.ArchivePrune || 0), 3600000)
+window.setInterval(archiveDoneTasks, 3600000, settings.mobySettings.ArchiveDone || 7)
+window.setInterval(pruneArchive, 3600000, settings.mobySettings.ArchivePrune || 0)
 window.setInterval(tasks.updateTaskAge, 3600000)
 window.setInterval(refreshAll, 600000)
 

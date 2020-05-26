@@ -4,6 +4,12 @@ const ServiceNow = require('servicenow-rest-api')
 const os = require('os')
 const username = os.userInfo().username
 
+// Temp group array
+const groups = []
+
+// Temp incident array
+const incidents = []
+
 // Import ServiceNow groups from local storage
 exports.snGroupsList = JSON.parse(localStorage.getItem('snGroupList')) || []
 
@@ -13,18 +19,13 @@ exports.snIncidentList = []
 // Track tag list
 exports.snTagList = []
 
-// Temp group array
-const groups = []
-
-// Temp incident array
-const incidents = []
-
 // Update local list of available ServiceNow groups from temp array
 exports.updateSnGroupList = () => {
   groups.forEach(group => {
-    group.GroupActive = this.snGroupsList.find(g => g.GroupId === group.GroupId).GroupActive || group.GroupActive
+    group.GroupActive = this.snGroupsList.find(g => g.GroupId === group.GroupId) ? this.snGroupsList.find(g => g.GroupId === group.GroupId).GroupActive : group.GroupActive
   })
   this.snGroupsList = groups.sort((a, b) => (a.GroupName > b.GroupName) ? 1 : -1)
+  this.saveSnGroups()
 }
 
 // Update local list of incidents from temp array
@@ -59,6 +60,7 @@ exports.getSnGroups = (domain, token) => {
   sn.Authenticate()
   sn.getTableData(fields, filters, type, function (res) {
     try {
+      groups.length = 0
       res.forEach(r => {
         const url = new URL(r.group.link)
         const newGroup = {
@@ -78,6 +80,7 @@ exports.getSnGroups = (domain, token) => {
 // Save groups to local storage
 exports.saveSnGroups = () => {
   localStorage.setItem('snGroupList', JSON.stringify(this.snGroupsList))
+  this.snGroupsList = JSON.parse(localStorage.getItem('snGroupList'))
 }
 
 // Query for incidents within active groups

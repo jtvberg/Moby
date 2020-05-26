@@ -19,6 +19,7 @@ let match = ''
 let desktopPath = ''
 let repoChange = false
 let groupChange = false
+let projectChange = false
 // #endregion
 
 // #region IPC handlers
@@ -35,7 +36,6 @@ ipcRenderer.on('send-issues', (e, data) => {
 // IPC event when sn groups returned
 ipcRenderer.on('send-groups', () => {
   serviceNow.updateSnGroupList()
-  serviceNow.saveSnGroups()
   loadSnGroups()
 })
 
@@ -47,7 +47,6 @@ ipcRenderer.on('send-incidents', (e, data) => {
 // IPC event when sn groups returned
 ipcRenderer.on('send-projects', () => {
   rally.updateProjectList()
-  rally.saveRallyProjects()
   loadRallyProjects()
 })
 
@@ -325,7 +324,7 @@ function loadRallyProjects () {
     rally.rallyProjectList.forEach(project => {
       const checked = project.ProjectActive ? 'fa-check-square check-checked' : 'fa-square check-unchecked'
       const rallyProject = `<div class="check-modal-host">
-                        <div class="fas ${checked} check-checkbox servicenow-group-check" data-project-id="${project.ProjectId}"></div>
+                        <div class="fas ${checked} check-checkbox rally-group-check" data-rallyproject-id="${project.ProjectId}"></div>
                         <label class="check-label">${project.ProjectName}</label>
                       </div>`
       $('#rally-project-box').append(rallyProject)
@@ -356,6 +355,13 @@ function saveSettings () {
     })
   }
   serviceNow.saveSnGroups()
+
+  // Update Rally projects
+  if (projectChange) {
+    $('.rally-group-check').each(function () {
+      rally.updateRallyProjectActive($(this).data('rallyproject-id'), $(this).hasClass('check-checked'))
+    })
+  }
   rally.saveRallyProjects()
 
   if (groupChange || repoChange) {
@@ -468,6 +474,11 @@ $('#settings-github-toggle').click(() => {
   repoChange = true
 })
 
+// Track change to repo show status-
+$('#settings-rally-toggle').click(() => {
+  projectChange = true
+})
+
 // Refresh available Rally projects
 $('#settings-rallyprojects-refresh-button').click(() => {
   $('#rally-project-box').children().remove()
@@ -503,6 +514,11 @@ $(document).on('click', '.repo-menu-item-clone', (e) => {
   newRepo.RepoId = Date.now()
   $('#settings-github-repos').append(buildRepoItem(newRepo))
   $('.modal-body').animate({ scrollTop: $(document).height() }, 'fast')
+})
+
+// Track for changes in group entries selection on click of checks or labels (through check-host)
+$(document).on('click', '.rally-group-check', (e) => {
+  projectChange = true
 })
 // #endregion
 

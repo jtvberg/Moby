@@ -4,6 +4,12 @@ const ServiceNow = require('servicenow-rest-api')
 const os = require('os')
 const username = os.userInfo().username
 
+// Temp group array
+const groups = []
+
+// Temp incident array
+const incidents = []
+
 // Import ServiceNow groups from local storage
 exports.snGroupsList = JSON.parse(localStorage.getItem('snGroupList')) || []
 
@@ -13,18 +19,13 @@ exports.snIncidentList = []
 // Track tag list
 exports.snTagList = []
 
-// Temp group array
-const groups = []
-
-// Temp incident array
-const incidents = []
-
 // Update local list of available ServiceNow groups from temp array
 exports.updateSnGroupList = () => {
   groups.forEach(group => {
-    group.GroupActive = this.snGroupsList.find(g => g.GroupId === group.GroupId).GroupActive || group.GroupActive
+    group.GroupActive = this.snGroupsList.find(g => g.GroupId === group.GroupId) ? this.snGroupsList.find(g => g.GroupId === group.GroupId).GroupActive : group.GroupActive
   })
   this.snGroupsList = groups.sort((a, b) => (a.GroupName > b.GroupName) ? 1 : -1)
+  this.saveSnGroups()
 }
 
 // Update local list of incidents from temp array
@@ -59,6 +60,7 @@ exports.getSnGroups = (domain, token) => {
   sn.Authenticate()
   sn.getTableData(fields, filters, type, function (res) {
     try {
+      groups.length = 0
       res.forEach(r => {
         const url = new URL(r.group.link)
         const newGroup = {
@@ -78,6 +80,7 @@ exports.getSnGroups = (domain, token) => {
 // Save groups to local storage
 exports.saveSnGroups = () => {
   localStorage.setItem('snGroupList', JSON.stringify(this.snGroupsList))
+  this.snGroupsList = JSON.parse(localStorage.getItem('snGroupList'))
 }
 
 // Query for incidents within active groups
@@ -131,6 +134,8 @@ exports.getSnIncidents = (domain, token, priority) => {
       } catch (err) {
         if (isError) {
           alert('Unable to connect to ServiceNow')
+          $('#sn-stack').find('.box').children().remove()
+          $('#sn-stack').find('.box').append('<div class="no-results getting-results"><span>Unable to Connect</span></div></div>')
           isError = false
         }
         isError = true
@@ -158,6 +163,7 @@ exports.addSnIncident = (incident) => {
   tagColor = hexToHSL(tagColor, 60)
   const tagHTML = `<div class="tags" style="background-color: ${tagColor}">${tag}</div>`
   // get incident URL
+  // TODO: hardcoded url!
   const url = id.substring(0, 3) === 'INC' ? `https://optum.service-now.com/nav_to.do?uri=incident.do?sys_id=${incident.sys_id}` : `https://optum.service-now.com/nav_to.do?uri=problem.do?sys_id=${incident.sys_id}`
   // Color glyphs
   let colorGlyph = ''

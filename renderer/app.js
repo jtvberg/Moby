@@ -4,7 +4,7 @@ const settings = require('./settings')
 const tasks = require('./tasks')
 const gitHub = require('./gitHub')
 const serviceNow = require('./serviceNow')
-// const rally = require('./rally')
+const rally = require('./rally')
 const fs = require('fs')
 require('bootstrap/js/dist/modal')
 require('./menu.js')
@@ -19,6 +19,7 @@ let match = ''
 let desktopPath = ''
 let repoChange = false
 let groupChange = false
+let projectChange = false
 // #endregion
 
 // #region IPC handlers
@@ -32,16 +33,26 @@ ipcRenderer.on('send-issues', (e, data) => {
   loadIssues(data)
 })
 
-// IPC event when sn groups returned
+// IPC event when ServiceNow groups returned
 ipcRenderer.on('send-groups', () => {
   serviceNow.updateSnGroupList()
-  serviceNow.saveSnGroups()
   loadSnGroups()
 })
 
-// IPC event when sn groups returned
+// IPC event when ServiceNow incidents returned
 ipcRenderer.on('send-incidents', (e, data) => {
   loadSnIncidents(data)
+})
+
+// IPC event when Rally projects returned
+ipcRenderer.on('send-projects', () => {
+  rally.updateProjectList()
+  loadRallyProjects()
+})
+
+// IPC event when Rally items returned
+ipcRenderer.on('send-items', () => {
+  loadRallyItems()
 })
 
 // IPC event to get task data from tray window
@@ -78,8 +89,8 @@ highlightCards()
 
 // Set intervals for data refresh
 window.setInterval(addScheduledTasks, 3600000)
-window.setInterval(archiveDoneTasks(settings.mobySettings.ArchiveDone || 7), 3600000)
-window.setInterval(pruneArchive(settings.mobySettings.ArchivePrune || 0), 3600000)
+window.setInterval(archiveDoneTasks, 3600000, settings.mobySettings.ArchiveDone || 7)
+window.setInterval(pruneArchive, 3600000, settings.mobySettings.ArchivePrune || 0)
 window.setInterval(tasks.updateTaskAge, 3600000)
 window.setInterval(refreshAll, 600000)
 
@@ -164,6 +175,19 @@ function loadSnIncidents (type) {
   applySettings()
   loadTagCloud()
   highlightCards()
+}
+
+// Load ServiceNow incidents
+function loadRallyItems () {
+  rally.updateItemList()
+  $('#rally-stack').find('.box').children().remove()
+  if (rally.rallyItemList.length > 0) {
+    rally.rallyTagList.push('Defect')
+    rally.rallyItemList.forEach(item => { rally.addRallyItem(item) })
+    applySettings()
+    loadTagCloud()
+    highlightCards()
+  }
 }
 // #endregion
 
@@ -267,6 +291,7 @@ function loadSettingsModal () {
   toggleCheck($('#settings-serv-toggle'), settings.mobySettings.ServToggle)
   toggleCheck($('#settings-github-toggle'), settings.mobySettings.GhToggle)
   toggleCheck($('#settings-servicenow-toggle'), settings.mobySettings.SnToggle)
+  toggleCheck($('#settings-rally-toggle'), settings.mobySettings.RallyToggle)
   $('input[name=radio-archive]').prop('checked', false).parent('.btn').removeClass('active')
   $('input[name=radio-prune]').prop('checked', false).parent('.btn').removeClass('active')
   $(`input[name=radio-archive][value=${settings.mobySettings.ArchiveDone}]`).prop('checked', true).parent('.btn').addClass('active')
@@ -286,6 +311,10 @@ function loadSettingsModal () {
   $('input[name=radio-priority]').prop('checked', false).parent('.btn').removeClass('active')
   $(`input[name=radio-priority][value=${settings.mobySettings.SnPriority}]`).prop('checked', true).parent('.btn').addClass('active')
   loadSnGroups()
+  // Load Rally auth / projects
+  $('#settings-rally-domain').val(settings.mobySettings.RallyDomain)
+  $('#settings-rally-token').val(settings.mobySettings.RallyToken)
+  loadRallyProjects()
   $('#settings-modal').modal('show')
 }
 
@@ -303,6 +332,23 @@ function loadSnGroups () {
     })
   } else {
     $('#servicenow-group-box').append('<div>No Groups Found</div>')
+  }
+}
+
+// Load Rally projects in settings modal
+function loadRallyProjects () {
+  $('#rally-project-box').children().remove()
+  if (rally.rallyProjectList && rally.rallyProjectList.length > 0) {
+    rally.rallyProjectList.forEach(project => {
+      const checked = project.ProjectActive ? 'fa-check-square check-checked' : 'fa-square check-unchecked'
+      const rallyProject = `<div class="check-modal-host">
+                        <div class="fas ${checked} check-checkbox rally-group-check" data-rallyproject-id="${project.ProjectId}"></div>
+                        <label class="check-label">${project.ProjectName}</label>
+                      </div>`
+      $('#rally-project-box').append(rallyProject)
+    })
+  } else {
+    $('#rally-project-box').append('<div>No Projects Found</div>')
   }
 }
 
@@ -328,7 +374,15 @@ function saveSettings () {
   }
   serviceNow.saveSnGroups()
 
-  if (groupChange || repoChange) {
+  // Update Rally projects
+  if (projectChange) {
+    $('.rally-group-check').each(function () {
+      rally.updateRallyProjectActive($(this).data('rallyproject-id'), $(this).hasClass('check-checked'))
+    })
+  }
+  rally.saveRallyProjects()
+
+  if (groupChange || repoChange || projectChange) {
     getStacks()
   }
 }
@@ -343,6 +397,7 @@ const buildRepoItem = (repo) => {
   const repoActive = repo ? repo.Active : true
   const repoActiveCheck = repoActive ? 'fa-check-square check-checked' : 'fa-square check-unchecked'
   const repoAssigned = repo && repo.AssignToMe === true ? 'fa-check-square check-checked' : 'fa-square check-unchecked'
+  // TODO: hardcoded url!
   const repoItem = `<div class="github-repo" data-repo-id="${repoId}">
                       <div class="repo-menu">
                         <div class="repo-menu-item-delete fas fa-minus-square" data-toggle="tooltip" title="Delete Repo"></div>
@@ -438,6 +493,18 @@ $('#settings-github-toggle').click(() => {
   repoChange = true
 })
 
+// Track change to repo show status-
+$('#settings-rally-toggle').click(() => {
+  projectChange = true
+})
+
+// Refresh available Rally projects
+$('#settings-rallyprojects-refresh-button').click(() => {
+  $('#rally-project-box').children().remove()
+  $('#rally-project-box').append('<div><span">Getting Projects </span><div class="spinner-grow spinner-grow-sm" role="status"></div></div>')
+  rally.getRallyProjects(settings.mobySettings.RallyDomain, settings.mobySettings.RallyToken)
+})
+
 // Track for changes in group entries selection on click of checks or labels (through check-host)
 $(document).on('click', '.servicenow-group-check', (e) => {
   groupChange = true
@@ -466,6 +533,11 @@ $(document).on('click', '.repo-menu-item-clone', (e) => {
   newRepo.RepoId = Date.now()
   $('#settings-github-repos').append(buildRepoItem(newRepo))
   $('.modal-body').animate({ scrollTop: $(document).height() }, 'fast')
+})
+
+// Track for changes in group entries selection on click of checks or labels (through check-host)
+$(document).on('click', '.rally-group-check', (e) => {
+  projectChange = true
 })
 // #endregion
 
@@ -498,9 +570,16 @@ function getStacks () {
       }
     })
   }
-  // ServiceNow stacks
+  // ServiceNow stack
   if (settings.mobySettings.SnToggle && serviceNow.snGroupsList && serviceNow.snGroupsList.filter(group => group.GroupActive === true).length > 0) {
+    // TODO: hardcoded url!
     buildStack('sn-stack', 'ServiceNow', index, 'https://optum.service-now.com/')
+    showBtn = true
+    index++
+  }
+  // Rally Stack
+  if (settings.mobySettings.RallyToggle && rally.rallyProjectList.length > 0) {
+    buildStack('rally-stack', 'Rally', index, settings.mobySettings.RallyDomain)
     showBtn = true
     index++
   }
@@ -522,6 +601,9 @@ function getStacks () {
   }
   if (settings.mobySettings.SnToggle) {
     serviceNow.getSnIncidents(settings.mobySettings.SnDomain, settings.mobySettings.SnToken, settings.mobySettings.SnPriority)
+  }
+  if (settings.mobySettings.RallyToggle) {
+    rally.getRallyItems(settings.mobySettings.RallyDomain, settings.mobySettings.RallyToken)
   }
   loadTagCloud()
   applySettings()
@@ -572,6 +654,7 @@ function buildStack (id, title, index, url) {
   let refreshDataSource = ''
   let itemType = 'Task'
   let addStackBtn = ''
+  let hidden = ''
   if (isDefault && id !== 'stack-do') {
     addStackBtn = '<div class="stack-add fas fa-caret-square-left" data-toggle="tooltip" title="Insert Stack" onclick="addNewStackClick(event)"></div>'
   } else if (id.substring(0, 3) === 'git') {
@@ -586,6 +669,13 @@ function buildStack (id, title, index, url) {
     refreshDataSource = 'data-source="sn"'
     itemType = 'Incident'
     addStackBtn = `<div class="sn-stack-icon stack-icon fas fa-exclamation-triangle" data-toggle="tooltip" title="ServiceNow Link" data-url="${url}"></div>`
+  } else if (id.substring(0, 5) === 'rally') {
+    hidden = 'hidden '
+    addTaskBtn = '"'
+    refreshBtn = ''
+    refreshDataSource = 'data-source="rally"'
+    itemType = 'Item'
+    addStackBtn = `<div class="rally-stack-icon stack-icon fas fa-tasks" data-toggle="tooltip" title="Rally Link" data-url="${url}"></div>`
   }
   const removeStackBtn = id === 'stack-do' || id === 'stack-done' || !isDefault ? '' : `<div class="dropdown-menu dropdown-menu-sm ddcm" id="context-menu-${id}">
                                                     <a class="dropdown-item" href="#remove-modal" data-toggle="modal">Remove Stack</a>
@@ -597,7 +687,7 @@ function buildStack (id, title, index, url) {
                       <div class="box" id="${id}-box"></div>
                       <div class="stack-footer">
                         <span class="footer stack-updated" data-toggle="tooltip" title="Last Update: ${updatedTs}">${updated}</span>
-                        <span data-toggle="tooltip" title="Add ${itemType}" style="float: right;">
+                        <span ${hidden}data-toggle="tooltip" title="Add ${itemType}" style="float: right;">
                           <div class="footer fas fa-plus fa-2x${addTaskBtn}></div>
                         </span>
                         <span ${refreshBtn} data-toggle="tooltip" title="Refresh from Source" style="float: right;">
@@ -747,6 +837,8 @@ $(document).on('click', '.refresh-data', (e) => {
     gitHub.getIssues($(e.currentTarget).closest('.serv-stack').prop('id'))
   } else if ($(e.currentTarget).data('source') === 'sn') {
     serviceNow.getSnIncidents(settings.mobySettings.SnDomain, settings.mobySettings.SnToken, settings.mobySettings.SnPriority)
+  } else if ($(e.currentTarget).data('source') === 'rally') {
+    rally.getRallyItems(settings.mobySettings.RallyDomain, settings.mobySettings.RallyToken)
   } else {
     return
   }
@@ -779,8 +871,8 @@ $(document).on('blur', '.stack-header', function () {
 // Load tag list UI
 function loadTagCloud () {
   $('#tag-cloud-box').children('.cloud-tags').remove()
-  if (tasks.tagList.length > 0 || gitHub.tagList.length > 0) {
-    const utl = [...new Set(tasks.tagList.concat(gitHub.tagList).concat(serviceNow.snTagList))]
+  if (tasks.tagList.length + gitHub.tagList.length + serviceNow.snTagList.length + rally.rallyTagList.length > 0) {
+    const utl = [...new Set(tasks.tagList.concat(gitHub.tagList).concat(serviceNow.snTagList).concat(rally.rallyTagList))]
     utl.sort()
     utl.forEach((tag) => {
       let color = `#${asciiToHex(tag)}`

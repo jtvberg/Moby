@@ -149,6 +149,7 @@ ipcMain.on('win-min', () => {
 // IPC channel to set unread badge
 ipcMain.on('badge-count', (e, data) => {
   app.setBadgeCount(data)
+  // TODO: depricated function use badgeCount
 })
 
 // IPC channel to update tags on task delete
@@ -174,4 +175,9 @@ ipcMain.on('get-incidents', (e, data) => {
 // IPC channel for getting Rally Projects
 ipcMain.on('get-projects', () => {
   win.webContents.send('send-projects')
+})
+
+// IPC channel for getting Rally Items
+ipcMain.on('get-items', () => {
+  win.webContents.send('send-items')
 })

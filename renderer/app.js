@@ -33,21 +33,26 @@ ipcRenderer.on('send-issues', (e, data) => {
   loadIssues(data)
 })
 
-// IPC event when sn groups returned
+// IPC event when ServiceNow groups returned
 ipcRenderer.on('send-groups', () => {
   serviceNow.updateSnGroupList()
   loadSnGroups()
 })
 
-// IPC event when sn incidents returned
+// IPC event when ServiceNow incidents returned
 ipcRenderer.on('send-incidents', (e, data) => {
   loadSnIncidents(data)
 })
 
-// IPC event when sn groups returned
+// IPC event when Rally projects returned
 ipcRenderer.on('send-projects', () => {
   rally.updateProjectList()
   loadRallyProjects()
+})
+
+// IPC event when Rally items returned
+ipcRenderer.on('send-items', () => {
+  loadRallyItems()
 })
 
 // IPC event to get task data from tray window
@@ -170,6 +175,19 @@ function loadSnIncidents (type) {
   applySettings()
   loadTagCloud()
   highlightCards()
+}
+
+// Load ServiceNow incidents
+function loadRallyItems () {
+  rally.updateItemList()
+  $('#rally-stack').find('.box').children().remove()
+  if (rally.rallyItemList.length > 0) {
+    rally.rallyTagList.push('Defect')
+    rally.rallyItemList.forEach(item => { rally.addRallyItem(item) })
+    applySettings()
+    loadTagCloud()
+    highlightCards()
+  }
 }
 // #endregion
 
@@ -379,6 +397,7 @@ const buildRepoItem = (repo) => {
   const repoActive = repo ? repo.Active : true
   const repoActiveCheck = repoActive ? 'fa-check-square check-checked' : 'fa-square check-unchecked'
   const repoAssigned = repo && repo.AssignToMe === true ? 'fa-check-square check-checked' : 'fa-square check-unchecked'
+  // TODO: hardcoded url!
   const repoItem = `<div class="github-repo" data-repo-id="${repoId}">
                       <div class="repo-menu">
                         <div class="repo-menu-item-delete fas fa-minus-square" data-toggle="tooltip" title="Delete Repo"></div>
@@ -551,9 +570,16 @@ function getStacks () {
       }
     })
   }
-  // ServiceNow stacks
+  // ServiceNow stack
   if (settings.mobySettings.SnToggle && serviceNow.snGroupsList && serviceNow.snGroupsList.filter(group => group.GroupActive === true).length > 0) {
+    // TODO: hardcoded url!
     buildStack('sn-stack', 'ServiceNow', index, 'https://optum.service-now.com/')
+    showBtn = true
+    index++
+  }
+  // Rally Stack
+  if (settings.mobySettings.RallyToggle && rally.rallyProjectList.length > 0) {
+    buildStack('rally-stack', 'Rally', index, settings.mobySettings.RallyDomain)
     showBtn = true
     index++
   }
@@ -577,7 +603,7 @@ function getStacks () {
     serviceNow.getSnIncidents(settings.mobySettings.SnDomain, settings.mobySettings.SnToken, settings.mobySettings.SnPriority)
   }
   if (settings.mobySettings.RallyToggle) {
-    // TODO: get tasks
+    rally.getRallyItems(settings.mobySettings.RallyDomain, settings.mobySettings.RallyToken)
   }
   loadTagCloud()
   applySettings()
@@ -628,6 +654,7 @@ function buildStack (id, title, index, url) {
   let refreshDataSource = ''
   let itemType = 'Task'
   let addStackBtn = ''
+  let hidden = ''
   if (isDefault && id !== 'stack-do') {
     addStackBtn = '<div class="stack-add fas fa-caret-square-left" data-toggle="tooltip" title="Insert Stack" onclick="addNewStackClick(event)"></div>'
   } else if (id.substring(0, 3) === 'git') {
@@ -642,6 +669,13 @@ function buildStack (id, title, index, url) {
     refreshDataSource = 'data-source="sn"'
     itemType = 'Incident'
     addStackBtn = `<div class="sn-stack-icon stack-icon fas fa-exclamation-triangle" data-toggle="tooltip" title="ServiceNow Link" data-url="${url}"></div>`
+  } else if (id.substring(0, 5) === 'rally') {
+    hidden = 'hidden '
+    addTaskBtn = '"'
+    refreshBtn = ''
+    refreshDataSource = 'data-source="rally"'
+    itemType = 'Item'
+    addStackBtn = `<div class="rally-stack-icon stack-icon fas fa-tasks" data-toggle="tooltip" title="Rally Link" data-url="${url}"></div>`
   }
   const removeStackBtn = id === 'stack-do' || id === 'stack-done' || !isDefault ? '' : `<div class="dropdown-menu dropdown-menu-sm ddcm" id="context-menu-${id}">
                                                     <a class="dropdown-item" href="#remove-modal" data-toggle="modal">Remove Stack</a>
@@ -653,7 +687,7 @@ function buildStack (id, title, index, url) {
                       <div class="box" id="${id}-box"></div>
                       <div class="stack-footer">
                         <span class="footer stack-updated" data-toggle="tooltip" title="Last Update: ${updatedTs}">${updated}</span>
-                        <span data-toggle="tooltip" title="Add ${itemType}" style="float: right;">
+                        <span ${hidden}data-toggle="tooltip" title="Add ${itemType}" style="float: right;">
                           <div class="footer fas fa-plus fa-2x${addTaskBtn}></div>
                         </span>
                         <span ${refreshBtn} data-toggle="tooltip" title="Refresh from Source" style="float: right;">
@@ -803,6 +837,8 @@ $(document).on('click', '.refresh-data', (e) => {
     gitHub.getIssues($(e.currentTarget).closest('.serv-stack').prop('id'))
   } else if ($(e.currentTarget).data('source') === 'sn') {
     serviceNow.getSnIncidents(settings.mobySettings.SnDomain, settings.mobySettings.SnToken, settings.mobySettings.SnPriority)
+  } else if ($(e.currentTarget).data('source') === 'rally') {
+    rally.getRallyItems(settings.mobySettings.RallyDomain, settings.mobySettings.RallyToken)
   } else {
     return
   }
@@ -835,8 +871,8 @@ $(document).on('blur', '.stack-header', function () {
 // Load tag list UI
 function loadTagCloud () {
   $('#tag-cloud-box').children('.cloud-tags').remove()
-  if (tasks.tagList.length > 0 || gitHub.tagList.length > 0) {
-    const utl = [...new Set(tasks.tagList.concat(gitHub.tagList).concat(serviceNow.snTagList))]
+  if (tasks.tagList.length + gitHub.tagList.length + serviceNow.snTagList.length + rally.rallyTagList.length > 0) {
+    const utl = [...new Set(tasks.tagList.concat(gitHub.tagList).concat(serviceNow.snTagList).concat(rally.rallyTagList))]
     utl.sort()
     utl.forEach((tag) => {
       let color = `#${asciiToHex(tag)}`

@@ -134,6 +134,8 @@ exports.getSnIncidents = (domain, token, priority) => {
       } catch (err) {
         if (isError) {
           alert('Unable to connect to ServiceNow')
+          $('#sn-stack').find('.box').children().remove()
+          $('#sn-stack').find('.box').append('<div class="no-results getting-results"><span>Unable to Connect</span></div></div>')
           isError = false
         }
         isError = true
@@ -161,6 +163,7 @@ exports.addSnIncident = (incident) => {
   tagColor = hexToHSL(tagColor, 60)
   const tagHTML = `<div class="tags" style="background-color: ${tagColor}">${tag}</div>`
   // get incident URL
+  // TODO: hardcoded url!
   const url = id.substring(0, 3) === 'INC' ? `https://optum.service-now.com/nav_to.do?uri=incident.do?sys_id=${incident.sys_id}` : `https://optum.service-now.com/nav_to.do?uri=problem.do?sys_id=${incident.sys_id}`
   // Color glyphs
   let colorGlyph = ''

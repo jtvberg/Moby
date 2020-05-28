@@ -96,6 +96,7 @@ body {
   cursor: pointer;
 }
 
+.rally-stack-icon,
 .git-stack-icon {
   color: var(--primary);
   display: table;

@@ -61,6 +61,8 @@ const callIssueService = (repo) => {
     }).catch(err => {
       console.log(err)
       alert('Unable to connect to GitHub')
+      $(`#${repoStack}`).find('.box').children().remove()
+      $(`#${repoStack}`).find('.box').append('<div class="no-results getting-results"><span>Unable to Connect</span></div></div>')
     })
   }
 }
@@ -159,6 +161,7 @@ exports.saveRepos = () => {
 }
 
 // Add repo
+// TODO: hardcoded url!
 exports.submitRepo = (repoId) => {
   const url = new URL($(`#surl${repoId}`).val())
   const newRepo = {

@@ -96,6 +96,7 @@ body {
   cursor: pointer;
 }
 
+.rally-stack-icon,
 .git-stack-icon {
   color: var(--primary);
   display: table;
@@ -669,7 +670,7 @@ a {
   transform: translateY(-50%);
 }
 
-#servicenow-group-box {
+.serv-item-list {
   border-color: var(--main-background-light) !important;
   border-width: 1px !important;
   border: solid;

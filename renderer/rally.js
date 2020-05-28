@@ -1,7 +1,6 @@
 // Modules and variable definition
 const { ipcRenderer, clipboard } = require('electron')
 const rally = require('rally')
-const queryUtils = rally.util.query
 const refUtils = rally.util.ref
 
 // Local project list
@@ -100,16 +99,22 @@ exports.getRallyItems = (domain, token) => {
   const type = 'Defect'
   $('#rally-stack').find('.box').children().remove()
   $('#rally-stack').find('.box').append(`<div class="no-results getting-results"><span">Getting ${type}s </span><div class="spinner-grow spinner-grow-sm" role="status"></div></div>`)
-  var query = '(((((((((((((('
+
+  let queryPrefix = '((((State != Closed) AND (Blocked = true)) AND (Priority != Low)) AND '
+  let queryProj = ''
+  let first = true
   this.rallyProjectList.forEach(project => {
     if (project.ProjectActive) {
-      query += `(Project = /project/${project.ProjectId})) OR `
+      if (first) {
+        queryProj += `(Project = /project/${project.ProjectId}) OR `
+        first = false
+      } else {
+        queryPrefix += '('
+        queryProj += `(Project = /project/${project.ProjectId})) OR `
+      }
     }
   })
-  query = query.substring(0, query.length - 4)
-  console.log(query)
-
-  query = '(((((((((((((((Project = /project/289647061612) OR (Project = /project/323332373244)) OR (Project = /project/308550393352)) OR (Project = /project/174190250660)) OR (Project = /project/174190265660)) OR (Project = /project/263993485100)) OR (Project = /project/55671290996)) OR (Project = /project/273606567240)) OR (Project = /project/47627198616)) OR (Project = /project/259470859564)) OR (Project = /project/336237026208)) OR (Project = /project/142945529724)) OR (Project = /project/124290281424)) OR (Project = /project/376562049944)) OR (Project = /project/174190260988))'
+  const query = queryPrefix + queryProj.substring(0, queryProj.length - 4) + ')'
 
   restApi.query({
     type: 'defect',
@@ -175,7 +180,7 @@ function getRallyItem (domain, token, item) {
     if (error) {
       console.log(error)
     } else {
-      if (result.Object.State !== 'Closed' && result.Object.Blocked && result.Object.Priority !== 'Low') {
+      if (result.Object.Priority !== 'Low') {
         const url = new URL(result.Object.Project._ref)
         const project = url.pathname.split('/')[url.pathname.split('/').length - 1]
         const defect = {

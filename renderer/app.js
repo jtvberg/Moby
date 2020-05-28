@@ -382,7 +382,7 @@ function saveSettings () {
   }
   rally.saveRallyProjects()
 
-  if (groupChange || repoChange) {
+  if (groupChange || repoChange || projectChange) {
     getStacks()
   }
 }

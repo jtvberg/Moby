@@ -1,7 +1,7 @@
 // Modules and variable definition
 const { ipcRenderer, clipboard } = require('electron')
 const rally = require('rally')
-// const queryUtils = rally.util.query
+const queryUtils = rally.util.query
 const refUtils = rally.util.ref
 
 // Local project list
@@ -99,36 +99,45 @@ exports.getRallyItems = (domain, token) => {
 
   const type = 'Defect'
   $('#rally-stack').find('.box').children().remove()
-  const projects = []
-  projects.push('/project/174190265660')
+  $('#rally-stack').find('.box').append(`<div class="no-results getting-results"><span">Getting ${type}s </span><div class="spinner-grow spinner-grow-sm" role="status"></div></div>`)
+  var query = '(((((((((((((('
   this.rallyProjectList.forEach(project => {
     if (project.ProjectActive) {
-      projects.push(`/project/${project.ProjectId}`)
+      query += `(Project = /project/${project.ProjectId})) OR `
     }
   })
+  query = query.substring(0, query.length - 4)
+  console.log(query)
+
+  query = '(((((((((((((((Project = /project/289647061612) OR (Project = /project/323332373244)) OR (Project = /project/308550393352)) OR (Project = /project/174190250660)) OR (Project = /project/174190265660)) OR (Project = /project/263993485100)) OR (Project = /project/55671290996)) OR (Project = /project/273606567240)) OR (Project = /project/47627198616)) OR (Project = /project/259470859564)) OR (Project = /project/336237026208)) OR (Project = /project/142945529724)) OR (Project = /project/124290281424)) OR (Project = /project/376562049944)) OR (Project = /project/174190260988))'
 
   restApi.query({
     type: 'defect',
     start: 1,
     pageSize: 200,
-    limit: 200,
+    limit: Infinity,
     scope: {
-      project: projects[0],
       up: false,
       down: false
     },
-    fetch: ['_ref']
+    fetch: ['_ref'],
+    query: query.trim()
   }, function (error, result) {
     if (error) {
       console.log(error)
       alert('Unable to connect to Rally')
+      $('#rally-stack').find('.box').children().remove()
       $('#rally-stack').find('.box').append('<div class="no-results getting-results"><span>Unable to Connect</span></div></div>')
     } else {
-      $('#rally-stack').find('.box').append(`<div class="no-results getting-results"><span">Getting ${type}s </span><div class="spinner-grow spinner-grow-sm" role="status"></div></div>`)
       items.length = 0
-      result.Results.forEach(element => {
-        getRallyItem(domain, token, refUtils.getRelative(element._ref))
-      })
+      if (result.Results.length > 0) {
+        result.Results.forEach(element => {
+          getRallyItem(domain, token, refUtils.getRelative(element._ref))
+        })
+      } else {
+        $('#rally-stack').find('.box').children().remove()
+        $('#rally-stack').find('.box').append('<div class="no-results getting-results"><span>No Defects</span></div></div>')
+      }
     }
   })
 }

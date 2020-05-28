@@ -135,10 +135,10 @@ function loadIssues (stack) {
   if (gitHub.issueList.find(issue => issue.stack === stack) === undefined) {
     $(`#${stack}`).find('.box').append('<div class="no-results">No Issues</div>')
   } else {
-    gitHub.tagList.push('Issue')
     gitHub.issueList.forEach((issue) => {
       if (issue.stack === stack) {
         gitHub.addIssue(issue)
+        issue.pr ? gitHub.tagList.push('PR') : gitHub.tagList.push('Issue')
       }
     })
   }

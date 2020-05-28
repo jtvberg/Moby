@@ -54,6 +54,7 @@ const callIssueService = (repo) => {
           assigned: assigned,
           owned: owned,
           repoId: repo.RepoId,
+          pr: !!issue.pull_request,
           issueOjb: issue
         })
       })
@@ -84,7 +85,7 @@ exports.addIssue = (issue) => {
     let color = issue.owned ? 3 : 1
     color = issue.assigned ? 2 : color
     // Add issue tags
-    let tagHTML = '<div class="tags">Issue</div>'
+    let tagHTML = issue.pr ? '<div class="tags">PR</div>' : '<div class="tags">Issue</div>'
     if (issue.issueOjb.labels && issue.issueOjb.labels.length > 0) {
       issue.issueOjb.labels.forEach((tag) => {
         let tagColor = `#${asciiToHex(tag.name)}`
@@ -119,12 +120,13 @@ exports.addIssue = (issue) => {
     // Show banded cards $('.card-bar').is(':visible')
     const bandedCards = $('.card-bar').is(':visible') ? '' : 'style="display: none;"'
     const colorCards = $('.card-bar').is(':visible') ? ' color-trans' : ''
+    const prIssuePrefix = issue.pr ? 'PR:' : '#' + issue.issueOjb.number
     // Generate issue card html
     const issueHtml = `<div class="card color-${color}${colorCards}" id="${id}" data-url="${issue.issueOjb.html_url}">
                         <div class="card-bar color-${color}"${bandedCards}></div>  
                         <div class="card-header" style="clear: both" id="b${id}" data-toggle="collapse" data-target="#c${id}">
                           <span class="color-glyph fas fa-${colorGlyph}" ${showColorGlyphs}></span>
-                          <span class="title">#${issue.issueOjb.number} ${issue.issueOjb.title}</span>
+                          <span class="title">${prIssuePrefix} ${issue.issueOjb.title}</span>
                           <span class="aging" id="a${id}" ${showAge}>${age}</span>
                         </div>
                         <div class="card-content collapse collapse-content" id="c${id}">

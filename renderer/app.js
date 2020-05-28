@@ -1078,7 +1078,8 @@ function exportData () {
     Tasks: JSON.parse(localStorage.getItem('taskList')) || [],
     Settings: JSON.parse(localStorage.getItem('mobySettings')) || [],
     Repos: JSON.parse(localStorage.getItem('repoList')) || [],
-    SnGroups: JSON.parse(localStorage.getItem('snGroupList')) || []
+    SnGroups: JSON.parse(localStorage.getItem('snGroupList')) || [],
+    RallyProjects: JSON.parse(localStorage.getItem('rallyProjectList')) || []
   }
   fs.writeFile(`${desktopPath}/moby_export_${Date.now()}.txt`, JSON.stringify(JSONexport, null, 4), err => {
     if (err) {
@@ -1091,7 +1092,7 @@ function exportData () {
 
 // Import all data
 function importData () {
-  if (!confirm('Import will replace all stacks and settings and add tasks, repos and groups that are not present.\nFurther, any tasks not assigned an existing stack will be moved into your first stack.\nAre you sure?')) {
+  if (!confirm('Import will replace all stacks and settings and add tasks, repos, projects and groups that are not present.\nFurther, any tasks not assigned an existing stack will be moved into your first stack.\nAre you sure?')) {
     return
   }
   let latestExport = 0
@@ -1207,6 +1208,31 @@ function importData () {
         }
       } else {
         alert('\n No groups found')
+      }
+    } catch (err) {
+      alert(err)
+    }
+    try {
+      // Rally Project import
+      const JSONimport = JSON.parse(data).RallyProjects
+      if (JSONimport) {
+        let i = 0
+        JSONimport.forEach(project => {
+          if (!rally.rallyProjectList.some(e => e.ProjectId === project.ProjectId)) {
+            rally.rallyProjectList.push(project)
+            i++
+          }
+        })
+        rally.saveRallyProjects()
+        if (i > 1) {
+          alertString += `\n${i} projects imported succesfully`
+        } else if (i === 1) {
+          alertString += '\n1 project imported succesfully'
+        } else {
+          alertString += '\nNo new projects found'
+        }
+      } else {
+        alert('\n No projects found')
       }
     } catch (err) {
       alert(err)

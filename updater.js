@@ -6,7 +6,7 @@ autoUpdater.logger = require('electron-log')
 autoUpdater.logger.transports.file.level = 'info'
 
 // Disabable auto-download of updates
-autoUpdater.autoDounload = false
+autoUpdater.autoDownload = false
 
 // Check for app updates
 module.exports = () => {

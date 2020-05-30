@@ -49,6 +49,9 @@
       "target": [
         {
           "target": "zip",
+          "certificate": "private/jtvberg.p12",
+          "certificatePassword": "",
+          "verifyUpdateCodeSignature": false,
           "arch": [
             "x64"
           ]

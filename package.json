@@ -35,6 +35,7 @@
     "@octokit/rest": "^17.9.2",
     "bootstrap": "^4.5.0",
     "custom-electron-titlebar": "^3.2.2",
+    "electron-log": "^4.2.0",
     "electron-updater": "^4.3.1",
     "jquery": "3.4.1",
     "popper.js": "^1.16.1",
@@ -47,21 +48,12 @@
       "provider": "github"
     },
     "mac": {
-      "category": "public.app-category.productivity",
-      "target": "dmg"
+      "category": "public.app-category.productivity"
     },
     "win": {
       "certificateFile": "private/jtvberg.p12",
       "certificatePassword": "",
-      "verifyUpdateCodeSignature": false,
-      "target": [
-        {
-          "target": "zip",
-          "arch": [
-            "x64"
-          ]
-        }
-      ]
+      "verifyUpdateCodeSignature": false
     },
     "linux": {
       "category": "Utility"

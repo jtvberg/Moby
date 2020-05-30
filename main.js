@@ -2,12 +2,18 @@
 const { app } = require('electron')
 const { BrowserWindow, Tray, ipcMain } = require('electron')
 const path = require('path')
+const updater = require('./updater')
+
 // Enable Electron-Reload (dev only)
 // require('electron-reload')(__dirname)
 
 // Create main app window
 let win
 const createWindow = () => {
+  // Check for updates
+  setTimeout(updater, 5000)
+
+  // Create main window
   win = new BrowserWindow({
     width: 1200,
     height: 800,
@@ -34,21 +40,25 @@ const createWindow = () => {
 // Create tray icon and calculate positions
 let tray
 const createTray = () => {
+  // Create tray icon
   tray = new Tray(path.join(__dirname, 'renderer/res/moby_icon_19_Template.png'))
   tray.on('click', function (e) {
     toggleQuickMenu()
   })
 
+  // Toggle quick menu on click of tray icon
   const toggleQuickMenu = () => {
     quick.isVisible() ? quick.hide() : showQuickMenu()
   }
 
+  // Show the quick task menu
   const showQuickMenu = () => {
     const position = getWindowPosition()
     quick.setPosition(position.x, position.y, false)
     quick.show()
   }
 
+  // Get position of tray icon
   const getWindowPosition = () => {
     const windowBounds = quick.getBounds()
     const trayBounds = tray.getBounds()
@@ -63,6 +73,7 @@ const createTray = () => {
 // Create window attached to tray icon press
 let quick
 const createQuickMenu = () => {
+  // Create quick task tray menu
   quick = new BrowserWindow({
     width: 360,
     height: 183,
@@ -75,16 +86,20 @@ const createQuickMenu = () => {
       nodeIntegration: true
     }
   })
+
   // open DevTools remove for dist
   // quick.openDevTools()
+
   // HTML to open
   quick.loadURL(`file://${__dirname}/renderer/quick.html`)
+
   // Hide the window when it loses focus
   quick.on('blur', () => {
     if (!quick.webContents.isDevToolsOpened()) {
       quick.hide()
     }
   })
+
   // IPC event/channel to communicate showing of window (used to reset fields)
   quick.on('show', () => {
     quick.webContents.send('quick-reset')
@@ -96,10 +111,13 @@ app.on('ready', () => {
   createWindow()
   createQuickMenu()
   createTray()
+
   // Tray icon only on Mac
   if (process.platform !== 'darwin') {
     tray.destroy()
   }
+
+  // Do stuff when DOM ready
   win.webContents.on('dom-ready', () => {
     // IPC event to send system desktop path
     win.webContents.send('desktop-path', app.getPath('desktop'))

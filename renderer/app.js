@@ -1606,7 +1606,7 @@ function toggleCheck (element, check) {
 // eslint-disable-next-line no-unused-vars
 const exit = () => {
   const remote = require('electron').remote
-  remote.app.exit()
+  remote.app.quit()
 }
 
 // Title bar double click event to maximize/restore window

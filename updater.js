@@ -35,7 +35,7 @@ module.exports = () => {
       type: 'info',
       title: 'Update Ready',
       message: 'Install and restart now?',
-      buttons: ['Restart', 'Later']
+      buttons: ['Install', 'Later']
     }, buttonIndex => {
       // Download if Update chosen
       if (buttonIndex === 0) {

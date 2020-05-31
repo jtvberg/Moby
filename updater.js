@@ -2,8 +2,8 @@
 const { dialog } = require('electron')
 const { autoUpdater } = require('electron-updater')
 
-autoUpdater.logger = require('electron-log')
-autoUpdater.logger.transports.file.level = 'info'
+// autoUpdater.logger = require('electron-log')
+// autoUpdater.logger.transports.file.level = 'info'
 
 // Disabable auto-download of updates
 autoUpdater.autoDownload = false
@@ -19,10 +19,12 @@ module.exports = () => {
       type: 'info',
       title: 'Update Available',
       message: 'A new version of Moby is available. Do you want to update now?',
-      buttons: ['Update', 'Cancel']
-    }, buttonIndex => {
+      buttons: ['Update', 'Cancel'],
+      defaultId: 0,
+      cancelId: 1
+    }).then(result => {
       // Download if Update chosen
-      if (buttonIndex === 0) {
+      if (result.response === 0) {
         autoUpdater.downloadUpdate()
       }
     })
@@ -35,11 +37,13 @@ module.exports = () => {
       type: 'info',
       title: 'Update Ready',
       message: 'Install and restart now?',
-      buttons: ['Install', 'Later']
-    }, buttonIndex => {
+      buttons: ['Install', 'Later'],
+      defaultId: 0,
+      cancelId: 1
+    }).then(result => {
       // Download if Update chosen
-      if (buttonIndex === 0) {
-        autoUpdater.quitAndInstall(true, true)
+      if (result.response === 0) {
+        autoUpdater.quitAndInstall(false, true)
       }
     })
   })

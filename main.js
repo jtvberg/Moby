@@ -11,7 +11,7 @@ const updater = require('./updater')
 let win
 const createWindow = () => {
   // Check for updates
-  setTimeout(updater, 5000)
+  setTimeout(updater, 3000)
 
   // Create main window
   win = new BrowserWindow({

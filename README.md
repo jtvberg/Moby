@@ -1,5 +1,6 @@
 ## Moby
-Moby is a Kanban based personal task management system built with Electron.
+Moby is a Kanban based personal task management system built with Electron
+It can integrate with GitHub (Issues + PRs), Rally (Defects/Blocked USs) and ServiceNow (Incidents/Problems)
 
 ## Using the code
     Clone repo
@@ -8,6 +9,7 @@ Moby is a Kanban based personal task management system built with Electron.
     Navigate to directory and run 'npm install' to install dependencies
 
 ## Running the code
+    Some npm scripts are already setup in package.json
     'npm start' will launch the app (alternatively you can use 'electron .')
     You can uncomment the dev tools load on start up in main.js (~webContents.openDevTools()) or launch from help menu to debug
     To debug main.js you can use the following commands (assumes you are using npm):
@@ -16,5 +18,5 @@ Moby is a Kanban based personal task management system built with Electron.
     Use chrome://inspect and configure the target with above port
 
 ## Other
-  A fully packaged app is not yet avaliable.
-  Tested on MacOS (Mojave & Catalina), Windows 10 (1903) and Linux (Mint 19.3)
+  A fully packaged beta is available under releases for Mac/Win which supports auto-update on Mac
+  Tested on MacOS (Mojave & Catalina), Windows 10 (1909) and Linux (Mint 19.3)

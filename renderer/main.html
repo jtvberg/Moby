@@ -16,17 +16,17 @@
   <body id="main-window">
     <div class="wrapper">
       <div class="menu">
-        <span href="#restore-modal" data-toggle="modal">
-          <div class="menu-item fas fa-archive fa-2x" data-toggle="tooltip" title="Restore from Archive" style="padding-top: 0;"></div>
-        </span>
+        <div class="menu-item fas fa-server fa-2x" id="si-button" style="display: none;" data-toggle="tooltip" title="Toggle Service Stacks" onclick="toggleServStacks(event)"></div>
+        <div class="menu-item fas fa-tags fa-2x" id="tags-button" style="font-size: 150%;" data-toggle="tooltip" title="Toggle Tags" onclick="toggleTags(event)"></div>
+        <div class="menu-item fas fa-expand-arrows-alt fa-2x" data-toggle="tooltip" title="Expand All" onclick="expandAll(event)"></div>
+        <div class="menu-item fas fa-compress-arrows-alt fa-2x" data-toggle="tooltip" title="Collapse All" onclick="collapseAll(event)"></div>
         <span href="#schedule-modal" data-toggle="modal">
           <div class="menu-item fas fa-calendar fa-2x" data-toggle="tooltip" title="Scheduled Tasks"></div>
         </span>
-        <div class="menu-item fas fa-tags fa-2x" id="tags-button" style="font-size: 150%;" data-toggle="tooltip" title="Toggle Tags" onclick="toggleTags(event)"></div>
-        <div class="menu-item fas fa-server fa-2x" id="si-button" style="display: none;" data-toggle="tooltip" title="Toggle Service Stacks" onclick="toggleServStacks(event)"></div>
-        <div class="menu-item fas fa-expand-arrows-alt fa-2x" data-toggle="tooltip" title="Expand All" onclick="expandAll(event)"></div>
-        <div class="menu-item fas fa-compress-arrows-alt fa-2x" data-toggle="tooltip" title="Collapse All" onclick="collapseAll(event)"></div>
-        <div class="menu-item fas fa-sign-out-alt fa-2x" data-toggle="tooltip" title="Exit" onclick="exit(event)"></div>
+        <span href="#restore-modal" data-toggle="modal">
+          <div class="menu-item fas fa-archive fa-2x" data-toggle="tooltip" title="Restore from Archive"></div>
+        </span>
+        <div class="menu-item fas fa-sign-out-alt fa-2x" data-toggle="tooltip" title="Exit" style="padding-top: 0;" onclick="exit(event)"></div>
         <div class="color-toggle" data-toggle="tooltip" title="Filter Tasks">
           <div class="color-item color-pick-1" id="color-1-button" data-color-id="1" onclick="toggleColorClick(event)">
             <span class="color-box fas fa-square fa-2x"></span>

@@ -118,8 +118,8 @@ exports.submitTask = (taskType) => {
   if (weekDay.length < 1 && monthDay > 0) {
     weekDay.push(new Date(startDate).getDay())
   }
-  count *= weekDay.length > 0 ? weekDay.length : 1
-  if (startDate > now) {
+  count *= weekDay.length > 0 ? weekDay.length + 1 : 1
+  if (startDate > now || count !== 1) {
     taskStack = 'stack-schedule'
   }
   const newTaskData = {
@@ -263,7 +263,7 @@ exports.addTask = (task) => {
                         <div class="subtask-box">${subtaskHTML}</div>
                         <div class="tag-box" id="t${task.TaskId}">${tagHTML}</div>
                         <div class="card-menu">
-                          <div class="card-menu-item fas fa-minus-square" id="del-button-${task.TaskId}" data-toggle="tooltip" title="${archDelete} Task" ></div>
+                          <div class="card-menu-item fas fa-minus-square card-del-button" data-toggle="tooltip" title="${archDelete} Task" ></div>
                           <div class="card-menu-item fas fa-clone" id="clone-button-${task.TaskId}" data-toggle="tooltip" title="Clone Task"></div>
                           <div class="card-menu-item fas fa-clipboard" id="copy-button-${task.TaskId}" data-toggle="tooltip" title="Copy To Clipboard"></div>
                           <div class="card-menu-item fas fa-edit card-edit-button" data-toggle="tooltip" title="Edit Task"></div>
@@ -292,14 +292,6 @@ exports.addTask = (task) => {
     if (updTaskId) {
       this.updateTaskDetail(updTaskId, $(`#d${task.TaskId}`)[0].innerText || '')
       updTaskId = null
-    }
-  })
-  // Delete active task (send to archive; delete if in archive)
-  $(`#del-button-${task.TaskId}`).click(() => {
-    if (task.TaskStack === 'stack-archive') {
-      this.deleteTask(task.TaskId)
-    } else {
-      this.archiveTask(task.TaskId)
     }
   })
   // Clone active task (to 'do')

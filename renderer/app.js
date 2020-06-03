@@ -59,7 +59,7 @@ ipcRenderer.on('send-items', () => {
 ipcRenderer.on('quick-data', (e, data) => {
   tasks.taskList.push(data)
   tasks.saveTasks()
-  tasks.addTask(data)
+  knownList.push(tasks.addTask(data))
 })
 
 // IPC event to get update tag cloud on task delete
@@ -1383,6 +1383,7 @@ $('#submit-button').click(() => {
   knownList.push(tasks.submitTask(taskType))
   localStorage.setItem('knownList', JSON.stringify(knownList))
   $('#task-modal').modal('hide')
+  addScheduledTasks()
 })
 
 // Execute task modal submit on enter except when in detail field
@@ -1528,6 +1529,17 @@ $(document).on('click', '.card-edit-button', function (e) {
   window.activeTask = parseInt($(e.currentTarget).closest('.card').prop('id'))
   taskType = 'edit'
   $('#task-modal').modal('show')
+})
+
+// Archive/Delete on card 'minus' button click
+$(document).on('click', '.card-del-button', function (e) {
+  window.activeTask = parseInt($(e.currentTarget).closest('.card').prop('id'))
+  const getTask = tasks.taskList.find(task => task.TaskId === window.activeTask)
+  if (getTask.TaskStack === 'stack-archive') {
+    tasks.deleteTask(getTask.TaskId)
+  } else {
+    tasks.archiveTask(getTask.TaskId)
+  }
 })
 
 // Double click on card opens edit modal

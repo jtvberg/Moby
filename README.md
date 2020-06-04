@@ -15,7 +15,7 @@ It can integrate with GitHub (Issues + PRs), Rally (Defects/Blocked USs) and Ser
 <img src="/screenshots/edit_task.png" width="250"/>
 
 #### Settings Modal:
-<img src="/screenshots/settings_general.png" width="250"/>
+<img src="/screenshots/settings_general.png" width="500"/>
 
 ## Using the code
     Clone repo

@@ -1,6 +1,7 @@
 ## Moby
 Moby is a Kanban based personal task management system built with Electron
 It can integrate with GitHub (Issues + PRs), Rally (Defects/Blocked USs) and ServiceNow (Incidents/Problems)
+![Default View](/screenshots/full_default.png)
 
 ## Using the code
     Clone repo

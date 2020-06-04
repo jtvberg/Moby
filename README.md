@@ -14,8 +14,20 @@ It can integrate with GitHub (Issues + PRs), Rally (Defects/Blocked USs) and Ser
 #### Edit Mode Task Modal:
 <img src="/screenshots/edit_task.png" width="250"/>
 
+#### Expanded Card:
+<img src="/screenshots/expanded_card.png" width="250"/>
+
+#### Highlighted Card:
+<img src="/screenshots/highlight_card.png" width="250"/>
+
 #### Settings Modal:
 <img src="/screenshots/settings_general.png" width="500"/>
+
+#### GitHub Settings:
+<img src="/screenshots/settings_gh.png" width="500"/>
+
+#### Service Stack (GitHub):
+<img src="/screenshots/serv_stack.png" width="500"/>
 
 ## Using the code
     Clone repo

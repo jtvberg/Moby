@@ -9,13 +9,13 @@ It can integrate with GitHub (Issues + PRs), Rally (Defects/Blocked USs) and Ser
 ![Default View](/screenshots/full_custom.png)
 
 #### New Task Modal:
-![Default View](/screenshots/new_task.png)
+![Default View](/screenshots/new_task.png =250x)
 
 #### Edit Mode Task Modal:
-![Default View](/screenshots/edit_task.png)
+![Default View](/screenshots/edit_task.png =250x)
 
 #### Settings Modal:
-![Default View](/screenshots/settings_general.png)
+![Default View](/screenshots/settings_general.png =300x)
 
 ## Using the code
     Clone repo

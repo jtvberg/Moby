@@ -6,16 +6,16 @@ It can integrate with GitHub (Issues + PRs), Rally (Defects/Blocked USs) and Ser
 ![Default View](/screenshots/full_default.png)
 
 #### Customized:
-![Default View](/screenshots/full_custom.png)
+![Custom View](/screenshots/full_custom.png)
 
 #### New Task Modal:
-![Default View](/screenshots/new_task.png =250x)
+<img src="/screenshots/new_task.png" width="250"/>
 
 #### Edit Mode Task Modal:
-![Default View](/screenshots/edit_task.png =250x)
+<img src="/screenshots/edit_task.png" width="250"/>
 
 #### Settings Modal:
-![Default View](/screenshots/settings_general.png =300x)
+<img src="/screenshots/settings_general.png" width="250"/>
 
 ## Using the code
     Clone repo

@@ -24,6 +24,7 @@ exports.getIssues = (repoId) => {
   } else if (this.repoList.length > 0) {
     this.repoList.forEach((repo) => {
       callIssueService(repo)
+      callAlertService(repo)
     })
   }
 }
@@ -67,6 +68,53 @@ const callIssueService = (repo) => {
     })
   }
 }
+
+const callAlertService = (repo) => {
+  if (repo.Active) {
+    const repoStack = `git-stack-${repo.Owner}-${repo.Repo}`
+    // $(`#${repoStack}`).find('.box').children().remove()
+    // $(`#${repoStack}`).find('.box').append('<div class="no-results getting-results"><span>Getting Notifications </span><div class="spinner-grow spinner-grow-sm" role="status"></div></div>')
+    const octokit = new Octokit({ auth: repo.Auth })
+    octokit.paginate('GET /repos/:owner/:repo/notifications', {
+      baseUrl: repo.BaseUrl,
+      owner: repo.Owner,
+      repo: repo.Repo
+    }).then(notifications => {
+      console.log(notifications)
+      // notifications.forEach((notification) => {
+      //   this.issueList.push({
+      //     stack: `git-stack-${repo.Owner}-${repo.Repo}`,
+      //     user: repo.User,
+      //     assigned: 'NA',
+      //     owned: 'NA',
+      //     repoId: repo.RepoId,
+      //     pr: false,
+      //     issueOjb: notification
+      //   })
+      // })
+      // ipcRenderer.send('get-issues', repoStack)
+    }).catch(err => {
+      console.log(err)
+      // alert('Unable to connect to GitHub')
+      // $(`#${repoStack}`).find('.box').children().remove()
+      // $(`#${repoStack}`).find('.box').append('<div class="no-results getting-results"><span>Unable to Connect</span></div></div>')
+    })
+  }
+}
+// id: "848465676"
+// last_read_at: null
+// reason: "security_alert"
+// repository: {id: 190311801, node_id: "MDEwOlJlcG9zaXRvcnkxOTAzMTE4MDE=", name: "Moby", full_name: "jtvberg/Moby", private: false, …}
+// subject:
+//  latest_comment_url: "https://api.github.com/repos/jtvberg/Moby"
+//  title: "Potential security vulnerability found in the jquery dependency"
+//  type: "RepositoryVulnerabilityAlert"
+//  url: "https://api.github.com/repos/jtvberg/Moby"
+// __proto__: Object
+// subscription_url: "https://api.github.com/notifications/threads/848465676/subscription"
+// unread: true
+// updated_at: "2020-04-29T23:50:44Z"
+// url: "https://api.github.com/notifications/threads/848465676"
 
 // Add issue(s) to UI
 exports.addIssue = (issue) => {

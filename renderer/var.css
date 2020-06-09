@@ -1,3 +1,8 @@
+.color-edit-1.active,
+.color-edit-2.active,
+.color-edit-3.active,
+.color-edit-4.active,
+.color-edit-5.active,
 .color-1.active,
 .color-2.active,
 .color-3.active,
@@ -16,22 +21,27 @@
   font-weight: 500;
 }
 
+.color-edit-1,
 .color-1 {
   background-color: var(--blue);
 }
 
+.color-edit-2,
 .color-2 {
   background-color: var(--red);
 }
 
+.color-edit-3,
 .color-3 {
   background-color: var(--purple);
 }
 
+.color-edit-4,
 .color-4 {
   background-color: var(--orange);
 }
 
+.color-edit-5,
 .color-5 {
   background-color: var(--green);
 }

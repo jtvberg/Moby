@@ -21,6 +21,7 @@ exports.getIssues = (repoId) => {
   if (repoId) {
     const repo = this.repoList.find(repo => `git-stack-${repo.Owner}-${repo.Repo}` === repoId)
     callIssueService(repo)
+    callAlertService(repo)
   } else if (this.repoList.length > 0) {
     this.repoList.forEach((repo) => {
       callIssueService(repo)
@@ -71,7 +72,7 @@ const callIssueService = (repo) => {
 
 const callAlertService = (repo) => {
   if (repo.Active) {
-    const repoStack = `git-stack-${repo.Owner}-${repo.Repo}`
+    // const repoStack = `git-stack-${repo.Owner}-${repo.Repo}`
     // $(`#${repoStack}`).find('.box').children().remove()
     // $(`#${repoStack}`).find('.box').append('<div class="no-results getting-results"><span>Getting Notifications </span><div class="spinner-grow spinner-grow-sm" role="status"></div></div>')
     const octokit = new Octokit({ auth: repo.Auth })

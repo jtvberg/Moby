@@ -103,7 +103,7 @@ function addScheduledTasks () {
   if (tasks.taskList.length) {
     tasks.taskList.forEach((item) => {
       if (item.TaskStack === 'stack-schedule' && item.StartDate < Date.now()) {
-        tasks.cloneTask(item.TaskId, 'stack-do')
+        tasks.cloneTask(item.TaskId, item.ScheduleStack)
         const i = item.Count > 0 ? item.Count - 1 : item.Count
         if (i === 0) {
           tasks.archiveTask(item.TaskId)
@@ -1282,10 +1282,12 @@ function loadTaskModal (type, stack) {
     $('#task-detail').val(getTask.TaskDetail)
     if (getTask.TaskStack === 'stack-archive') {
       $(new Option('Archive', 'stack-archive')).appendTo('#task-stack')
-    } else if (getTask.TaskStack === 'stack-schedule') {
-      getTask.TaskStack = 'stack-do'
     }
-    $('#task-stack').val(getTask.TaskStack)
+    if (getTask.TaskStack === 'stack-schedule') {
+      $('#task-stack').val(getTask.ScheduleStack)
+    } else {
+      $('#task-stack').val(getTask.TaskStack)
+    }
     $(`#color-option-${getTask.TaskColor}`).closest('.btn').button('toggle')
     let tagHTML = ''
     if (getTask.Tags && getTask.Tags.length > 0) {
@@ -1309,16 +1311,15 @@ function loadTaskModal (type, stack) {
     $('#count-select').val(getTask.Count)
     const dt = new Date(getTask.StartDate)
     $('#start-date').val(dt.getMonth() + 1 + '/' + dt.getDate() + '/' + dt.getFullYear())
-    if (getTask.weekDay) {
-      $('#check-sun').prop('checked', getTask.WeekDay.includes(0))
-      $('#check-mon').prop('checked', getTask.WeekDay.includes(1))
-      $('#check-tue').prop('checked', getTask.WeekDay.includes(2))
-      $('#check-wed').prop('checked', getTask.WeekDay.includes(3))
-      $('#check-thu').prop('checked', getTask.WeekDay.includes(4))
-      $('#check-fri').prop('checked', getTask.WeekDay.includes(5))
-      $('#check-sat').prop('checked', getTask.WeekDay.includes(6))
-    }
-    // $(`input[name=radio-archive][value=${getTask.MonthDay}]`).prop('checked', true).parent('.btn').addClass('active')
+    // if (getTask.weekDay) {
+    //   $('#check-sun').prop('checked', getTask.WeekDay.includes(0))
+    //   $('#check-mon').prop('checked', getTask.WeekDay.includes(1))
+    //   $('#check-tue').prop('checked', getTask.WeekDay.includes(2))
+    //   $('#check-wed').prop('checked', getTask.WeekDay.includes(3))
+    //   $('#check-thu').prop('checked', getTask.WeekDay.includes(4))
+    //   $('#check-fri').prop('checked', getTask.WeekDay.includes(5))
+    //   $('#check-sat').prop('checked', getTask.WeekDay.includes(6))
+    // }
     $(`input[name=radio-recur][value=${getTask.MonthDay}]`).prop('checked', true)
     enableRecur(!$('#radio-once').is(':checked'))
   }

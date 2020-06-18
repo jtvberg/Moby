@@ -7,9 +7,12 @@ function updateTaskListModel () {
   const rl = localStorage.getItem('taskList') || null
   if (rl) {
     const tl = JSON.parse(rl) || []
-    // tl.forEach(task => {
-    //   // Use to update task model
-    // })
+    tl.forEach(task => {
+      // Use to update task model
+      if (task.ScheduleStack === undefined) {
+        task.ScheduleStack = null
+      }
+    })
     localStorage.setItem('taskList', JSON.stringify(tl))
     return tl
   }
@@ -81,9 +84,10 @@ exports.submitTask = (taskType) => {
   const taskTitle = $('#task-title').val() || 'No Title'
   const taskDetail = $('#task-detail').val()
   const taskColor = parseInt($('#choose-color input:radio:checked').val()) || 1
+  let scheduleStack = null
   let taskStack = $('#task-stack').val()
   const taskId = now
-  let count = parseInt($('#count-select').val()) || 1
+  const count = parseInt($('#count-select').val()) || 1
   const startDate = new Date(Date.parse($('#start-date').val()) || now).getTime()
   const monthDay = parseInt($('#choose-recur input:radio:checked').val()) || 0
   const weekDay = []
@@ -108,22 +112,24 @@ exports.submitTask = (taskType) => {
       offset++
     }
   })
-  $('#check-sun').prop('checked') && weekDay.push(0)
-  $('#check-mon').prop('checked') && weekDay.push(1)
-  $('#check-tue').prop('checked') && weekDay.push(2)
-  $('#check-wed').prop('checked') && weekDay.push(3)
-  $('#check-thu').prop('checked') && weekDay.push(4)
-  $('#check-fri').prop('checked') && weekDay.push(5)
-  $('#check-sat').prop('checked') && weekDay.push(6)
-  if (weekDay.length < 1 && monthDay > 0) {
-    weekDay.push(new Date(startDate).getDay())
-  }
-  count *= weekDay.length > 0 ? weekDay.length + 1 : 1
+  // $('#check-sun').prop('checked') && weekDay.push(0)
+  // $('#check-mon').prop('checked') && weekDay.push(1)
+  // $('#check-tue').prop('checked') && weekDay.push(2)
+  // $('#check-wed').prop('checked') && weekDay.push(3)
+  // $('#check-thu').prop('checked') && weekDay.push(4)
+  // $('#check-fri').prop('checked') && weekDay.push(5)
+  // $('#check-sat').prop('checked') && weekDay.push(6)
+  // if (weekDay.length < 1 && monthDay > 0) {
+  //   weekDay.push(new Date(startDate).getDay())
+  // }
+  // count *= weekDay.length > 0 ? weekDay.length + 1 : 1
   if (startDate > now || count !== 1) {
+    scheduleStack = taskStack
     taskStack = 'stack-schedule'
   }
   const newTaskData = {
     TaskStack: taskStack,
+    ScheduleStack: scheduleStack,
     TaskId: taskId,
     TaskTitle: taskTitle,
     TaskDetail: taskDetail,
@@ -161,6 +167,7 @@ exports.submitTask = (taskType) => {
     getTask.Tags = tags
     getTask.Subtasks = subtasks
     getTask.UpdateTimestamp = updateTimestamp
+    getTask.ScheduleStack = scheduleStack
   }
   this.saveTasks()
   return this.addTask(newTaskData)

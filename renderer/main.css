@@ -442,13 +442,18 @@ body {
   background: var(--trans);
 }
 
-
 .tag-cloud {
   grid-row: 2;
   grid-column: 2;
   height: 1fr;
   z-index: 2000;
   width: 0;
+  overflow: hidden;
+}
+
+.tag-host {
+  height: calc(100% - 35px);
+  overflow-y: scroll;
 }
 
 .tag-box {
@@ -456,12 +461,7 @@ body {
   flex-wrap: wrap;
   white-space: nowrap;
   text-overflow: ellipsis;
-  overflow: hidden;
   cursor: default;
-}
-
-#tag-cloud-box {
-  flex-direction: column;
 }
 
 .new-tags,
@@ -499,7 +499,7 @@ body {
   text-overflow: ellipsis;
   overflow: hidden;
   width: fit-content;
-  max-width: 100px;
+  max-width: 115px;
   cursor: pointer;
 }
 

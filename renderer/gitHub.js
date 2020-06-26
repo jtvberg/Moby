@@ -23,6 +23,7 @@ exports.getIssues = (repoId) => {
     callIssueService(repo)
     callAlertService(repo)
   } else if (this.repoList.length > 0) {
+    this.tagList.length = 0
     this.repoList.forEach((repo) => {
       callIssueService(repo)
       callAlertService(repo)
@@ -145,6 +146,7 @@ exports.addIssue = (issue) => {
         this.tagList.push(tag.name)
       })
     }
+    this.tagList = [...new Set(this.tagList)]
     // Color glyphs
     let colorGlyph = ''
     switch (color) {

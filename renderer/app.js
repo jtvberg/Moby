@@ -569,6 +569,7 @@ function getStacks () {
         index++
       }
     })
+    gitHub.getIssues()
   }
   // ServiceNow stack
   if (settings.mobySettings.SnToggle && serviceNow.snGroupsList && serviceNow.snGroupsList.filter(group => group.GroupActive === true).length > 0) {
@@ -576,12 +577,14 @@ function getStacks () {
     buildStack('sn-stack', 'ServiceNow', index, 'https://optum.service-now.com/')
     showBtn = true
     index++
+    serviceNow.getSnIncidents(settings.mobySettings.SnDomain, settings.mobySettings.SnToken, settings.mobySettings.SnPriority)
   }
   // Rally Stack
   if (settings.mobySettings.RallyToggle && rally.rallyProjectList.length > 0) {
     buildStack('rally-stack', 'Rally', index, settings.mobySettings.RallyDomain)
     showBtn = true
     index++
+    rally.getRallyItems(settings.mobySettings.RallyDomain, settings.mobySettings.RallyToken)
   }
   // Check if there are stacks to show button and check settings for toggle behavior
   if (showBtn) {
@@ -590,21 +593,13 @@ function getStacks () {
       if (settings.mobySettings.ServToggle === false) {
         $('#si-button').addClass('menu-item-toggled')
       } else {
+        $('#si-button').removeClass('menu-item-toggled')
         $('.serv-stack').hide(0)
       }
     }
   }
-  // Add tasks, issues, incidents, tags to the stacks
+  // Add tasks
   tasks.taskList.forEach(tasks.addTask)
-  if (settings.mobySettings.GhToggle) {
-    gitHub.getIssues()
-  }
-  if (settings.mobySettings.SnToggle) {
-    serviceNow.getSnIncidents(settings.mobySettings.SnDomain, settings.mobySettings.SnToken, settings.mobySettings.SnPriority)
-  }
-  if (settings.mobySettings.RallyToggle) {
-    rally.getRallyItems(settings.mobySettings.RallyDomain, settings.mobySettings.RallyToken)
-  }
   loadTagCloud()
   applySettings()
 }
@@ -956,7 +951,7 @@ const toggleTags = () => {
     $('.cloud-tags').removeClass('cloud-tags-toggled')
     $('#tags-button').removeClass('menu-item-toggled')
   } else {
-    $('.tag-cloud').show().animate({ width: '105px' }, 'fast')
+    $('.tag-cloud').show().animate({ width: '130px' }, 'fast')
     $('#tags-button').addClass('menu-item-toggled')
   }
 }

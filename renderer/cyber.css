@@ -12,6 +12,9 @@
   --trans: #00000000;
   --opaque: #ffffff10;
   --opaque-card: #00000071;
+  --new-highlight: #4dd332;
+  --tag-highlight: #32b3d3;
+  --search-highlight: #32b3d3;
   --highlight: #00ccff;
   --unchecked: #ffffff42;
   --checked: #ffee00;

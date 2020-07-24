@@ -31,6 +31,7 @@ ipcRenderer.on('desktop-path', (e, data) => {
 // IPC event when git issues returned; then add to stack
 ipcRenderer.on('send-issues', (e, data) => {
   loadIssues(data)
+  toggleCardColor()
 })
 
 // IPC event when ServiceNow groups returned
@@ -42,6 +43,7 @@ ipcRenderer.on('send-groups', () => {
 // IPC event when ServiceNow incidents returned
 ipcRenderer.on('send-incidents', (e, data) => {
   loadSnIncidents(data)
+  toggleCardColor()
 })
 
 // IPC event when Rally projects returned
@@ -53,6 +55,7 @@ ipcRenderer.on('send-projects', () => {
 // IPC event when Rally items returned
 ipcRenderer.on('send-items', () => {
   loadRallyItems()
+  toggleCardColor()
 })
 
 // IPC event to get task data from tray window
@@ -1349,6 +1352,7 @@ $('#task-modal').on('shown.bs.modal', () => {
 // Reload tag cloud on 'hide'
 $('#task-modal').on('hide.bs.modal', () => {
   loadTagCloud()
+  toggleCardColor()
 })
 
 // Size task detail on input
@@ -1397,15 +1401,26 @@ $('#restore-button').click(() => {
 // #endregion
 
 // #region Task Card code
-// Task color toggle task show
+// Task color button toggle
 function toggleColor (colorId) {
   if ($(`#color-${colorId}-button`).hasClass(`color-pick-${colorId}`)) {
     $(`#color-${colorId}-button`).removeClass(`color-pick-${colorId}`)
-    $(`.color-${colorId}`).hide()
   } else {
     $(`#color-${colorId}-button`).addClass(`color-pick-${colorId}`)
-    $(`.color-${colorId}`).show()
   }
+  toggleCardColor()
+}
+
+// Task card color toggle
+function toggleCardColor () {
+  let i = 1
+  $('.color-toggle').children().each(function () {
+    $(`.color-${i}`).hide()
+    if ($(this).hasClass(`color-pick-${i}`)) {
+      $(`.color-${i}`).show()
+    }
+    i++
+  })
 }
 
 // Get the color of the passed card
@@ -1452,10 +1467,10 @@ function changeWatch (box) {
 function highlightCards () {
   const cl = createKnown()
   const diff = $(cl).not(knownList).get()
-  $('.card').removeClass('card-highlighted')
+  $('.card').removeClass('card-new-highlighted')
   diff.forEach(task => {
     const id = task.substring(1, task.length)
-    $(`#${id}`).addClass('card-highlighted')
+    $(`#${id}`).addClass('card-new-highlighted')
   })
   ipcRenderer.send('badge-count', diff.length || 0)
 }
@@ -1509,13 +1524,13 @@ $(document).on('click', '.card', function (e) {
   const id = $(e.currentTarget).prop('id')
   window.activeTask = parseInt(id) || id
   $('.card').removeClass('card-selected')
-  if ($(`#${id}`).hasClass('card-highlighted')) {
+  if ($(`#${id}`).hasClass('card-new-highlighted')) {
     knownList.push(getColor($(e.currentTarget)) + '' + id)
     localStorage.setItem('knownList', JSON.stringify([...new Set(knownList)]))
     highlightCards()
   }
   if ($(`#${id}`).offset()) {
-    $(`#${id}`).removeClass('card-highlighted').addClass('card-selected').parent().animate({ scrollTop: $(`#${id}`).offset().top - $(`#${id}`).parent().offset().top + $(`#${id}`).parent().scrollTop() })
+    $(`#${id}`).removeClass('card-new-highlighted').addClass('card-selected').parent().animate({ scrollTop: $(`#${id}`).offset().top - $(`#${id}`).parent().offset().top + $(`#${id}`).parent().scrollTop() })
   }
   $('.window-title').text(`Moby - ${$(e.currentTarget).find('.title').text()}`)
 })

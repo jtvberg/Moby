@@ -292,10 +292,14 @@ body {
   border-color: var(--focused) !important;
 }
 
-.card-tagged,
-.card-highlighted {
+.card-tagged {
   border-width: 2px;
-  border-color: var(--highlight);
+  border-color: var(--tag-highlight);
+}
+
+.card-new-highlighted {
+  border-width: 2px;
+  border-color: var(--new-highlight);
 }
 
 .title {

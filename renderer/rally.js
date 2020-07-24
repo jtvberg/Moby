@@ -133,6 +133,7 @@ exports.getRallyItems = (domain, token) => {
       alert('Unable to connect to Rally')
       $('#rally-stack').find('.box').children().remove()
       $('#rally-stack').find('.box').append('<div class="no-results getting-results"><span>Unable to Connect</span></div></div>')
+      $('#rally-stack').find('.refresh-data').show()
     } else {
       items.length = 0
       if (result.Results.length > 0) {
@@ -142,6 +143,7 @@ exports.getRallyItems = (domain, token) => {
       } else {
         $('#rally-stack').find('.box').children().remove()
         $('#rally-stack').find('.box').append('<div class="no-results getting-results"><span>No Defects</span></div></div>')
+        $('#rally-stack').find('.refresh-data').show()
       }
     }
   })

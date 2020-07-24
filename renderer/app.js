@@ -31,7 +31,6 @@ ipcRenderer.on('desktop-path', (e, data) => {
 // IPC event when git issues returned; then add to stack
 ipcRenderer.on('send-issues', (e, data) => {
   loadIssues(data)
-  toggleCardColor()
 })
 
 // IPC event when ServiceNow groups returned
@@ -43,7 +42,6 @@ ipcRenderer.on('send-groups', () => {
 // IPC event when ServiceNow incidents returned
 ipcRenderer.on('send-incidents', (e, data) => {
   loadSnIncidents(data)
-  toggleCardColor()
 })
 
 // IPC event when Rally projects returned
@@ -55,7 +53,6 @@ ipcRenderer.on('send-projects', () => {
 // IPC event when Rally items returned
 ipcRenderer.on('send-items', () => {
   loadRallyItems()
-  toggleCardColor()
 })
 
 // IPC event to get task data from tray window
@@ -146,6 +143,7 @@ function pruneArchive (days) {
 // Load GitHub issues
 function loadIssues (stack) {
   $(`#${stack}`).find('.box').children().remove()
+  $(`#${stack}`).find('.refresh-data').show()
   if (gitHub.issueList.find(issue => issue.stack === stack) === undefined) {
     $(`#${stack}`).find('.box').append('<div class="no-results">No Issues</div>')
   } else {
@@ -159,12 +157,14 @@ function loadIssues (stack) {
   applySettings()
   loadTagCloud()
   highlightCards()
+  toggleCardColor()
 }
 
 // Load ServiceNow incidents
 function loadSnIncidents (type) {
   serviceNow.updateSnIncidentList()
   $('#sn-stack').find('.box').children(`.${type}, .getting-results`).remove()
+  $('#sn-stack').find('.refresh-data').show()
   if (serviceNow.snIncidentList.filter(inc => inc.number.substring(0, 2).toLowerCase() === type.substring(0, 2).toLowerCase()).length === 0) {
     $('#sn-stack').find('.box').append(`<div class="no-results ${type}">No ${type}s</div>`)
   } else {
@@ -178,18 +178,21 @@ function loadSnIncidents (type) {
   applySettings()
   loadTagCloud()
   highlightCards()
+  toggleCardColor()
 }
 
 // Load ServiceNow incidents
 function loadRallyItems () {
   rally.updateItemList()
   $('#rally-stack').find('.box').children().remove()
+  $('#rally-stack').find('.refresh-data').show()
   if (rally.rallyItemList.length > 0) {
     rally.rallyTagList.push('Defect')
     rally.rallyItemList.forEach(item => { rally.addRallyItem(item) })
     applySettings()
     loadTagCloud()
     highlightCards()
+    toggleCardColor()
   }
 }
 // #endregion
@@ -831,6 +834,7 @@ $(document).on('click', '.add-incident', (e) => {
 
 // Refresh data click
 $(document).on('click', '.refresh-data', (e) => {
+  $(e.currentTarget).hide()
   if ($(e.currentTarget).data('source') === 'git') {
     gitHub.getIssues($(e.currentTarget).closest('.serv-stack').prop('id'))
   } else if ($(e.currentTarget).data('source') === 'sn') {

@@ -67,6 +67,7 @@ const callIssueService = (repo) => {
       alert('Unable to connect to GitHub')
       $(`#${repoStack}`).find('.box').children().remove()
       $(`#${repoStack}`).find('.box').append('<div class="no-results getting-results"><span>Unable to Connect</span></div></div>')
+      $(`#${repoStack}`).find('.refresh-data').show()
     })
   }
 }
@@ -76,6 +77,7 @@ const callAlertService = (repo) => {
     // const repoStack = `git-stack-${repo.Owner}-${repo.Repo}`
     // $(`#${repoStack}`).find('.box').children().remove()
     // $(`#${repoStack}`).find('.box').append('<div class="no-results getting-results"><span>Getting Notifications </span><div class="spinner-grow spinner-grow-sm" role="status"></div></div>')
+    // $(`#${repoStack}`).find('.refresh-data').show()
     const octokit = new Octokit({ auth: repo.Auth })
     octokit.paginate('GET /repos/:owner/:repo/notifications', {
       baseUrl: repo.BaseUrl,

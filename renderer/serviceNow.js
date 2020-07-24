@@ -136,6 +136,7 @@ exports.getSnIncidents = (domain, token, priority) => {
           alert('Unable to connect to ServiceNow')
           $('#sn-stack').find('.box').children().remove()
           $('#sn-stack').find('.box').append('<div class="no-results getting-results"><span>Unable to Connect</span></div></div>')
+          $('#sn-stack').find('.refresh-data').show()
           isError = false
         }
         isError = true

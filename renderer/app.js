@@ -77,6 +77,37 @@ const ctb = new customTitlebar.Titlebar({
 })
 // #endregion
 
+// #region Seach bar
+$('#main-window').append('<div class="search-icon fas fa-search"></div><div><input class="search-box form-control" type="text" placeholder="Search" aria-label="Search"></div>')
+$('.search-box').hide()
+
+$(document).on('click', '.search-icon', function () {
+  if ($('.search-box').is(':visible')) {
+    $('.card').removeClass('card-search-highlighted')
+    $('.search-box').animate({ width: '0px' }, 'fast', 'swing').hide(0)
+  } else {
+    $('.search-box').show().animate({ width: '150px' }, 'fast', 'swing')
+    searchResults($('.search-box').val())
+  }
+})
+
+$(document).on('keyup', '.search-box', function (e) {
+  const searchString = $(e.currentTarget).val()
+  searchResults(searchString)
+})
+
+function searchResults (query) {
+  $('.card').removeClass('card-search-highlighted')
+  if (query.length > 0) {
+    $('.card').each(function () {
+      if ($(this).find('.title').text().toLowerCase().includes(query.toLowerCase())) {
+        $(this).addClass('card-search-highlighted')
+      }
+    })
+  }
+}
+// #endregion
+
 // #region Data Load and Refresh
 // Initial Load
 getStacks()

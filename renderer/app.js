@@ -78,9 +78,13 @@ const ctb = new customTitlebar.Titlebar({
 // #endregion
 
 // #region Seach bar
-$('#main-window').append('<div class="search-icon fas fa-search"></div><div><input class="search-box form-control" type="text" placeholder="Search" aria-label="Search"></div>')
-$('.search-box').hide()
+// Add search elements
+if (process.platform === 'darwin') {
+  $('#main-window').append('<div class="search-icon fas fa-search"></div><div><input class="search-box form-control" type="text" placeholder="Search" aria-label="Search"></div>')
+  $('.search-box').hide()
+}
 
+// Search button event handler
 $(document).on('click', '.search-icon', function () {
   if ($('.search-box').is(':visible')) {
     $('.card').removeClass('card-search-highlighted')
@@ -91,11 +95,13 @@ $(document).on('click', '.search-icon', function () {
   }
 })
 
+// Search input event handler
 $(document).on('keyup', '.search-box', function (e) {
   const searchString = $(e.currentTarget).val()
   searchResults(searchString)
 })
 
+// Search function to highlight results
 function searchResults (query) {
   $('.card').removeClass('card-search-highlighted')
   if (query.length > 0) {

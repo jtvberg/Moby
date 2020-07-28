@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.14.0",
-    "@octokit/rest": "^18.0.0",
+    "@octokit/rest": "^18.0.3",
     "bootstrap": "^4.5.0",
     "custom-electron-titlebar": "^3.2.3",
     "electron-updater": "^4.3.1",

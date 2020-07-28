@@ -303,8 +303,19 @@ body {
 }
 
 .card-search-highlighted {
-  border-width: 2px;
-  border-color: var(--search-highlight);
+  box-shadow: inset 0px 0px 1px 2px var(--search-highlight);
+}
+
+.search-glyph {
+  position: absolute;
+  top: 0px;
+  left: -3px;
+  width: 15px;
+  height: 15px;
+  background: var(--search-highlight);
+  border: 1px solid black;
+  border-radius: 50%;
+  display: none;
 }
 
 .title {
@@ -386,6 +397,7 @@ body {
 
 .search-icon,
 .menu-item {
+  position: relative;
   color: var(--menu-primary);
   padding: 4px;
   -webkit-app-region: no-drag;
@@ -432,6 +444,7 @@ body {
 }
 
 .color-item {
+  position: relative;
   padding: 2px 0px 0px 0px;
   border-color: var(--highlight) !important;
   border-width: 2px solid !important;

@@ -88,9 +88,10 @@ if (process.platform === 'darwin') {
 $(document).on('click', '.search-icon', function () {
   if ($('.search-box').is(':visible')) {
     $('.card').removeClass('card-search-highlighted')
+    highlightGlyphRemove()
     $('.search-box').animate({ width: '0px' }, 'fast', 'swing').hide(0)
   } else {
-    $('.search-box').show().animate({ width: '150px' }, 'fast', 'swing')
+    $('.search-box').show().animate({ width: '150px' }, 'fast', 'swing').focus()
     searchResults($('.search-box').val())
   }
 })
@@ -104,13 +105,43 @@ $(document).on('keyup', '.search-box', function (e) {
 // Search function to highlight results
 function searchResults (query) {
   $('.card').removeClass('card-search-highlighted')
+  highlightGlyphRemove()
   if (query.length > 0) {
     $('.card').each(function () {
       if ($(this).find('.title').text().toLowerCase().includes(query.toLowerCase())) {
         $(this).addClass('card-search-highlighted')
+        if (!$(this).is(':visible')) {
+          for (let i = 1, t = 5; i <= t; i++) {
+            if ($(this).hasClass(`color-${i}`)) {
+              highlightGlyph($(this).prop('id'), i)
+              return
+            }
+          }
+        }
       }
     })
   }
+}
+
+function highlightGlyph (id, color) {
+  const stack = $(`#${id}`).closest('.stack-any').prop('id')
+  const serv = $(`#${id}`).closest('.stack-any').hasClass('serv-stack')
+
+  if (stack === 'stack-archive') {
+    $('#archive-button').find('.search-glyph').show()
+  } else if (stack === 'stack-schedule') {
+    $('#schedule-button').find('.search-glyph').show()
+  } else if (serv && !$('#si-button').hasClass('menu-item-toggled')) {
+    $('#si-button').find('.search-glyph').show()
+  }
+
+  if (!$(`#color-${color}-button`).hasClass(`color-pick-${color}`)) {
+    $(`#color-${color}-button`).find('.search-glyph').show()
+  }
+}
+
+function highlightGlyphRemove () {
+  $('#archive-button, #schedule-button, #si-button, .color-item').find('.search-glyph').hide()
 }
 // #endregion
 
@@ -718,7 +749,7 @@ function buildStack (id, title, index, url) {
   const removeStackBtn = id === 'stack-do' || id === 'stack-done' || !isDefault ? '' : `<div class="dropdown-menu dropdown-menu-sm ddcm" id="context-menu-${id}">
                                                     <a class="dropdown-item" href="#remove-modal" data-toggle="modal">Remove Stack</a>
                                                   </div>`
-  const stackHtml = `<div class="${stackClass}" id="${id}" data-stack-index="${index}"${dragDrop}>
+  const stackHtml = `<div class="${stackClass} stack-any" id="${id}" data-stack-index="${index}"${dragDrop}>
                       ${addStackBtn}
                       <div class="header stack-header" contenteditable="${isDefault}" onclick="document.execCommand('selectAll',false,null)" oncontextmenu="event.preventDefault(); event.stopPropagation();">${title}</div>
                       ${removeStackBtn}

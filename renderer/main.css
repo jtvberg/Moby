@@ -313,7 +313,7 @@ body {
   width: 15px;
   height: 15px;
   background: var(--search-highlight);
-  border: 1px solid black;
+  border: 1px solid var(--main-background-dark);
   border-radius: 50%;
   display: none;
 }

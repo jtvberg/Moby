@@ -88,7 +88,7 @@ if (process.platform === 'darwin') {
 $(document).on('click', '.search-icon', function () {
   if ($('.search-box').is(':visible')) {
     $('.card').removeClass('card-search-highlighted')
-    highlightGlyphRemove()
+    highlightSearchGlyphRemove()
     $('.search-box').animate({ width: '0px' }, 'fast', 'swing').hide(0)
   } else {
     $('.search-box').show().animate({ width: '150px' }, 'fast', 'swing').focus()
@@ -105,7 +105,7 @@ $(document).on('keyup', '.search-box', function (e) {
 // Search function to highlight results
 function searchResults (query) {
   $('.card').removeClass('card-search-highlighted')
-  highlightGlyphRemove()
+  highlightSearchGlyphRemove()
   if (query.length > 0) {
     $('.card').each(function () {
       if ($(this).find('.title').text().toLowerCase().includes(query.toLowerCase())) {
@@ -113,7 +113,7 @@ function searchResults (query) {
         if (!$(this).is(':visible')) {
           for (let i = 1, t = 5; i <= t; i++) {
             if ($(this).hasClass(`color-${i}`)) {
-              highlightGlyph($(this).prop('id'), i)
+              highlightSearchGlyph($(this).prop('id'), i)
               return
             }
           }
@@ -123,7 +123,8 @@ function searchResults (query) {
   }
 }
 
-function highlightGlyph (id, color) {
+// Add search glyph to toggle for hidden results
+function highlightSearchGlyph (id, color) {
   const stack = $(`#${id}`).closest('.stack-any').prop('id')
   const serv = $(`#${id}`).closest('.stack-any').hasClass('serv-stack')
 
@@ -140,7 +141,8 @@ function highlightGlyph (id, color) {
   }
 }
 
-function highlightGlyphRemove () {
+// Remove search glyph
+function highlightSearchGlyphRemove () {
   $('#archive-button, #schedule-button, #si-button, .color-item').find('.search-glyph').hide()
 }
 // #endregion
@@ -857,6 +859,7 @@ const toggleServStacks = () => {
       $('#stack-schedule').show()
     }
     $('.serv-stack').show()
+    highlightNewGlyphRemove()
     $('#si-button').addClass('menu-item-toggled')
   }
 }
@@ -1543,8 +1546,37 @@ function highlightCards () {
   diff.forEach(task => {
     const id = task.substring(1, task.length)
     $(`#${id}`).addClass('card-new-highlighted')
+    if (!$(`#${id}`).is(':visible')) {
+      for (let i = 1, t = 5; i <= t; i++) {
+        if ($(`#${id}`).hasClass(`color-${i}`)) {
+          highlightNewGlyph($(`#${id}`).prop('id'), i)
+          return
+        }
+      }
+    }
   })
   ipcRenderer.send('badge-count', diff.length || 0)
+}
+
+// Add new task glyph to toggle for hidden results
+function highlightNewGlyph (id, color) {
+  const serv = $(`#${id}`).closest('.stack-any').hasClass('serv-stack')
+  if (serv && !$('#si-button').hasClass('menu-item-toggled')) {
+    $('#si-button').find('.new-glyph').show()
+  }
+
+  if (!$(`#color-${color}-button`).hasClass(`color-pick-${color}`)) {
+    $(`#color-${color}-button`).find('.new-glyph').show()
+  }
+}
+
+// Remove new task glyph
+function highlightNewGlyphRemove (color) {
+  if (color) {
+    $(`#color-${color}-button`).find('.new-glyph').hide()
+  } else {
+    $('#si-button').find('.new-glyph').hide()
+  }
 }
 
 // Task drag and drop events
@@ -1578,7 +1610,9 @@ const drop = (e) => {
 // Color toggle event
 // eslint-disable-next-line no-unused-vars
 const toggleColorClick = (e) => {
-  toggleColor($(e.currentTarget).data('color-id'))
+  const color = $(e.currentTarget).data('color-id')
+  toggleColor(color)
+  highlightNewGlyphRemove(color)
 }
 
 // Expand all tasks event

@@ -318,6 +318,18 @@ body {
   display: none;
 }
 
+.new-glyph {
+  position: absolute;
+  top: 0px;
+  left: -3px;
+  width: 15px;
+  height: 15px;
+  background: var(--new-highlight);
+  border: 1px solid var(--main-background-dark);
+  border-radius: 50%;
+  display: none;
+}
+
 .title {
   float: left;
   word-wrap: break-word;

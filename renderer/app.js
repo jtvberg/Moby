@@ -9,6 +9,7 @@ const fs = require('fs')
 require('bootstrap/js/dist/modal')
 require('./menu.js')
 const customTitlebar = require('custom-electron-titlebar')
+const { EDEADLK } = require('constants')
 const stackPrefix = 'stack-'
 const knownList = JSON.parse(localStorage.getItem('knownList')) || createKnown()
 let taskType = 'new'
@@ -1477,8 +1478,13 @@ $('#restore-button').click(() => {
 
 // #region Task Card code
 // Task color button toggle
-function toggleColor (colorId) {
-  if ($(`#color-${colorId}-button`).hasClass(`color-pick-${colorId}`)) {
+function toggleColor (colorId, only) {
+  if (only) {
+    for (i = 1; i <= 5; i++) {
+      $(`#color-${i}-button`).removeClass(`color-pick-${i}`)
+    }
+    $(`#color-${colorId}-button`).addClass(`color-pick-${colorId}`)
+  } else if ($(`#color-${colorId}-button`).hasClass(`color-pick-${colorId}`)) {
     $(`#color-${colorId}-button`).removeClass(`color-pick-${colorId}`)
   } else {
     $(`#color-${colorId}-button`).addClass(`color-pick-${colorId}`)
@@ -1611,7 +1617,7 @@ const drop = (e) => {
 // eslint-disable-next-line no-unused-vars
 const toggleColorClick = (e) => {
   const color = $(e.currentTarget).data('color-id')
-  toggleColor(color)
+  toggleColor(color, e.metaKey)
   highlightNewGlyphRemove(color)
 }
 

@@ -9,7 +9,6 @@ const fs = require('fs')
 require('bootstrap/js/dist/modal')
 require('./menu.js')
 const customTitlebar = require('custom-electron-titlebar')
-const { EDEADLK } = require('constants')
 const stackPrefix = 'stack-'
 const knownList = JSON.parse(localStorage.getItem('knownList')) || createKnown()
 let taskType = 'new'
@@ -1480,7 +1479,7 @@ $('#restore-button').click(() => {
 // Task color button toggle
 function toggleColor (colorId, only) {
   if (only) {
-    for (i = 1; i <= 5; i++) {
+    for (let i = 1; i <= 5; i++) {
       $(`#color-${i}-button`).removeClass(`color-pick-${i}`)
     }
     $(`#color-${colorId}-button`).addClass(`color-pick-${colorId}`)

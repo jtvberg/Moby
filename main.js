@@ -15,6 +15,7 @@ const createWindow = () => {
 
   // Create main window
   win = new BrowserWindow({
+    show: false,
     width: 1200,
     height: 800,
     minWidth: 500,
@@ -31,6 +32,10 @@ const createWindow = () => {
 
   // HTML to open
   win.loadURL(`file://${__dirname}/renderer/main.html`)
+
+  win.once('ready-to-show', () => {
+    win.show()
+  })
 
   win.on('closed', () => {
     win = null

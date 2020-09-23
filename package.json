@@ -1,6 +1,6 @@
 {
   "name": "Moby",
-  "version": "0.9.6",
+  "version": "0.9.7",
   "description": "It will task you",
   "main": "main.js",
   "scripts": {

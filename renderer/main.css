@@ -373,6 +373,7 @@ body {
   height: 30px;
 }
 
+.panel-header>a:hover,
 .panel-header:hover {
   color: var(--highlight);
 }
@@ -383,6 +384,10 @@ body {
 
 .panel-header .collapsed .fa {
   transform: rotate(-90deg);
+}
+
+.panel-header>a {
+  color: var(--primary)
 }
 
 .form-check-inline {

@@ -20,8 +20,8 @@
   "author": "jtvberg",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^9.3.0",
-    "electron-builder": "^22.8.0",
+    "electron": "^9.3.1",
+    "electron-builder": "^22.8.1",
     "electron-log": "^4.2.4",
     "electron-reload": "^1.5.0",
     "eslint": "^7.9.0",
@@ -33,10 +33,10 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.14.0",
-    "@octokit/rest": "^18.0.5",
+    "@octokit/rest": "^18.0.6",
     "bootstrap": "^4.5.2",
     "custom-electron-titlebar": "^3.2.4",
-    "electron-updater": "^4.3.4",
+    "electron-updater": "^4.3.5",
     "jquery": "3.4.1",
     "popper.js": "^1.16.1",
     "rally": "^2.1.3",

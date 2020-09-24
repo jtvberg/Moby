@@ -282,7 +282,7 @@ exports.addTask = (task) => {
   // Add Ageing
   this.updateTaskAge(task.taskId)
   // Stop right-click on card invoking remove stack
-  $(`#${task.TaskId}`).contextmenu((e) => {
+  $(`#${task.TaskId}`).on('contextmenu', (e) => {
     e.stopPropagation()
   })
 
@@ -302,11 +302,11 @@ exports.addTask = (task) => {
     }
   })
   // Clone active task (to 'do')
-  $(`#clone-button-${task.TaskId}`).click(() => {
+  $(`#clone-button-${task.TaskId}`).on('click', () => {
     this.cloneTask(task.TaskId)
   })
   // Copy task details to clipboard
-  $(`#copy-button-${task.TaskId}`).click(() => {
+  $(`#copy-button-${task.TaskId}`).on('click', () => {
     clipboard.writeText(`${task.TaskTitle}\n${task.TaskDetail}\n`)
   })
   // Initialize tooltips

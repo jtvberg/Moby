@@ -212,11 +212,11 @@ exports.addSnIncident = (incident) => {
   // Add issue html to host
   $('#sn-stack').find('.box').append(incidentHtml)
   // Stop right-click on card invoking remove stack
-  $(`#${id}`).contextmenu((e) => {
+  $(`#${id}`).on('contextmenu', (e) => {
     e.stopPropagation()
   })
   // Copy issue details to clipboard
-  $(`#copy-button-${id}`).click(() => {
+  $(`#copy-button-${id}`).on('click', () => {
     const cbs = `${id}\nLink: ${url}\nPriority: ${incident.priority}\nState: ${incident.state}\nCreated: ${incident.opened_at}\nUpdated: ${incident.sys_updated_on}\nOpened by: ${incident.opened_by.display_value}\nAssigned to: ${incident.assignment_group.display_value}\nDetail: ${incident.short_description.trim()}`
     clipboard.writeText(cbs)
   })

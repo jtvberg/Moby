@@ -2,6 +2,7 @@
 const { dialog } = require('electron')
 const { autoUpdater } = require('electron-updater')
 
+// Uncomment to log updater events/errors
 // autoUpdater.logger = require('electron-log')
 // autoUpdater.logger.transports.file.level = 'info'
 

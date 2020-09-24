@@ -2,7 +2,7 @@
 const { ipcRenderer, remote } = require('electron')
 
 // IPC event/channel to act on reset of form
-ipcRenderer.on('quick-reset', (e) => {
+ipcRenderer.on('quick-reset', () => {
   $('#quick-task-form').trigger('reset')
   $('#quick-task-detail').height('48px')
   $('#color-option-1').closest('.btn').button('toggle')
@@ -15,7 +15,7 @@ ipcRenderer.on('quick-reset', (e) => {
       i++
     }
   })
-  $('#quick-task-title').focus()
+  $('#quick-task-title').trigger('focus')
 })
 
 // IPC call to set quick menu theme
@@ -54,7 +54,7 @@ function makeSubmitButton (stackId, stackTitle) {
   const btnHtml = `<button id="${stackId}" type="button" class="btn btn-primary btn-sm submit-button">${stackTitle}</button>`
   $('#submit-button-group').append(btnHtml)
   // Submit task from tray window events
-  $(`#${stackId}`).click((e) => {
+  $(`#${stackId}`).on('click', (e) => {
     quickTask(e.currentTarget.id)
   })
 }
@@ -82,8 +82,8 @@ $('#quick-task-detail').on('input keydown', function () {
 })
 
 // Ignore enter on title
-$('#quick-task-title').keypress(function (e) {
-  if (e.which === 13) {
+$('#quick-task-title').on('keydown', function (e) {
+  if (e.key === 'Enter') {
     e.preventDefault()
   }
 })

@@ -5,7 +5,7 @@ const path = require('path')
 const updater = require('./updater')
 
 // Enable Electron-Reload (dev only)
-// require('electron-reload')(__dirname)
+require('electron-reload')(__dirname)
 
 // Create main app window
 let win

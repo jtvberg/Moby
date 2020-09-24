@@ -195,11 +195,11 @@ exports.addIssue = (issue) => {
     // Add issue html to host
     $(`#${issue.stack}`).find('.box').append(issueHtml)
     // Stop right-click on card invoking remove stack
-    $(`#${id}`).contextmenu((e) => {
+    $(`#${id}`).on('contextmenu', (e) => {
       e.stopPropagation()
     })
     // Copy issue details to clipboard
-    $(`#copy-button-${id}`).click(() => {
+    $(`#copy-button-${id}`).on('click', () => {
       const cbs = `#${issue.issueOjb.number} ${issue.issueOjb.title}\nLink: ${issue.issueOjb.html_url}\nCreated: ${cd.toLocaleDateString()}\nUpdated: ${ud.toLocaleDateString()}\nOpened by: ${issue.issueOjb.user.login}\nAssigned to: ${assigned}\nDetail: ${issue.issueOjb.body}`
       clipboard.writeText(cbs)
     })

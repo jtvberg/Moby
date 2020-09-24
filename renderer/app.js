@@ -91,7 +91,7 @@ $(document).on('click', '.search-icon', function () {
     highlightSearchGlyphRemove()
     $('.search-box').animate({ width: '0px' }, 'fast', 'swing').hide(0)
   } else {
-    $('.search-box').show().animate({ width: '150px' }, 'fast', 'swing').focus()
+    $('.search-box').show().animate({ width: '150px' }, 'fast', 'swing').trigger('focus')
     searchResults($('.search-box').val())
   }
 })
@@ -165,7 +165,7 @@ window.setInterval(tasks.updateTaskAge, 3600000)
 window.setInterval(refreshAll, 600000)
 
 function refreshAll () {
-  $('.refresh-data').click()
+  $('.refresh-data').trigger('click')
 }
 
 // Scheduled tasks method
@@ -522,12 +522,12 @@ const addNewGitHub = () => {
 }
 
 // Save changes button click handler
-$('#settings-button').click(() => {
+$('#settings-button').on('click', () => {
   saveSettings()
 })
 
 // Reset settings to defaults
-$('#settings-default-button').click(() => {
+$('#settings-default-button').on('click', () => {
   if (!confirm('This will restore all settings to defaults outside of any user inputted data.\nAre you sure?')) {
     return
   }
@@ -538,44 +538,44 @@ $('#settings-default-button').click(() => {
 })
 
 // Collapse other panels when clicking on headers in settings modal
-$('.panel-header').click(() => {
+$('.panel-header').on('click', () => {
   $('.panel-header').parent().find('.collapse').collapse('hide')
 })
 
 // Refresh available ServiceNow groups
-$('#settings-sngroups-refresh-button').click(() => {
+$('#settings-sngroups-refresh-button').on('click', () => {
   $('#servicenow-group-box').children().remove()
   $('#servicenow-group-box').append('<div><span">Getting Groups </span><div class="spinner-grow spinner-grow-sm" role="status"></div></div>')
   serviceNow.getSnGroups(settings.mobySettings.SnDomain, settings.mobySettings.SnToken)
 })
 
 // Track change to SN group selection
-$('#settings-servicenow-toggle').click(() => {
+$('#settings-servicenow-toggle').on('click', () => {
   groupChange = true
 })
 
 // Track change to SN priority
-$('#choose-priority').click(() => {
+$('#choose-priority').on('click', () => {
   groupChange = true
 })
 
 // Track change to SN domain/token fields
-$('.servicenow-edit').change(function () {
+$('.servicenow-edit').on('change', function () {
   $(this).addClass('input-change')
 })
 
 // Track change to repo show status-
-$('#settings-github-toggle').click(() => {
+$('#settings-github-toggle').on('click', () => {
   repoChange = true
 })
 
 // Track change to repo show status-
-$('#settings-rally-toggle').click(() => {
+$('#settings-rally-toggle').on('click', () => {
   projectChange = true
 })
 
 // Refresh available Rally projects
-$('#settings-rallyprojects-refresh-button').click(() => {
+$('#settings-rallyprojects-refresh-button').on('click', () => {
   $('#rally-project-box').children().remove()
   $('#rally-project-box').append('<div><span">Getting Projects </span><div class="spinner-grow spinner-grow-sm" role="status"></div></div>')
   rally.getRallyProjects(settings.mobySettings.RallyDomain, settings.mobySettings.RallyToken)
@@ -717,7 +717,7 @@ function saveStacks () {
 function buildStack (id, title, index, url) {
   const isDefault = id.substring(0, 6) === stackPrefix
   const stackClass = isDefault ? 'stack' : 'serv-stack'
-  const dragDrop = isDefault ? ' ondrop="drop(event)" ondragover="allowDrop(event)"' : ''
+  const dragDrop = isDefault ? ' ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)"' : ''
   const updated = isDefault ? '' : new Date(Date.now()).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
   const updatedTs = new Date(Date.now()).toLocaleString()
   let addTaskBtn = `" href="#task-modal" data-toggle="modal" data-stack-id="${id}" data-type-id="new"`
@@ -775,7 +775,7 @@ function buildStack (id, title, index, url) {
       left: 'auto',
       top: '5px'
     }).addClass('show').animate({ width: '98px' }, 'fast', 'swing')
-  }).click(() => {
+  }).on('click', () => {
     $(`#context-menu-${id}`).removeClass('show').hide().css({ width: '0px' })
   })
   $(`#context-menu-${id} a`).on('mouseleave', () => {
@@ -800,7 +800,7 @@ function addNewStack (addIndex) {
   stacks.splice(addIndex, 0, stackData)
   localStorage.setItem('stackList', JSON.stringify(stacks))
   getStacks()
-  $(`#${stackData.StackId}`).find('.stack-header').focus()
+  $(`#${stackData.StackId}`).find('.stack-header').trigger('focus')
   document.execCommand('selectAll', false, null)
 }
 
@@ -871,14 +871,14 @@ $('#remove-modal').on('show.bs.modal', (e) => {
 })
 
 // Remove stack event
-$('#remove-stack-button').click((e) => {
+$('#remove-stack-button').on('click', (e) => {
   $('#remove-modal').modal('hide')
   removeStack($(e.currentTarget).data('stack-index'), $('#task-stack-new').val())
 })
 
 // In-line stack title update: No enter for you!
-$('.stack-header').keypress(function (e) {
-  if (e.which === 13) {
+$('.stack-header').on('keydown', function (e) {
+  if (e.key === 'Enter') {
     this.blur()
   }
 })
@@ -1035,8 +1035,8 @@ const toggleTags = () => {
 }
 
 // Fill tag on tab or enter with matched tag
-$('#tag-edit-box').keydown(function (e) {
-  if (e.keyCode === 9 || e.keyCode === 13) {
+$('#tag-edit-box').on('keydown', function (e) {
+  if (e.key === 'Tab' || e.key === 'Enter') {
     $('#tag-edit-box').children().last('.new-tags').val(match)
     newTagList = newTagList.filter(t => t !== match)
   }
@@ -1421,7 +1421,7 @@ $('#task-modal').on('show.bs.modal', (e) => {
 
 // Focus title field on modal 'shown'
 $('#task-modal').on('shown.bs.modal', () => {
-  $('#task-title').focus()
+  $('#task-title').trigger('focus')
 })
 
 // Reload tag cloud on 'hide'
@@ -1445,16 +1445,16 @@ $('#task-detail').on('focus mouseenter', function () {
 })
 
 // Active radio button change events
-$('#radio-weekly, #radio-biWeekly, #radio-triWeekly, #radio-monthly').click(() => {
+$('#radio-weekly, #radio-biWeekly, #radio-triWeekly, #radio-monthly').on('click', () => {
   enableRecur(true)
 })
 
-$('#radio-once').click(() => {
+$('#radio-once').on('click', () => {
   enableRecur()
 })
 
 // Task modal submit event
-$('#submit-button').click(() => {
+$('#submit-button').on('click', () => {
   knownList.push(tasks.submitTask(taskType))
   localStorage.setItem('knownList', JSON.stringify(knownList))
   $('#task-modal').modal('hide')
@@ -1462,14 +1462,14 @@ $('#submit-button').click(() => {
 })
 
 // Execute task modal submit on enter except when in detail field
-$('#task-modal').keypress((e) => {
-  if (e.which === 13 && !$('#task-detail').is(':focus')) {
-    $('#submit-button').click()
+$('#task-modal').on('keydown', (e) => {
+  if (e.key === 'Enter' && !$('#task-detail').is(':focus')) {
+    $('#submit-button').trigger('click')
   }
 })
 
 // Restore archived task to 'Do' column
-$('#restore-button').click(() => {
+$('#restore-button').on('click', () => {
   tasks.restoreTask(window.activeTask)
   $('#restore-modal').modal('hide')
 })
@@ -1596,8 +1596,22 @@ const drag = (e) => {
 }
 
 // eslint-disable-next-line no-unused-vars
+const dragClear = (e) => {
+  $('.stack').css('background-color', '')
+}
+
+// eslint-disable-next-line no-unused-vars
+const dragEnter = (e) => {
+  const id = $(e.target).closest('.stack').prop('id')
+  console.log(id)
+  $('.stack').css('background-color', '')
+  $(`#${id}`).css('background-color', getComputedStyle(document.documentElement,null).getPropertyValue('--drop'))
+}
+
+// eslint-disable-next-line no-unused-vars
 const drop = (e) => {
   e.preventDefault()
+  $('.stack').css('background-color', '')
   const data = e.dataTransfer.getData('text')
   if ($(e.target).hasClass('box')) {
     $(e.target).append($(`#${data}`))
@@ -1670,7 +1684,7 @@ $(document).on('dblclick', '.card', (e) => {
     if ($(e.currentTarget).parent().parent().hasClass('serv-stack', 'sn-stack')) {
       shell.openExternal($(e.currentTarget).data('url'))
     } else {
-      $(e.currentTarget).find('.card-edit-button').click()
+      $(e.currentTarget).find('.card-edit-button').trigger('click')
     }
   }
 })
@@ -1682,7 +1696,7 @@ $(document).on('click', 'a[href^="http"]', function (e) {
 })
 
 // Deselect task
-$('.click-area').click(() => {
+$('.click-area').on('click', () => {
   $('.window-title').text('Moby')
   $('.card').removeClass('card-selected')
   window.activeTask = null
@@ -1744,7 +1758,7 @@ const exit = () => {
 }
 
 // Title bar double click event to maximize/restore window
-$('.titlebar-drag-region').dblclick(() => {
+$('.titlebar-drag-region').on('dblclick', () => {
   maxRestoreWindow()
 })
 
@@ -1758,6 +1772,6 @@ $(document).on('click', '.check-checkbox', (e) => {
 
 // Checkbox label click handler
 $(document).on('click', '.check-label', (e) => {
-  $(e.currentTarget).parent('.check-host, .check-modal-host').find('.check-checkbox').click()
+  $(e.currentTarget).parent('.check-host, .check-modal-host').find('.check-checkbox').trigger('click')
 })
 // #endregion

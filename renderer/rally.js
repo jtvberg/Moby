@@ -271,11 +271,11 @@ exports.addRallyItem = (item) => {
   // Add issue html to host
   $('#rally-stack').find('.box').append(itemHtml)
   // Stop right-click on card invoking remove stack
-  $(`#${id}`).contextmenu((e) => {
+  $(`#${id}`).on('contextmenu', (e) => {
     e.stopPropagation()
   })
   // Copy issue details to clipboard
-  $(`#copy-button-${id}`).click(() => {
+  $(`#copy-button-${id}`).on('click', () => {
     const cbs = `${id}\nLink: ${url}\nPriority: ${item.Priority}\nSeverity: ${item.Severity}\nState: ${item.State}\nCreated: ${item.CreationDate}\nUpdated: ${item.LastUpdateDate}\nProject: ${item.Project}\nDetail: ${item.Name.trim()}`
     clipboard.writeText(cbs)
   })

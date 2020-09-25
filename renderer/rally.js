@@ -55,7 +55,7 @@ exports.getRallyProjects = (domain, token) => {
   }, function (error, result) {
     if (error) {
       console.log(error)
-      alert('Unable to connect to Rally')
+      ipcRenderer.send('send-error-rally')
     } else {
       projects.length = 0
       result.Results.forEach(element => {
@@ -130,7 +130,7 @@ exports.getRallyItems = (domain, token) => {
   }, function (error, result) {
     if (error) {
       console.log(error)
-      alert('Unable to connect to Rally')
+      ipcRenderer.send('send-error-rally')
       $('#rally-stack').find('.box').children().remove()
       $('#rally-stack').find('.box').append('<div class="no-results getting-results"><span>Unable to Connect</span></div></div>')
       $('#rally-stack').find('.refresh-data').show()

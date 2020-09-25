@@ -21,12 +21,12 @@ exports.getIssues = (repoId) => {
   if (repoId) {
     const repo = this.repoList.find(repo => `git-stack-${repo.Owner}-${repo.Repo}` === repoId)
     callIssueService(repo)
-    callAlertService(repo)
+    // callAlertService(repo)
   } else if (this.repoList.length > 0) {
     this.tagList.length = 0
     this.repoList.forEach((repo) => {
       callIssueService(repo)
-      callAlertService(repo)
+      // callAlertService(repo)
     })
   }
 }
@@ -64,7 +64,7 @@ const callIssueService = (repo) => {
       ipcRenderer.send('get-issues', repoStack)
     }).catch(err => {
       console.log(err)
-      alert('Unable to connect to GitHub')
+      ipcRenderer.send('send-error-gh')
       $(`#${repoStack}`).find('.box').children().remove()
       $(`#${repoStack}`).find('.box').append('<div class="no-results getting-results"><span>Unable to Connect</span></div></div>')
       $(`#${repoStack}`).find('.refresh-data').show()

@@ -66,6 +66,21 @@ ipcRenderer.on('quick-data', (e, data) => {
 ipcRenderer.on('update-tags', () => {
   loadTagCloud()
 })
+
+// IPC event on ServiceNow error
+ipcRenderer.on('error-sn', () => {
+  alert('sn-error')
+})
+
+// IPC event on Rally error
+ipcRenderer.on('error-rally', () => {
+  alert('rally-error')
+})
+
+// IPC event on GitHub error
+ipcRenderer.on('error-gh', () => {
+  alert('gh-error')
+})
 // #endregion
 
 // #region Custom titlebar instantiation
@@ -1605,7 +1620,7 @@ const dragEnter = (e) => {
   const id = $(e.target).closest('.stack').prop('id')
   console.log(id)
   $('.stack').css('background-color', '')
-  $(`#${id}`).css('background-color', getComputedStyle(document.documentElement,null).getPropertyValue('--drop'))
+  $(`#${id}`).css('background-color', getComputedStyle(document.documentElement, null).getPropertyValue('--drop'))
 }
 
 // eslint-disable-next-line no-unused-vars

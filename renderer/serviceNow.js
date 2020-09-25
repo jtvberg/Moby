@@ -71,7 +71,7 @@ exports.getSnGroups = (domain, token) => {
         groups.push(newGroup)
       })
     } catch (err) {
-      alert('Unable to connect to ServiceNow')
+      ipcRenderer.send('send-error-sn')
     }
     ipcRenderer.send('get-groups')
   })
@@ -133,7 +133,7 @@ exports.getSnIncidents = (domain, token, priority) => {
         }
       } catch (err) {
         if (isError) {
-          alert('Unable to connect to ServiceNow')
+          ipcRenderer.send('send-error-rally')
           $('#sn-stack').find('.box').children().remove()
           $('#sn-stack').find('.box').append('<div class="no-results getting-results"><span>Unable to Connect</span></div></div>')
           $('#sn-stack').find('.refresh-data').show()

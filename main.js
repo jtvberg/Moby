@@ -204,3 +204,18 @@ ipcMain.on('get-projects', () => {
 ipcMain.on('get-items', () => {
   win.webContents.send('send-items')
 })
+
+// IPC channel for Rally Errors
+ipcMain.on('send-error-rally', () => {
+  win.webContents.send('error-rally')
+})
+
+// IPC channel for GitHub Errors
+ipcMain.on('send-error-gh', () => {
+  win.webContents.send('error-gh')
+})
+
+// IPC channel for ServiceNow Errors
+ipcMain.on('send-error-sn', () => {
+  win.webContents.send('error-sn')
+})

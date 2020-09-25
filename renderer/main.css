@@ -330,6 +330,18 @@ body {
   display: none;
 }
 
+.error-glyph {
+  position: absolute;
+  top: 0px;
+  left: -3px;
+  width: 15px;
+  height: 15px;
+  background: var(--red);
+  border: 1px solid var(--main-background-dark);
+  border-radius: 50%;
+  display: none;
+}
+
 .title {
   float: left;
   word-wrap: break-word;

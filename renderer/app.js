@@ -28,9 +28,21 @@ ipcRenderer.on('desktop-path', (e, data) => {
   desktopPath = data
 })
 
+// IPC event to get task data from tray window
+ipcRenderer.on('quick-data', (e, data) => {
+  tasks.taskList.push(data)
+  tasks.saveTasks()
+  knownList.push(tasks.addTask(data))
+})
+
+// IPC event to get update tag cloud on task delete
+ipcRenderer.on('update-tags', () => {
+  loadTagCloud()
+})
+
 // IPC event when git issues returned; then add to stack
 ipcRenderer.on('send-issues', (e, data) => {
-  loadIssues(data)
+  loadGhIssues(data)
 })
 
 // IPC event when ServiceNow groups returned
@@ -55,31 +67,19 @@ ipcRenderer.on('send-items', () => {
   loadRallyItems()
 })
 
-// IPC event to get task data from tray window
-ipcRenderer.on('quick-data', (e, data) => {
-  tasks.taskList.push(data)
-  tasks.saveTasks()
-  knownList.push(tasks.addTask(data))
-})
-
-// IPC event to get update tag cloud on task delete
-ipcRenderer.on('update-tags', () => {
-  loadTagCloud()
-})
-
 // IPC event on ServiceNow error
 ipcRenderer.on('error-sn', () => {
-  alert('sn-error')
+  showErrorGlyph()
 })
 
 // IPC event on Rally error
 ipcRenderer.on('error-rally', () => {
-  alert('rally-error')
+  showErrorGlyph()
 })
 
 // IPC event on GitHub error
 ipcRenderer.on('error-gh', () => {
-  alert('gh-error')
+  showErrorGlyph()
 })
 // #endregion
 
@@ -180,6 +180,7 @@ window.setInterval(tasks.updateTaskAge, 3600000)
 window.setInterval(refreshAll, 600000)
 
 function refreshAll () {
+  $('#si-button').find('.error-glyph').hide()
   $('.refresh-data').trigger('click')
 }
 
@@ -226,7 +227,7 @@ function pruneArchive (days) {
 }
 
 // Load GitHub issues
-function loadIssues (stack) {
+function loadGhIssues (stack) {
   $(`#${stack}`).find('.box').children().remove()
   $(`#${stack}`).find('.refresh-data').show()
   if (gitHub.issueList.find(issue => issue.stack === stack) === undefined) {
@@ -278,6 +279,13 @@ function loadRallyItems () {
     loadTagCloud()
     highlightCards()
     toggleCardColor()
+  }
+}
+
+// Show error glyph when a service errors and serv stacks are hidden
+function showErrorGlyph () {
+  if (!$('#si-button').hasClass('menu-item-toggled')) {
+    $('#si-button').find('.error-glyph').show()
   }
 }
 // #endregion
@@ -650,6 +658,7 @@ function getStacks () {
     getDefaultStacks()
   }
   $('#si-button').hide()
+  $('#si-button').find('.error-glyph').hide()
   // GitHub stacks
   let showBtn = false
   if (settings.mobySettings.GhToggle && gitHub.repoList.length > 0) {
@@ -876,6 +885,7 @@ const toggleServStacks = () => {
     $('.serv-stack').show()
     highlightNewGlyphRemove()
     $('#si-button').addClass('menu-item-toggled')
+    $('#si-button').find('.error-glyph').hide()
   }
 }
 

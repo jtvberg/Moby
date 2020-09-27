@@ -1568,6 +1568,13 @@ function changeWatch (box) {
   observer.observe(targetNode, config)
 }
 
+// Add card to known list handler
+function highlightCard (id) {
+  knownList.push(getColor($(`#${id}`)) + '' + id)
+  localStorage.setItem('knownList', JSON.stringify([...new Set(knownList)]))
+  highlightCards()
+}
+
 // Highlight newly added cards via diff from knownList (which would include color change)
 function highlightCards () {
   const cl = createKnown()
@@ -1618,6 +1625,7 @@ const allowDrop = (e) => {
 // eslint-disable-next-line no-unused-vars
 const drag = (e) => {
   e.dataTransfer.setData('text', e.target.id)
+  highlightCard(e.target.id)
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -1675,9 +1683,7 @@ $(document).on('click', '.card', function (e) {
   window.activeTask = parseInt(id) || id
   $('.card').removeClass('card-selected')
   if ($(`#${id}`).hasClass('card-new-highlighted')) {
-    knownList.push(getColor($(e.currentTarget)) + '' + id)
-    localStorage.setItem('knownList', JSON.stringify([...new Set(knownList)]))
-    highlightCards()
+    highlightCard(id)
   }
   if ($(`#${id}`).offset()) {
     $(`#${id}`).removeClass('card-new-highlighted').addClass('card-selected').parent().animate({ scrollTop: $(`#${id}`).offset().top - $(`#${id}`).parent().offset().top + $(`#${id}`).parent().scrollTop() })

@@ -1636,7 +1636,6 @@ const dragClear = (e) => {
 // eslint-disable-next-line no-unused-vars
 const dragEnter = (e) => {
   const id = $(e.target).closest('.stack').prop('id')
-  console.log(id)
   $('.stack').css('background-color', '')
   $(`#${id}`).css('background-color', getComputedStyle(document.documentElement, null).getPropertyValue('--drop'))
 }

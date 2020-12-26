@@ -191,6 +191,7 @@ body {
 
 .modal {
   z-index: 2000;
+  backdrop-filter: blur( 4px );
 }
 
 .modal-backdrop {
@@ -204,6 +205,7 @@ body {
 .modal-content {
   border-color: var(--main-background-light);
   background-color: var(--main-background-dark);
+  box-shadow: 0 8px 32px 0 rgba(117, 117, 117, 0.37);
   color: var(--primary);
   max-height: calc(100vh - 57px);
 }

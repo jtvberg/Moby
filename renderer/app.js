@@ -1371,7 +1371,7 @@ function loadTaskModal (type, stack) {
     $('form').get(0).reset()
     $('#task-stack').val(stack)
     const dt = new Date(Date.now())
-    $('#start-date').val(dt.getMonth() + 1 + '/' + dt.getDate() + '/' + dt.getFullYear())
+    $('#start-date').val(dt.toISOString().substr(0, 10))
     enableRecur()
   } else {
     $('#task-modal-title').html('Edit Task')
@@ -1408,7 +1408,7 @@ function loadTaskModal (type, stack) {
     $('#subtask-edit-box').append(subtaskHTML)
     $('#count-select').val(getTask.Count)
     const dt = new Date(getTask.StartDate)
-    $('#start-date').val(dt.getMonth() + 1 + '/' + dt.getDate() + '/' + dt.getFullYear())
+    $('#start-date').val(dt.toISOString().substr(0, 10))
     // if (getTask.weekDay) {
     //   $('#check-sun').prop('checked', getTask.WeekDay.includes(0))
     //   $('#check-mon').prop('checked', getTask.WeekDay.includes(1))

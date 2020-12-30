@@ -768,3 +768,7 @@ a {
   padding: 5px;
   margin: 5px;
 }
+
+.date-box {
+  width: 150px;
+}

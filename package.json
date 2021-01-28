@@ -20,7 +20,7 @@
   "author": "jtvberg",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^9.3.2",
+    "electron": "^9.4.0",
     "electron-builder": "^22.9.1",
     "electron-log": "^4.2.4",
     "electron-reload": "^1.5.0",

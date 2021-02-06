@@ -46,7 +46,7 @@ const createWindow = () => {
 let tray
 const createTray = () => {
   // Create tray icon
-  tray = new Tray(path.join(__dirname, 'renderer/res/moby_icon_19_Template.png'))
+  tray = new Tray(path.join(__dirname, 'renderer/res/moby_icon_19.png'))
   tray.on('click', function (e) {
     toggleQuickMenu()
   })

@@ -47,7 +47,7 @@ let tray
 const createTray = () => {
   // Create tray icon
   tray = new Tray(path.join(__dirname, 'renderer/res/iconTemplate@2x.png'))
-  tray.on('click', function (e) {
+  tray.on('click', function () {
     toggleQuickMenu()
   })
 

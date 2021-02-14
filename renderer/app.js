@@ -605,7 +605,7 @@ $('#settings-rallyprojects-refresh-button').on('click', () => {
 })
 
 // Track for changes in group entries selection on click of checks or labels (through check-host)
-$(document).on('click', '.servicenow-group-check', (e) => {
+$(document).on('click', '.servicenow-group-check', () => {
   groupChange = true
 })
 
@@ -616,7 +616,7 @@ $(document).on('change', '.repo-edit', (e) => {
 })
 
 // Track for changes in repo entries on click of checks or labels (through check-host)
-$(document).on('click', '.repo-check', (e) => {
+$(document).on('click', '.repo-check', () => {
   repoChange = true
 })
 
@@ -635,7 +635,7 @@ $(document).on('click', '.repo-menu-item-clone', (e) => {
 })
 
 // Track for changes in group entries selection on click of checks or labels (through check-host)
-$(document).on('click', '.rally-group-check', (e) => {
+$(document).on('click', '.rally-group-check', () => {
   projectChange = true
 })
 // #endregion

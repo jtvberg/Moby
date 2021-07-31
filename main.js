@@ -22,8 +22,14 @@ const createWindow = () => {
     minHeight: 470,
     titleBarStyle: 'hidden',
     frame: false,
+    trafficLightPosition: {
+      x: 7,
+      y: 7
+    },
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true
     }
   })
 

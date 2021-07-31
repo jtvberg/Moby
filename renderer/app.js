@@ -366,7 +366,7 @@ function setTheme (themeId) {
   } else {
     $('#moby-bg-img').prop('src', 'res/moby_bg.png')
   }
-  updateTitileBar()
+  setTimeout(updateTitileBar, 100)
   remote.Menu.getApplicationMenu().getMenuItemById('theme').submenu.items.forEach(mi => { mi.checked = false })
   remote.Menu.getApplicationMenu().getMenuItemById(`${themeId || 'default'}`).checked = true
   ipcRenderer.send('theme-change', themeId)
@@ -375,6 +375,7 @@ function setTheme (themeId) {
 // Update TitleBar bakground color on theme change
 function updateTitileBar () {
   const nbg = getComputedStyle(document.documentElement).getPropertyValue('--main-background-light').trim()
+  console.log(nbg)
   ctb.updateBackground(customTitlebar.Color.fromHex(nbg))
 }
 
@@ -1557,7 +1558,7 @@ function createKnown (save) {
 function changeWatch (box) {
   var targetNode = document.getElementById(box)
   var config = { childList: true }
-  var callback = function (mutationsList, observer) {
+  var callback = function (mutationsList) {
     for (var mutation of mutationsList) {
       if (mutation.type === 'childList') {
         highlightCards()

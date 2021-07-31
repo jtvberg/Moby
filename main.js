@@ -1,6 +1,5 @@
 // Modules and variable definition
-const { app } = require('electron')
-const { BrowserWindow, Tray, ipcMain } = require('electron')
+const { app, BrowserWindow, Tray, ipcMain } = require('electron')
 const path = require('path')
 const updater = require('./updater')
 

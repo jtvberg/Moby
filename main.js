@@ -1,5 +1,5 @@
 // Modules and variable definition
-const { app, BrowserWindow, Tray, ipcMain } = require('electron')
+const { app, BrowserWindow, Tray, ipcMain, Menu, shell } = require('electron')
 const path = require('path')
 const updater = require('./updater')
 
@@ -28,7 +28,8 @@ const createWindow = () => {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
-      enableRemoteModule: true
+      enableRemoteModule: false,
+      webSecurity: false
     }
   })
 
@@ -116,11 +117,190 @@ const createQuickMenu = () => {
   })
 }
 
+// Create application menu
+const createMenu = () => {
+  const template = [
+    {
+      label: 'Tasks',
+      submenu: [
+        {
+          label: 'New Task',
+          accelerator: 'CmdOrCtrl+N',
+          click () { 
+            console.log('New Task menu clicked!')
+            win.webContents.send('execute-menu-command', 'new-task') 
+          }
+        },
+        {
+          label: 'Edit Task',
+          accelerator: 'CmdOrCtrl+Enter',
+          click () { win.webContents.send('execute-menu-command', 'edit-task') }
+        },
+        {
+          label: 'Clone Task',
+          accelerator: 'CmdOrCtrl+L',
+          click () { win.webContents.send('execute-menu-command', 'clone-task') }
+        },
+        {
+          label: 'Delete Task',
+          accelerator: 'CmdOrCtrl+Backspace',
+          click () { win.webContents.send('execute-menu-command', 'archive-task') }
+        },
+        {
+          label: 'Restore Task',
+          accelerator: 'CmdOrCtrl+R',
+          click () { win.webContents.send('execute-menu-command', 'restore-task') }
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Expand All Tasks',
+          accelerator: 'CmdOrCtrl+Down',
+          click () { win.webContents.send('execute-menu-command', 'expand-all') }
+        },
+        {
+          label: 'Collapse All Tasks',
+          accelerator: 'CmdOrCtrl+Up',
+          click () { win.webContents.send('execute-menu-command', 'collapse-all') }
+        },
+        {
+          label: 'Mark All Tasks Read',
+          accelerator: 'CmdOrCtrl+Shift+R',
+          click () { win.webContents.send('execute-menu-command', 'mark-all-read') }
+        },
+        {
+          label: 'Toggle Task Age',
+          type: 'checkbox',
+          id: 'menu-task-age',
+          accelerator: 'CmdOrCtrl+G',
+          click () { win.webContents.send('execute-menu-command', 'toggle-age') }
+        }
+      ]
+    },
+    {
+      role: 'editMenu'
+    },
+    {
+      role: 'windowMenu'
+    },
+    {
+      role: 'help',
+      submenu: [
+        {
+          label: 'Learn More',
+          click () { shell.openExternal('https://github.com/jtvberg/Moby') }
+        },
+        {
+          label: 'Toggle Dev Tools',
+          role: 'toggleDevTools'
+        }
+      ]
+    }
+  ]
+
+  // Mac specific menu adjustments
+  if (process.platform === 'darwin') {
+    template.unshift({
+      label: app.getName(),
+      submenu: [
+        {
+          role: 'about'
+        },
+        {
+          label: 'Preferences',
+          submenu: [
+            {
+              label: 'Settings',
+              click () { win.webContents.send('execute-menu-command', 'settings') }
+            },
+            {
+              label: 'Theme',
+              id: 'theme',
+              submenu: [
+                {
+                  label: 'Default',
+                  id: 'default',
+                  type: 'checkbox',
+                  click () { win.webContents.send('execute-menu-command', 'theme-default') }
+                },
+                {
+                  label: 'Dark',
+                  id: 'dark',
+                  type: 'checkbox',
+                  click () { win.webContents.send('execute-menu-command', 'theme-dark') }
+                },
+                {
+                  label: 'Light',
+                  id: 'light',
+                  type: 'checkbox',
+                  click () { win.webContents.send('execute-menu-command', 'theme-light') }
+                },
+                {
+                  label: 'Cyber',
+                  id: 'cyber',
+                  type: 'checkbox',
+                  click () { win.webContents.send('execute-menu-command', 'theme-cyber') }
+                },
+                {
+                  label: 'Steve',
+                  id: 'steve',
+                  type: 'checkbox',
+                  click () { win.webContents.send('execute-menu-command', 'theme-steve') }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Export Data',
+          click () { win.webContents.send('execute-menu-command', 'export-data') }
+        },
+        {
+          label: 'Import Data',
+          click () { win.webContents.send('execute-menu-command', 'import-data') }
+        },
+        {
+          type: 'separator'
+        },
+        {
+          role: 'services'
+        },
+        {
+          type: 'separator'
+        },
+        {
+          role: 'hide'
+        },
+        {
+          role: 'hideothers'
+        },
+        {
+          role: 'unhide'
+        },
+        {
+          type: 'separator'
+        },
+        {
+          role: 'quit'
+        }
+      ]
+    })
+  }
+
+  const menu = Menu.buildFromTemplate(template)
+  Menu.setApplicationMenu(menu)
+}
+
 // Create windows, tray, post electron init
 app.on('ready', () => {
   createWindow()
   createQuickMenu()
   createTray()
+  createMenu()
 
   // Tray icon only on Mac
   if (process.platform !== 'darwin') {
@@ -224,3 +404,37 @@ ipcMain.on('send-error-gh', () => {
 ipcMain.on('send-error-sn', () => {
   win.webContents.send('error-sn')
 })
+
+// IPC channel to quit the app
+ipcMain.on('app-quit', () => {
+  app.quit()
+})
+
+// IPC handlers for custom-electron-titlebar v4.x
+ipcMain.handle('request-application-menu', () => {
+  return null // No application menu for now
+})
+
+ipcMain.on('window-event', (event, data) => {
+  // Handle window events
+  if (data.type === 'maximize') {
+    win.maximize()
+  } else if (data.type === 'unmaximize') {
+    win.unmaximize()
+  } else if (data.type === 'minimize') {
+    win.minimize()
+  } else if (data.type === 'close') {
+    win.close()
+  }
+  event.returnValue = true
+})
+
+ipcMain.on('update-window-controls', (event) => {
+  event.returnValue = {
+    isMaximized: win.isMaximized(),
+    isMinimized: win.isMinimized(),
+    isFullScreen: win.isFullScreen()
+  }
+})
+
+// IPC handler for menu commands - removed as we send directly to renderer

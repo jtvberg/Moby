@@ -1,5 +1,5 @@
 // #region Modules and variable definition
-const { ipcRenderer, shell, remote } = require('electron')
+const { ipcRenderer, shell } = require('electron')
 const settings = require('./settings')
 const tasks = require('./tasks')
 const gitHub = require('./gitHub')
@@ -7,7 +7,6 @@ const serviceNow = require('./serviceNow')
 const rally = require('./rally')
 const fs = require('fs')
 require('bootstrap/js/dist/modal')
-require('./menu.js')
 const customTitlebar = require('custom-electron-titlebar')
 const stackPrefix = 'stack-'
 const knownList = JSON.parse(localStorage.getItem('knownList')) || createKnown()
@@ -81,14 +80,77 @@ ipcRenderer.on('error-rally', () => {
 ipcRenderer.on('error-gh', () => {
   showErrorGlyph()
 })
+
+// IPC event to handle menu commands
+ipcRenderer.on('execute-menu-command', (e, command) => {
+  console.log('Received menu command:', command)
+  switch (command) {
+    case 'new-task':
+      console.log('Executing new-task')
+      window.openTaskMenu('new')
+      break
+    case 'edit-task':
+      window.openTaskMenu('edit')
+      break
+    case 'clone-task':
+      window.cloneTaskMenu()
+      break
+    case 'archive-task':
+      window.archiveTaskMenu()
+      break
+    case 'restore-task':
+      window.restoreTaskMenu()
+      break
+    case 'expand-all':
+      window.expandAllMenu()
+      break
+    case 'collapse-all':
+      window.collapseAllMenu()
+      break
+    case 'mark-all-read':
+      window.createKnownMenu()
+      break
+    case 'toggle-age':
+      window.toggleAgeMenu()
+      break
+    case 'settings':
+      window.settingsMenu()
+      break
+    case 'theme-default':
+      window.setThemeMenu('default')
+      break
+    case 'theme-dark':
+      window.setThemeMenu('dark')
+      break
+    case 'theme-light':
+      window.setThemeMenu('light')
+      break
+    case 'theme-cyber':
+      window.setThemeMenu('cyber')
+      break
+    case 'theme-steve':
+      window.setThemeMenu('steve')
+      break
+    case 'export-data':
+      window.exportDataMenu()
+      break
+    case 'import-data':
+      window.importDataMenu()
+      break
+    default:
+      console.log('Unknown menu command:', command)
+  }
+})
 // #endregion
 
 // #region Custom titlebar instantiation
 const bg = getComputedStyle(document.documentElement).getPropertyValue('--main-background-light').trim()
 // eslint-disable-next-line no-new
 const ctb = new customTitlebar.Titlebar({
-  backgroundColor: customTitlebar.Color.fromHex(bg),
-  icon: './res/moby_icon.png'
+  backgroundColor: bg,
+  icon: './res/moby_icon.png',
+  unfocusEffect: false,
+  overflow: 'hidden'
 })
 // #endregion
 
@@ -307,7 +369,6 @@ function applySettings () {
     // Set Theme
     setTheme(settings.mobySettings.Theme)
     // Toggle Aging
-    remote.Menu.getApplicationMenu().getMenuItemById('menu-task-age').checked = settings.mobySettings.Aging
     toggleAge(settings.mobySettings.Aging)
     // Toggle Color Glyphs
     toggleColorGlyphs(settings.mobySettings.ColorGlyphs)
@@ -338,7 +399,6 @@ function toggleAge (check) {
     c = !$('.aging').is(':visible')
     c ? $('.aging').show() : $('.aging').hide()
   }
-  remote.Menu.getApplicationMenu().getMenuItemById('menu-task-age').checked = c
 }
 
 // Toggle color glyphs on tasks handler
@@ -367,16 +427,13 @@ function setTheme (themeId) {
     $('#moby-bg-img').prop('src', 'res/moby_bg.png')
   }
   setTimeout(updateTitileBar, 100)
-  remote.Menu.getApplicationMenu().getMenuItemById('theme').submenu.items.forEach(mi => { mi.checked = false })
-  remote.Menu.getApplicationMenu().getMenuItemById(`${themeId || 'default'}`).checked = true
   ipcRenderer.send('theme-change', themeId)
 }
 
 // Update TitleBar bakground color on theme change
 function updateTitileBar () {
   const nbg = getComputedStyle(document.documentElement).getPropertyValue('--main-background-light').trim()
-  console.log(nbg)
-  ctb.updateBackground(customTitlebar.Color.fromHex(nbg))
+  ctb.updateBackground(nbg)
 }
 
 // Load Settings modal
@@ -1784,8 +1841,7 @@ function toggleCheck (element, check) {
 // Completely close app
 // eslint-disable-next-line no-unused-vars
 const exit = () => {
-  const remote = require('electron').remote
-  remote.app.quit()
+  ipcRenderer.send('app-quit')
 }
 
 // Title bar double click event to maximize/restore window

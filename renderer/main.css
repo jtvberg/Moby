@@ -1,6 +1,6 @@
 body {
   background-color: var(--secondary);
-  -webkit-app-region: drag;
+  /* -webkit-app-region: drag; */ /* Disabled - conflicts with normal titlebar */
 }
 
 .wrapper {
@@ -195,7 +195,7 @@ body {
 }
 
 .modal-backdrop {
-  z-index: 1900;
+  z-index: 0;
 }
 
 .modal-header {
